@@ -1,0 +1,28 @@
+# Étape 1 : Build avec Maven + JDK 21
+FROM eclipse-temurin:21-jdk AS build
+
+WORKDIR /app
+
+# Copier les fichiers de configuration Maven
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+
+# Pré-charger les dépendances
+RUN ./mvnw dependency:go-offline
+
+# Copier le reste du projet
+COPY src ./src
+
+# Construire le jar
+RUN ./mvnw clean package -DskipTests
+
+# Étape 2 : Image finale allégée avec JRE 21
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+
+# Copier le jar depuis l'étape précédente
+COPY --from=build /app/target/*.jar app.jar
+
+# Lancer l’application
+ENTRYPOINT ["java", "-jar", "app.jar"]

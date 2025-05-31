@@ -1,0 +1,40 @@
+# === Global ===
+.env
+.DS_Store
+node_modules/
+*.log
+*.tmp
+*.swp
+.idea/
+.vscode/
+
+# === Java / Spring Boot ===
+/backend/target/
+*.iml
+*.class
+/backend/.mvn/
+**/application.properties
+**/application.yml
+/backend/.classpath
+/backend/.project
+/backend/.settings/
+backend/.gradle/
+backend/build/
+/backend/.vscode/
+
+# === React / Vite ===
+/frontend/node_modules/
+frontend/dist/
+frontend/.parcel-cache/
+frontend/.env.local
+frontend/.env.development
+frontend/.env.production
+/frontend/.vscode/
+
+# === Docker ===
+**/docker-compose.override.yml
+**/.docker/
+
+# === OS spécifiques ===
+Thumbs.db
+ehthumbs.db
