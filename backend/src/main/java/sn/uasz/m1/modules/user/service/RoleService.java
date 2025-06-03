@@ -1,10 +1,12 @@
 package sn.uasz.m1.modules.user.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
+import sn.uasz.m1.core.exceptions.RoleNotFoundException;
 import sn.uasz.m1.modules.user.entity.Role;
 import sn.uasz.m1.modules.user.repository.RoleRepository;
 
@@ -21,14 +23,16 @@ public class RoleService {
 
     public Role trouverRoleParId(Long id) {
         return roleRepo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        String.format("Le rôle avec l'identifiant %d n'existe pas !", id)));
+                .orElseThrow(() -> new RoleNotFoundException(id));
     }
 
     public Role trouverRoleParNom(String nom) {
         return roleRepo.findByNom(nom)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        String.format("Le rôle avec le nom '%s' n'existe pas !", nom)));
+                .orElseThrow(() -> new RoleNotFoundException(nom));
+    }
+
+    public List<Role> listerRolesActifs(){
+        return roleRepo.findAll();
     }
 
     public Role modifierRole(Long id, Role role) {
@@ -37,4 +41,21 @@ public class RoleService {
         existingRole.setModifierA(LocalDateTime.now());
         return roleRepo.save(existingRole);
     }
+
+    public void supprimerRole(Long id) {
+        Role role = trouverRoleParId(id);
+        role.setSupprime(true);
+        role.setSupprimeA(LocalDateTime.now());
+        role.setModifierA(LocalDateTime.now());
+        roleRepo.save(role);
+    }
+
+    public void restorerRole(Long id){
+        Role role = trouverRoleParId(id);
+        role.setSupprime(false);
+        role.setSupprimeA(null);
+        role.setModifierA(LocalDateTime.now());
+        roleRepo.save(role);
+    }
+
 }
