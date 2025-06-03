@@ -2,6 +2,9 @@ package sn.uasz.m1.core.base;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -16,6 +19,8 @@ import lombok.Setter;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
+@FilterDef(name = "supprimeFilter", parameters = @ParamDef(name = "isSupprime", type = Boolean.class))
+@Filter(name = "supprimeFilter", condition = "supprime = :isSupprime")
 public abstract class BaseEntity {
 
     @CreatedDate
@@ -26,10 +31,9 @@ public abstract class BaseEntity {
     @Column(name = "modifiee_a")
     private LocalDateTime modifierA;
 
-    @Column(name = "supprime")
-    private Boolean supprime = false;
+    @Column(name = "supprime", nullable = false)
+    private boolean supprime = false;
 
-    @Column(name = "supprimer_a")
-    private LocalDateTime supprimerA;
-
+    @Column(name = "supprime_a")
+    private LocalDateTime supprimeA;
 }
