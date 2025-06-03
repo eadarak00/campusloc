@@ -22,9 +22,14 @@ public abstract class BaseEntity {
     @Column(name = "cree_a", updatable = false)
     private LocalDateTime creerA;
 
-
     @LastModifiedDate
     @Column(name = "modifiee_a")
     private LocalDateTime modifierA;
-    
+
+    @Column(name = "supprime")
+    private Boolean supprime = false;
+
+    @Column(name = "supprimer_a")
+    private LocalDateTime supprimerA;
+
 }
