@@ -17,7 +17,7 @@ services:
     depends_on:
       - db
 
-  frontend:
-    build: ./frontend
-    ports:
-      - "5173:80"
+  # frontend:
+  #   build: ./frontend
+  #   ports:
+  #     - "5173:80"
