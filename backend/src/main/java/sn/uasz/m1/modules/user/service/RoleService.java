@@ -31,6 +31,10 @@ public class RoleService {
                 .orElseThrow(() -> new RoleNotFoundException(nom));
     }
 
+    public boolean existeRoleParNom(String nom){
+        return roleRepo.findByNom(nom).isPresent();
+    }
+
     public List<Role> listerRolesActifs(){
         return roleRepo.findAll();
     }

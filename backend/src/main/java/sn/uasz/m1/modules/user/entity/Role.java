@@ -26,4 +26,9 @@ public class Role extends BaseEntity {
 
     @Column(unique = true, nullable = false)
     private String nom;
+
+
+    public Role(String nom){
+        this.nom = nom;
+    }
 }
