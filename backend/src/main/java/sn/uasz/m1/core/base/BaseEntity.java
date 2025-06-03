@@ -1,4 +1,4 @@
-package sn.uasz.m1.core;
+package sn.uasz.m1.core.base;
 
 import java.time.LocalDateTime;
 
