@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
+import sn.uasz.m1.core.annotations.InclureElementsSupprimes;
 import sn.uasz.m1.core.exceptions.RoleNotFoundException;
 import sn.uasz.m1.modules.user.entity.Role;
 import sn.uasz.m1.modules.user.repository.RoleRepository;
@@ -16,9 +17,9 @@ public class RoleService {
 
     private final RoleRepository roleRepo;
 
-    public void creerRole(Role role) {
+    public Role creerRole(Role role) {
         role.setCreerA(LocalDateTime.now());
-        roleRepo.save(role);
+        return roleRepo.save(role);
     }
 
     public Role trouverRoleParId(Long id) {
@@ -38,6 +39,7 @@ public class RoleService {
     public List<Role> listerRolesActifs(){
         return roleRepo.findAll();
     }
+    
 
     public Role modifierRole(Long id, Role role) {
         Role existingRole = trouverRoleParId(id);
@@ -61,5 +63,21 @@ public class RoleService {
         role.setModifierA(LocalDateTime.now());
         roleRepo.save(role);
     }
+
+    @InclureElementsSupprimes
+    public List<Role> listerRoles(){
+        return roleRepo.findAll();
+    }
+
+    public List<Role> listerRolesInactifs() {
+        List<Role> tousLesRoles = listerRoles();
+        List<Role> rolesActifs = listerRolesActifs();
+        
+        // Supprimer les rôles actifs de la liste complète
+        tousLesRoles.removeAll(rolesActifs);
+        
+        return tousLesRoles; // Il ne reste que les rôles inactifs
+    }
+
 
 }
