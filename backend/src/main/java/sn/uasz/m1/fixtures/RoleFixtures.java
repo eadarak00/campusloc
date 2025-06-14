@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import sn.uasz.m1.modules.user.entity.Role;
 import sn.uasz.m1.modules.user.service.RoleService;
 

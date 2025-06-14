@@ -2,11 +2,11 @@ package sn.uasz.m1.modules.user.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
-import sn.uasz.m1.core.annotations.InclureElementsSupprimes;
 import sn.uasz.m1.core.exceptions.RoleNotFoundException;
 import sn.uasz.m1.modules.user.entity.Role;
 import sn.uasz.m1.modules.user.repository.RoleRepository;
@@ -32,14 +32,15 @@ public class RoleService {
                 .orElseThrow(() -> new RoleNotFoundException(nom));
     }
 
-    public boolean existeRoleParNom(String nom){
+    public boolean existeRoleParNom(String nom) {
         return roleRepo.findByNom(nom).isPresent();
     }
 
-    public List<Role> listerRolesActifs(){
-        return roleRepo.findAll();
+    public List<Role> listerRolesActifs() {
+        return roleRepo.findAll().stream()
+                .filter(role -> !role.isSupprime())
+                .collect(Collectors.toList());
     }
-    
 
     public Role modifierRole(Long id, Role role) {
         Role existingRole = trouverRoleParId(id);
@@ -56,7 +57,7 @@ public class RoleService {
         roleRepo.save(role);
     }
 
-    public void restorerRole(Long id){
+    public void restorerRole(Long id) {
         Role role = trouverRoleParId(id);
         role.setSupprime(false);
         role.setSupprimeA(null);
@@ -64,20 +65,18 @@ public class RoleService {
         roleRepo.save(role);
     }
 
-    @InclureElementsSupprimes
-    public List<Role> listerRoles(){
+    public List<Role> listerRoles() {
         return roleRepo.findAll();
     }
 
     public List<Role> listerRolesInactifs() {
         List<Role> tousLesRoles = listerRoles();
         List<Role> rolesActifs = listerRolesActifs();
-        
+
         // Supprimer les rôles actifs de la liste complète
         tousLesRoles.removeAll(rolesActifs);
-        
+
         return tousLesRoles; // Il ne reste que les rôles inactifs
     }
-
 
 }
