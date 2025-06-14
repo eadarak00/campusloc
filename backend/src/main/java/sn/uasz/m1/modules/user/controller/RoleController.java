@@ -52,7 +52,7 @@ public class RoleController {
         }
     }
 
-   @GetMapping
+    @GetMapping("/par-nom")
     public ResponseEntity<Role> getRoleByNom(@RequestParam String nom) {
         try {
             Role role = roleService.trouverRoleParNom(nom);
