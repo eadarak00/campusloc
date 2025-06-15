@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.hibernate.annotations.processing.Pattern;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -14,6 +15,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,11 +40,14 @@ public class Utilisateur extends BaseEntity implements UserDetails {
     private String prenom;
 
     @Column(unique = true, nullable = false)
+    @Email(message = "Email invalide")
+    @NotBlank(message = "L'email est obligatoire")
     private String email;
 
     @Column(nullable = false)
     private String motDePasse;
 
+    @jakarta.validation.constraints.Pattern(regexp = "^(\\+221|00221)?[7][05678]\\d{7}$", message = "Numéro de téléphone invalide (format Sénégal)")
     private String telephone;
 
     private LocalDate derniereConnexion;
