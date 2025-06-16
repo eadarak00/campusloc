@@ -28,13 +28,14 @@ public class UtilisateurService {
     private final RoleService roleService;
     private final PasswordEncoder encoder;
 
-    // 📌 Créer un utilisateur à partir du DTO
+    //réer un utilisateur à partir du DTO
     public Utilisateur creerUtilisateur(RegisterDTO dto) {
         if (utilisateurRepo.existsByEmail(dto.getEmail())) {
             throw new IllegalArgumentException("Email déjà utilisé.");
         }
 
-        Role role = roleService.trouverRoleParNom(dto.getRoleNom().toUpperCase());
+        // Role role = roleService.trouverRoleParNom(dto.getRoleNom().toUpperCase());
+        Role role = roleService.trouverRoleParNom("PROSPECT");
 
         Utilisateur utilisateur = new Utilisateur();
         utilisateur.setNom(dto.getNom());
@@ -148,17 +149,17 @@ public class UtilisateurService {
     }
 
     public UtilisateurResponseDTO mapToResponseDTO(Utilisateur user) {
-        UtilisateurResponseDTO dto = new UtilisateurResponseDTO();
-        dto.setId(user.getId());
-        dto.setNom(user.getNom());
-        dto.setPrenom(user.getPrenom());
-        dto.setEmail(user.getEmail());
-        dto.setTelephone(user.getTelephone());
-        dto.setPhotoProfil(user.getPhotoProfil());
-        dto.setActif(user.isActif());
-        dto.setBloque(user.isBloque());
-        dto.setRole(user.getRole().getNom());
-        return dto;
-    }
+    UtilisateurResponseDTO dto = new UtilisateurResponseDTO();
+    dto.setId(user.getId());
+    dto.setNom(user.getNom());
+    dto.setPrenom(user.getPrenom());
+    dto.setEmail(user.getEmail());
+    dto.setTelephone(user.getTelephone());
+    dto.setPhotoProfil(user.getPhotoProfil());
+    dto.setActif(user.isActif());
+    dto.setBloque(user.isBloque());
+    dto.setRole(user.getRole().getNom());
+    return dto;
+}
 
 }
