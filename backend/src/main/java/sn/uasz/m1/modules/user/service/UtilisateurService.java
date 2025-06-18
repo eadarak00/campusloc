@@ -27,7 +27,6 @@ public class UtilisateurService {
     private final UtilisateurRepository utilisateurRepo;
     private final RoleService roleService;
     private final PasswordEncoder encoder;
-
     //réer un utilisateur à partir du DTO
     public Utilisateur creerUtilisateur(RegisterDTO dto) {
         if (utilisateurRepo.existsByEmail(dto.getEmail())) {
@@ -46,6 +45,22 @@ public class UtilisateurService {
         utilisateur.setRole(role);
         utilisateur.setActif(false); // désactivé par défaut
         return utilisateurRepo.save(utilisateur);
+    }
+
+    public Utilisateur creerAdministrateur(Utilisateur utilisateur){
+        if(utilisateurRepo.existsByEmail(utilisateur.getEmail())){
+            throw new IllegalArgumentException("Email déjà utilisé.");
+        }
+
+        Role role = roleService.trouverRoleParNom("ADMIN");    
+        utilisateur.setRole(role);
+
+        String MdpCrypte = encoder.encode(utilisateur.getMotDePasse());
+        utilisateur.setMotDePasse(MdpCrypte);
+
+        return utilisateurRepo.save(utilisateur);    
+
+
     }
 
     public Utilisateur trouverParId(Long id) {

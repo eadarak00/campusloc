@@ -16,7 +16,7 @@ import sn.uasz.m1.modules.user.entity.Utilisateur;
 import sn.uasz.m1.modules.user.service.UtilisateurService;
 
 @RestController
-@RequestMapping("v1/auth")
+@RequestMapping("/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -32,7 +32,11 @@ public class AuthController {
                 .body(utilisateurService.mapToResponseDTO(utilisateur));
     }
 
-    // // 🔹 2. Connexion (login)
+    @GetMapping("/public")
+    public ResponseEntity<String> testPublic() {
+        return ResponseEntity.ok("Endpoint public accessible sans authentification.");
+    }
+    // // Connexion (login)
     // @PostMapping("/login")
     // public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginDTO dto) {
     //     authenticationManager.authenticate(
@@ -45,7 +49,7 @@ public class AuthController {
     //     return ResponseEntity.ok(Map.of("token", jwt));
     // }
 
-    // 🔹 3. Profil utilisateur connecté
+    // Profil utilisateur connecté
     // @GetMapping("/me")
     // public ResponseEntity<UtilisateurResponseDTO> me(Authentication authentication) {
     //     String email = authentication.getName();

@@ -23,7 +23,7 @@ import sn.uasz.m1.modules.user.entity.Utilisateur;
 import sn.uasz.m1.modules.user.service.UtilisateurService;
 
 @RestController
-@RequestMapping("v1/utilisateurs")
+@RequestMapping("/v1/utilisateurs")
 @RequiredArgsConstructor
 public class UtilisateurController {
 
