@@ -26,7 +26,7 @@ public class CodeValidationService {
     private final UtilisateurRepository utilisateurRepo;
     private final EmailService emailService;
 
-    public void genererEtEnvoyerCode(Utilisateur utilisateur) throws MessagingException {
+    public void genererEtEnvoyerCode(Utilisateur utilisateur) {
         String code = String.format("%06d", new Random().nextInt(999999));
         Instant now = Instant.now();
         Instant expiration = now.plus(15, ChronoUnit.MINUTES);
@@ -52,11 +52,17 @@ public class CodeValidationService {
         codeRepo.save(validation);
 
         // Envoyer par email
-        emailService.envoyerHtml(
-        utilisateur.getEmail(),
-        EmailUtils.sujetValidationInscription(),
-        EmailUtils.corpsValidationInscriptionHTML(utilisateur.getPrenom(), code)
-        );
+        try {
+            emailService.envoyerHtml(
+                    utilisateur.getEmail(),
+                    EmailUtils.sujetValidationInscription(),
+                    EmailUtils.corpsValidationInscriptionHTML(utilisateur.getPrenom(), code));
+        } catch (MessagingException e) {
+            System.err.println("Échec de l'envoi du mail de validation à l'utilisateur : "
+                    + utilisateur.getEmail());
+            e.printStackTrace();
+        }
+
     }
 
     public boolean validerCode(String email, String code) {
@@ -70,7 +76,7 @@ public class CodeValidationService {
             return false;
         }
 
-        //chercher le bon code encore valide
+        // chercher le bon code encore valide
         Optional<CodeValidation> match = codes.stream()
                 .filter(c -> c.getCode().equals(code))
                 .filter(c -> !c.isExpired())
@@ -82,11 +88,11 @@ public class CodeValidationService {
 
         CodeValidation codeValidation = match.get();
 
-        //marquer le code comme utilisé
+        // marquer le code comme utilisé
         codeValidation.setValide(true);
         codeRepo.save(codeValidation);
 
-        //activer l'utilisateur
+        // activer l'utilisateur
         utilisateur.setActif(true);
         utilisateurRepo.save(utilisateur);
 
