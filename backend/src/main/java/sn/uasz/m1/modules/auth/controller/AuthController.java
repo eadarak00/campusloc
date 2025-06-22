@@ -4,6 +4,9 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,7 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import sn.uasz.m1.modules.auth.dto.LoginDTO;
+import sn.uasz.m1.modules.auth.dto.LoginResponseDTO;
 import sn.uasz.m1.modules.auth.dto.RegisterDTO;
+import sn.uasz.m1.modules.auth.security.JwtUtil;
 import sn.uasz.m1.modules.user.dto.CodeValidationDTO;
 import sn.uasz.m1.modules.user.dto.UtilisateurResponseDTO;
 import sn.uasz.m1.modules.user.entity.Utilisateur;
@@ -24,8 +30,8 @@ import sn.uasz.m1.modules.user.service.UtilisateurService;
 @RequiredArgsConstructor
 public class AuthController {
 
-    // private final AuthenticationManager authenticationManager;
-    // private final JwtUtil jwtUtil;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
     private final UtilisateurService utilisateurService;
     private final CodeValidationService validationService;
 
@@ -47,19 +53,24 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "Compte activé avec succès"));
     }
 
-    // // Connexion (login)
-    // @PostMapping("/login")
-    // public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginDTO
-    // dto) {
-    // authenticationManager.authenticate(
-    // new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getMotDePasse())
-    // );
+     @PostMapping("/connexion")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO dto) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getMotDePasse())
+        );
 
-    // Utilisateur user = utilisateurService.trouverParEmail(dto.getEmail());
-    // String jwt = jwtUtil.generateToken(user);
+        Utilisateur utilisateur = utilisateurService.trouverParEmail(dto.getEmail());
 
-    // return ResponseEntity.ok(Map.of("token", jwt));
-    // }
+        String accessToken = jwtUtil.genererToken(utilisateur);
+
+        return ResponseEntity.ok(new LoginResponseDTO(
+                accessToken,
+                utilisateur.getNom(),
+                utilisateur.getPrenom(),
+                utilisateur.getEmail(),
+                utilisateur.getRole().getNom()
+        ));
+    }
 
     // Profil utilisateur connecté
     // @GetMapping("/me")

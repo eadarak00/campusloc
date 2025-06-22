@@ -8,13 +8,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import sn.uasz.m1.modules.auth.dto.LoginDTO;
+import sn.uasz.m1.modules.auth.dto.LoginResponseDTO;
 import sn.uasz.m1.modules.auth.dto.RegisterDTO;
+import sn.uasz.m1.modules.auth.security.JwtUtil;
 import sn.uasz.m1.modules.user.dto.UtilisateurResponseDTO;
 import sn.uasz.m1.modules.user.entity.Role;
 import sn.uasz.m1.modules.user.entity.Utilisateur;
@@ -22,12 +28,13 @@ import sn.uasz.m1.modules.user.repository.UtilisateurRepository;
 
 @Service
 @RequiredArgsConstructor
-public class UtilisateurService {
+public class UtilisateurService{
 
     private final UtilisateurRepository utilisateurRepo;
     private final RoleService roleService;
     private final PasswordEncoder encoder;
     private final CodeValidationService validationService;
+    private final JwtUtil jwtUtil;
 
     // réer un utilisateur à partir du DTO
     public Utilisateur creerUtilisateur(RegisterDTO dto) {
@@ -53,6 +60,32 @@ public class UtilisateurService {
         validationService.genererEtEnvoyerCode(savedUser);
 
         return savedUser;
+    }
+
+    public LoginResponseDTO connecter(LoginDTO dto) {
+        Utilisateur utilisateur = utilisateurRepo.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new EntityNotFoundException("Email non trouvé."));
+
+        if (!utilisateur.isActif()) {
+            throw new IllegalStateException("Compte non activé.");
+        }
+
+        if (utilisateur.isBloque()) {
+            throw new IllegalStateException("Compte bloqué.");
+        }
+
+        if (!encoder.matches(dto.getMotDePasse(), utilisateur.getMotDePasse())) {
+            throw new IllegalArgumentException("Mot de passe invalide.");
+        }
+
+        String token = jwtUtil.genererToken(utilisateur);
+
+        return new LoginResponseDTO(
+                token,
+                utilisateur.getNom(),
+                utilisateur.getPrenom(),
+                utilisateur.getEmail(),
+                utilisateur.getRole().getNom());
     }
 
     public Utilisateur creerAdministrateur(Utilisateur utilisateur) {
