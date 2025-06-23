@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import sn.uasz.m1.modules.auth.dto.LoginDTO;
 import sn.uasz.m1.modules.auth.dto.LoginResponseDTO;
 import sn.uasz.m1.modules.auth.dto.RegisterDTO;
@@ -28,7 +30,8 @@ import sn.uasz.m1.modules.user.repository.UtilisateurRepository;
 
 @Service
 @RequiredArgsConstructor
-public class UtilisateurService{
+@Slf4j
+public class UtilisateurService {
 
     private final UtilisateurRepository utilisateurRepo;
     private final RoleService roleService;
@@ -36,7 +39,7 @@ public class UtilisateurService{
     private final CodeValidationService validationService;
     private final JwtUtil jwtUtil;
 
-    // réer un utilisateur à partir du DTO
+    // Créer un utilisateur à partir du DTO
     public Utilisateur creerUtilisateur(RegisterDTO dto) {
         if (utilisateurRepo.existsByEmail(dto.getEmail())) {
             throw new IllegalArgumentException("Email déjà utilisé.");
@@ -44,6 +47,31 @@ public class UtilisateurService{
 
         // Par défaut : rôle PROSPECT (à adapter si besoin)
         Role role = roleService.trouverRoleParNom("PROSPECT");
+
+        Utilisateur utilisateur = new Utilisateur();
+        utilisateur.setNom(dto.getNom());
+        utilisateur.setPrenom(dto.getPrenom());
+        utilisateur.setEmail(dto.getEmail());
+        utilisateur.setMotDePasse(encoder.encode(dto.getMotDePasse()));
+        utilisateur.setTelephone(dto.getTelephone());
+        utilisateur.setRole(role);
+        utilisateur.setActif(false);
+
+        Utilisateur savedUser = utilisateurRepo.save(utilisateur);
+
+        // Générer et envoyer le code de validation
+        validationService.genererEtEnvoyerCode(savedUser);
+
+        return savedUser;
+    }
+
+    public Utilisateur creerBailleur(RegisterDTO dto) {
+        if (utilisateurRepo.existsByEmail(dto.getEmail())) {
+            throw new IllegalArgumentException("Email déjà utilisé.");
+        }
+
+        // Par défaut : rôle PROSPECT (à adapter si besoin)
+        Role role = roleService.trouverRoleParNom("BAILLEUR");
 
         Utilisateur utilisateur = new Utilisateur();
         utilisateur.setNom(dto.getNom());
@@ -78,10 +106,18 @@ public class UtilisateurService{
             throw new IllegalArgumentException("Mot de passe invalide.");
         }
 
-        String token = jwtUtil.genererToken(utilisateur);
+        utilisateur.setDerniereConnexion(LocalDate.now());
+        utilisateurRepo.save(utilisateur);
+
+        String accessToken = jwtUtil.genererAccessToken(utilisateur);
+        String refreshToken = jwtUtil.genererRefreshToken(utilisateur);
+
+        log.info("✅ Connexion réussie pour {}", utilisateur.getEmail());
+
 
         return new LoginResponseDTO(
-                token,
+                accessToken,
+                refreshToken,
                 utilisateur.getNom(),
                 utilisateur.getPrenom(),
                 utilisateur.getEmail(),
