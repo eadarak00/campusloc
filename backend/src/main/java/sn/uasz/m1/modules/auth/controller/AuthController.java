@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import sn.uasz.m1.modules.auth.dto.LoginDTO;
 import sn.uasz.m1.modules.auth.dto.LoginResponseDTO;
+import sn.uasz.m1.modules.auth.dto.RefreshTokenDTO;
 import sn.uasz.m1.modules.auth.dto.RegisterDTO;
 import sn.uasz.m1.modules.auth.security.JwtUtil;
 import sn.uasz.m1.modules.user.dto.CodeValidationDTO;
@@ -43,6 +44,13 @@ public class AuthController {
                 .body(utilisateurService.mapToResponseDTO(utilisateur));
     }
 
+     @PostMapping("/inscription-bailleur")
+    public ResponseEntity<UtilisateurResponseDTO> registerBailleur(@Valid @RequestBody RegisterDTO dto) {
+        Utilisateur utilisateur = utilisateurService.creerUtilisateur(dto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(utilisateurService.mapToResponseDTO(utilisateur));
+    }
+
     @PostMapping("/valider")
     public ResponseEntity<?> valider(@Valid @RequestBody CodeValidationDTO dto) {
         boolean valide = validationService.validerCode(dto.getEmail(), dto.getCode());
@@ -53,23 +61,44 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "Compte activé avec succès"));
     }
 
-     @PostMapping("/connexion")
+    @PostMapping("/connexion")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO dto) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getMotDePasse())
-        );
+                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getMotDePasse()));
 
         Utilisateur utilisateur = utilisateurService.trouverParEmail(dto.getEmail());
 
-        String accessToken = jwtUtil.genererToken(utilisateur);
+        String accessToken = jwtUtil.genererAccessToken(utilisateur);
+        String refreshToken = jwtUtil.genererRefreshToken(utilisateur);
 
         return ResponseEntity.ok(new LoginResponseDTO(
                 accessToken,
+                refreshToken,
                 utilisateur.getNom(),
                 utilisateur.getPrenom(),
                 utilisateur.getEmail(),
-                utilisateur.getRole().getNom()
-        ));
+                utilisateur.getRole().getNom()));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<LoginResponseDTO> refresh(@RequestBody RefreshTokenDTO dto) {
+        String refreshToken = dto.getRefreshToken();
+        String email = jwtUtil.extraireEmail(refreshToken);
+
+        Utilisateur utilisateur = utilisateurService.trouverParEmail(email);
+
+        if (!jwtUtil.estValide(refreshToken, utilisateur)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String newAccess = jwtUtil.genererAccessToken(utilisateur);
+        return ResponseEntity.ok(new LoginResponseDTO(
+                newAccess,
+                refreshToken,
+                utilisateur.getNom(),
+                utilisateur.getPrenom(),
+                utilisateur.getEmail(),
+                utilisateur.getRole().getNom()));
     }
 
     // Profil utilisateur connecté
