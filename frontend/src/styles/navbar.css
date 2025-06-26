@@ -1,0 +1,21 @@
+@import url(./variables.css);
+
+.navbar-link > .ant-menu-item-selected {
+  color: var(--color-primary) !important;
+}
+
+/* Style pour l'item sélectionné - trait en bas */
+.navbar-link > .ant-menu-item-selected::after {
+  border-bottom-color: var(--color-primary) !important;
+}
+
+/* Style au survol - texte */
+.navbar-link > .ant-menu-item:hover {
+  font-weight: 600 !important;
+  color: var(--color-primary) !important;
+}
+
+/* Style au survol - trait en bas */
+.navbar-link > .ant-menu-item:hover::after {
+  border-bottom-color: var(--color-primary) !important;
+}
