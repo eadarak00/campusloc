@@ -157,7 +157,7 @@ export default function Navbar() {
       }}
     >
       {/* Logo */}
-      <div style={{ display: 'flex', alignItems: 'center' }} className='font-poppins font-semibold'>
+      <div style={{ display: 'flex', alignItems: 'center' }} className='font-poppins font-semibold  campusloc-title'>
         <Link 
           to="/" 
           style={{ 
