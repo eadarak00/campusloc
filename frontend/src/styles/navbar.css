@@ -30,7 +30,8 @@
 }
 
 /**************************************************************/
-.ant-menu-light .ant-menu-item-selected,
+@media (max-width: 766px) {
+    .ant-menu-light .ant-menu-item-selected,
 .ant-menu-light > .ant-menu .ant-menu-item-selected,
 .navbar-link .ant-menu-item-selected {
   background-color: rgb(212, 180, 131,.4) !important;
@@ -44,6 +45,8 @@
   border-radius: 8px;
 }
 
+    
+}
 /* Tablet - 768px et plus */
 @media (min-width: 768px) {
   .mobile-menu-button {
