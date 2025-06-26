@@ -19,3 +19,60 @@
 .navbar-link > .ant-menu-item:hover::after {
   border-bottom-color: var(--color-primary) !important;
 }
+
+.mobile-menu-button {
+  display: flex !important;
+}
+
+.desktop-menu,
+.desktop-buttons {
+  display: none !important;
+}
+
+/**************************************************************/
+.ant-menu-light .ant-menu-item-selected,
+.ant-menu-light > .ant-menu .ant-menu-item-selected,
+.navbar-link .ant-menu-item-selected {
+  background-color: rgb(212, 180, 131,.4) !important;
+  color: var(--color-dark);
+  border-radius: 8px;
+}
+
+.ant-menu-light .ant-menu-item:hover,
+.navbar-link .ant-menu-item:hover {
+  background-color: rgba(207, 159, 114, 0.455) !important;
+  border-radius: 8px;
+}
+
+/* Tablet - 768px et plus */
+@media (min-width: 768px) {
+  .mobile-menu-button {
+    display: none !important;
+  }
+
+  .desktop-menu {
+    display: flex !important;
+  }
+
+  .desktop-buttons {
+    display: flex !important;
+  }
+}
+
+/* Desktop - 1024px et plus */
+@media (min-width: 1024px) {
+  .ant-layout-header {
+    padding: 0 24px !important;
+  }
+
+  .font-poppins a {
+    font-size: 1rem !important;
+  }
+}
+
+/* Large Desktop - 1440px et plus */
+@media (min-width: 1440px) {
+  .ant-layout-header {
+    padding: 0 48px !important;
+  }
+}
