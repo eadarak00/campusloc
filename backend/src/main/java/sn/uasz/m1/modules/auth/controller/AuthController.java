@@ -66,26 +66,6 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "Compte activé avec succès"));
     }
 
-    // @PostMapping("/connexion")
-    // public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO dto) {
-    // authenticationManager.authenticate(
-    // new UsernamePasswordAuthenticationToken(dto.getEmail(),
-    // dto.getMotDePasse()));
-
-    // Utilisateur utilisateur = utilisateurService.trouverParEmail(dto.getEmail());
-
-    // String accessToken = jwtUtil.genererAccessToken(utilisateur);
-    // String refreshToken = jwtUtil.genererRefreshToken(utilisateur);
-
-    // return ResponseEntity.ok(new LoginResponseDTO(
-    // accessToken,
-    // refreshToken,
-    // utilisateur.getNom(),
-    // utilisateur.getPrenom(),
-    // utilisateur.getEmail(),
-    // utilisateur.getRole().getNom()));
-    // }
-
     @PostMapping("/connexion")
     public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
 
