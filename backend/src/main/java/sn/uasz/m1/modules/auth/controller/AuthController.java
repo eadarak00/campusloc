@@ -5,6 +5,9 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import sn.uasz.m1.modules.auth.dto.LoginDTO;
 import sn.uasz.m1.modules.auth.dto.LoginResponseDTO;
 import sn.uasz.m1.modules.auth.dto.RefreshTokenDTO;
@@ -29,6 +33,7 @@ import sn.uasz.m1.modules.user.service.UtilisateurService;
 @RestController
 @RequestMapping("/v1/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -44,7 +49,7 @@ public class AuthController {
                 .body(utilisateurService.mapToResponseDTO(utilisateur));
     }
 
-     @PostMapping("/inscription-bailleur")
+    @PostMapping("/inscription-bailleur")
     public ResponseEntity<UtilisateurResponseDTO> registerBailleur(@Valid @RequestBody RegisterDTO dto) {
         Utilisateur utilisateur = utilisateurService.creerUtilisateur(dto);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -61,23 +66,70 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "Compte activé avec succès"));
     }
 
+    // @PostMapping("/connexion")
+    // public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO dto) {
+    // authenticationManager.authenticate(
+    // new UsernamePasswordAuthenticationToken(dto.getEmail(),
+    // dto.getMotDePasse()));
+
+    // Utilisateur utilisateur = utilisateurService.trouverParEmail(dto.getEmail());
+
+    // String accessToken = jwtUtil.genererAccessToken(utilisateur);
+    // String refreshToken = jwtUtil.genererRefreshToken(utilisateur);
+
+    // return ResponseEntity.ok(new LoginResponseDTO(
+    // accessToken,
+    // refreshToken,
+    // utilisateur.getNom(),
+    // utilisateur.getPrenom(),
+    // utilisateur.getEmail(),
+    // utilisateur.getRole().getNom()));
+    // }
+
     @PostMapping("/connexion")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO dto) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getMotDePasse()));
+    public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
 
-        Utilisateur utilisateur = utilisateurService.trouverParEmail(dto.getEmail());
+        try {
+            log.debug("Tentative de connexion pour l'email: {}", dto.getEmail());
 
-        String accessToken = jwtUtil.genererAccessToken(utilisateur);
-        String refreshToken = jwtUtil.genererRefreshToken(utilisateur);
+            // 1. Authentification
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getMotDePasse()));
 
-        return ResponseEntity.ok(new LoginResponseDTO(
-                accessToken,
-                refreshToken,
-                utilisateur.getNom(),
-                utilisateur.getPrenom(),
-                utilisateur.getEmail(),
-                utilisateur.getRole().getNom()));
+            // 2. Récupération utilisateur
+            Utilisateur utilisateur = utilisateurService.trouverParEmail(dto.getEmail());
+
+            // 3. Génération des tokens
+            String accessToken = jwtUtil.genererAccessToken(utilisateur);
+            String refreshToken = jwtUtil.genererRefreshToken(utilisateur);
+
+            log.info("Connexion réussie pour l'utilisateur: {} (ID: {})",
+                    dto.getEmail(),
+                    utilisateur.getId());
+
+            return ResponseEntity.ok(new LoginResponseDTO(
+                    accessToken,
+                    refreshToken,
+                    utilisateur.getNom(),
+                    utilisateur.getPrenom(),
+                    utilisateur.getEmail(),
+                    utilisateur.getRole().getNom()));
+
+        } catch (BadCredentialsException e) {
+            log.warn("Tentative de connexion échouée (mauvais credentials) pour email: {}", dto.getEmail());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Identifiants invalides");
+
+        } catch (DisabledException | LockedException e) {
+            log.warn("Tentative de connexion sur compte désactivé: {}", dto.getEmail());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Compte désactivé");
+
+        } catch (Exception e) {
+            log.error("Erreur technique lors de la connexion", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur technique");
+        }
     }
 
     @PostMapping("/refresh")
