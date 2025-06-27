@@ -6,7 +6,7 @@ import Connexion from "./auth/Connexion";
 const Home = () => {
   return (
     <main>
-      <EnConstruction nomPage="Accueil" />{" "}
+      <EnConstruction nomPage="Accueil" />
     </main>
   );
 };

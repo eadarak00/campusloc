@@ -146,7 +146,7 @@ export default function Navbar() {
   return (
     <Header 
       style={{ 
-        backgroundColor: '#FCFBF8',
+        backgroundColor: '#FFFFFF',
         boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
         padding: '0 16px',
         display: 'flex',
