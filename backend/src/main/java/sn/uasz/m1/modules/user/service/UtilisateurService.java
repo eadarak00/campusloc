@@ -114,10 +114,10 @@ public class UtilisateurService {
 
         log.info("✅ Connexion réussie pour {}", utilisateur.getEmail());
 
-
         return new LoginResponseDTO(
                 accessToken,
                 refreshToken,
+                utilisateur.getId(),
                 utilisateur.getNom(),
                 utilisateur.getPrenom(),
                 utilisateur.getEmail(),
@@ -145,7 +145,7 @@ public class UtilisateurService {
     }
 
     public Utilisateur trouverParEmail(String email) {
-        return utilisateurRepo.findByEmail(email)
+        return utilisateurRepo.findByEmail(email.trim().toLowerCase())
                 .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé."));
     }
 
@@ -251,6 +251,10 @@ public class UtilisateurService {
         dto.setBloque(user.isBloque());
         dto.setRole(user.getRole().getNom());
         return dto;
+    }
+
+    public boolean checkEmailExists(String email) {
+        return utilisateurRepo.findByEmail(email).isPresent();
     }
 
 }
