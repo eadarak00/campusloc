@@ -26,43 +26,88 @@ public class CodeValidationService {
     private final UtilisateurRepository utilisateurRepo;
     private final EmailService emailService;
 
+    // public void genererEtEnvoyerCode(Utilisateur utilisateur) {
+    // String code = String.format("%06d", new Random().nextInt(999999));
+    // Instant now = Instant.now();
+    // Instant expiration = now.plus(15, ChronoUnit.MINUTES);
+
+    // // Invalider les anciens codes non utilisés
+    // if (codeRepo.existsByUtilisateurAndValide(utilisateur, false)) {
+    // List<CodeValidation> anciens =
+    // codeRepo.findByUtilisateurAndValide(utilisateur, false);
+    // for (CodeValidation c : anciens) {
+    // c.setValide(true);
+    // }
+    // codeRepo.saveAll(anciens);
+    // }
+
+    // // Générer et sauvegarder le nouveau code
+    // CodeValidation validation = CodeValidation.builder()
+    // .code(code)
+    // .utilisateur(utilisateur)
+    // .creeA(now)
+    // .expireA(expiration)
+    // .valide(false)
+    // .build();
+
+    // codeRepo.save(validation);
+
+    // // Envoyer par email
+    // try {
+    // emailService.envoyerHtml(
+    // utilisateur.getEmail(),
+    // EmailUtils.sujetValidationInscription(),
+    // EmailUtils.corpsValidationInscriptionHTML(utilisateur.getPrenom(), code));
+    // } catch (MessagingException e) {
+    // System.err.println("Échec de l'envoi du mail de validation à l'utilisateur :
+    // "
+    // + utilisateur.getEmail());
+    // e.printStackTrace();
+    // }
+
+    // }
+
     public void genererEtEnvoyerCode(Utilisateur utilisateur) {
         String code = String.format("%06d", new Random().nextInt(999999));
         Instant now = Instant.now();
         Instant expiration = now.plus(15, ChronoUnit.MINUTES);
 
-        // Invalider les anciens codes non utilisés
-        if (codeRepo.existsByUtilisateurAndValide(utilisateur, false)) {
-            List<CodeValidation> anciens = codeRepo.findByUtilisateurAndValide(utilisateur, false);
-            for (CodeValidation c : anciens) {
-                c.setValide(true);
-            }
-            codeRepo.saveAll(anciens);
-        }
+        // 🔁 Vérifier s’il y a déjà un code pour cet utilisateur
+        Optional<CodeValidation> existing = codeRepo.findByUtilisateur(utilisateur);
 
-        // Générer et sauvegarder le nouveau code
-        CodeValidation validation = CodeValidation.builder()
-                .code(code)
-                .utilisateur(utilisateur)
-                .creeA(now)
-                .expireA(expiration)
-                .valide(false)
-                .build();
+        CodeValidation validation;
+        if (existing.isPresent()) {
+            // Mise à jour du code existant
+            validation = existing.get();
+            validation.setCode(code);
+            validation.setCreeA(now);
+            validation.setExpireA(expiration);
+            validation.setValide(false);
+            System.out.println("Code mis à jour pour " + utilisateur.getEmail());
+        } else {
+            // Création d’un nouveau code
+            validation = CodeValidation.builder()
+                    .code(code)
+                    .utilisateur(utilisateur)
+                    .creeA(now)
+                    .expireA(expiration)
+                    .valide(false)
+                    .build();
+            System.out.println("Nouveau code généré pour " + utilisateur.getEmail());
+        }
 
         codeRepo.save(validation);
 
-        // Envoyer par email
         try {
             emailService.envoyerHtml(
                     utilisateur.getEmail(),
                     EmailUtils.sujetValidationInscription(),
                     EmailUtils.corpsValidationInscriptionHTML(utilisateur.getPrenom(), code));
+            System.out.println("Email envoyé avec le code : " + code);
         } catch (MessagingException e) {
-            System.err.println("Échec de l'envoi du mail de validation à l'utilisateur : "
-                    + utilisateur.getEmail());
+            System.err.println("Échec de l'envoi du mail à : " + utilisateur.getEmail());
             e.printStackTrace();
         }
-
     }
 
     public boolean validerCode(String email, String code) {
