@@ -94,22 +94,6 @@ a {
   font-style: italic;
 }
 
-/* color */
-
-/* .button-primary{
-  color: var(--color-dark);
-  background-color: var(--color-primary);
-  font-size: 1rem;
-  border-color: var(--color-primary);
-  padding: 4px 20px;
-}
-
-.button-primary:hover {
-  background:#d1881a !important;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  border-color: rgba(#9a5f05, 0.71);
-} */
 
 .button-primary {
   color: var(--color-dark);
