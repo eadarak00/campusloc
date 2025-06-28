@@ -3,6 +3,7 @@ import { Eye, EyeOff, Fingerprint, Mail, Lock } from "lucide-react";
 import { notification } from "antd";
 import { login } from "../../api/auth";
 import "../../styles/auth/connexion.css";
+import { Link } from "react-router-dom";
 
 const Connexion = () => {
   const [formData, setFormData] = useState({
@@ -407,9 +408,9 @@ const Connexion = () => {
                 {/* Lien inscription */}
                 <div className="auth-signup-link">
                   <span>Je n'ai pas de compte? </span>
-                  <button type="button" className="auth-signup-button">
+                  <Link to="/inscription" className="auth-signup-button">
                     S'inscrire
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
