@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: eadarak
       POSTGRES_PASSWORD: eadarak
     ports:
-      - "5432:5432"
+      - "5440:5432"
 
   backend:
     build: ./backend
@@ -17,7 +17,7 @@ services:
     depends_on:
       - db
 
-  frontend:
-    build: ./frontend
-    ports:
-      - "5173:80"
+  # frontend:
+  #   build: ./frontend
+  #   ports:
+  #     - "5173:80"
