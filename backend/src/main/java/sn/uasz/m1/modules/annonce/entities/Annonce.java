@@ -15,6 +15,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,6 +28,7 @@ import sn.uasz.m1.modules.user.entity.Utilisateur;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 @Entity
 public class Annonce extends BaseEntity {
     @Id
@@ -49,22 +51,22 @@ public class Annonce extends BaseEntity {
 
     private LocalDateTime datePublication;
 
-    @NotBlank
+    @NotBlank(message = "La ville est obligatoire")
     private String adresse;
 
-    @NotBlank
+    @NotBlank(message = "La ville est obligatoire")
     private String ville;
 
-    @Positive
+    @Positive(message = "La surface doit être positive")
     private int surface;
 
-    @Positive
+    @Positive(message = "Le nombre de chambres doit être positif")
     private int nombreDeChambres;
 
-    @Positive
+    @Positive(message = "Le nombre de salles de bains doit être positif")
     private int salleDeBains;
 
-    @Positive
+    @Positive(message = "La capacité doit être positive")
     private int capacite;
 
     @ManyToOne
@@ -77,5 +79,7 @@ public class Annonce extends BaseEntity {
     public void onCreate(){
         this.datePublication = LocalDateTime.now();
         this.statut = StatutAnnonce.EN_ATTENTE;
+        this.setCreerA(LocalDateTime.now());
+        this.setSupprime(false);
     }
 }
