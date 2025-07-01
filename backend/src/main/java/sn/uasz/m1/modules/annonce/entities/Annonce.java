@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -70,5 +71,11 @@ public class Annonce extends BaseEntity {
     private Utilisateur proprietaire;
 
     @Enumerated(EnumType.STRING)
-    private StatutAnnonce statut = StatutAnnonce.EN_ATTENTE;
+    private StatutAnnonce statut;
+
+    @PrePersist
+    public void onCreate(){
+        this.datePublication = LocalDateTime.now();
+        this.statut = StatutAnnonce.EN_ATTENTE;
+    }
 }
