@@ -9,7 +9,6 @@ import org.hibernate.service.spi.ServiceException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,16 +17,21 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import sn.uasz.m1.modules.annonce.dto.AnnonceCreateDTO;
+import sn.uasz.m1.modules.annonce.dto.AnnonceResponseDTO;
+import sn.uasz.m1.modules.annonce.dto.AnnonceUpdateDTO;
 import sn.uasz.m1.modules.annonce.emuns.StatutAnnonce;
+import sn.uasz.m1.modules.annonce.emuns.TypeDeLogement;
 import sn.uasz.m1.modules.annonce.entities.Annonce;
 import sn.uasz.m1.modules.annonce.repository.AnnonceRepository;
 import sn.uasz.m1.modules.user.entity.Utilisateur;
+import sn.uasz.m1.modules.user.repository.UtilisateurRepository;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AnnonceService {
     private final AnnonceRepository annonceRepository;
+    private final UtilisateurRepository uRepository;
 
     @PreAuthorize("hasRole('BAILLEUR')")
     @Transactional
@@ -62,19 +66,112 @@ public class AnnonceService {
         }
     }
 
-    public List<Annonce> lister() {
-        return annonceRepository.findAll();
+    @PreAuthorize("hasRole('ADMIN')")
+    public AnnonceResponseDTO validerAnnonce(Long annonceId) {
+        Annonce annonce = trouverParId(annonceId);
+
+        // Mettre à jour le statut
+        annonce.setStatut(StatutAnnonce.ACCEPTER);
+
+        // Sauvegarder l'entité
+        annonceRepository.save(annonce);
+
+        // Retourner le DTO mis à jour
+        return toDto(annonce);
     }
 
-    public List<Annonce> listerInactifs() {
-        return annonceRepository.findAll().stream()
-                .filter(a -> a.isSupprime())
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public List<AnnonceResponseDTO> validerAnnonces(List<Long> annonceIds) {
+        List<Annonce> annonces = annonceRepository.findAllById(annonceIds);
+
+        if (annonces.isEmpty()) {
+            throw new EntityNotFoundException("Aucune annonce trouvée pour les IDs fournis.");
+        }
+
+        // Mise à jour du statut pour chaque annonce
+        annonces.forEach(annonce -> {
+            if (!annonce.isSupprime() && annonce.getStatut() != StatutAnnonce.ACCEPTER) {
+                annonce.setStatut(StatutAnnonce.ACCEPTER);
+            }
+        });
+
+        // Sauvegarde en batch
+        annonceRepository.saveAll(annonces);
+
+        // Retourne la liste des DTO mis à jour
+        return annonces.stream()
+                .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
-    public List<Annonce> listerActifs() {
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public AnnonceResponseDTO refuserAnnonce(Long annonceId) {
+        Annonce annonce = trouverParId(annonceId);
+
+        // Mettre à jour le statut
+        annonce.setStatut(StatutAnnonce.REFUSER);
+
+        // Sauvegarder l'entité
+        annonceRepository.save(annonce);
+
+        // Retourner le DTO mis à jour
+        return toDto(annonce);
+    }
+
+     @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public List<AnnonceResponseDTO> refuserAnnonces(List<Long> annonceIds) {
+        List<Annonce> annonces = annonceRepository.findAllById(annonceIds);
+
+        if (annonces.isEmpty()) {
+            throw new EntityNotFoundException("Aucune annonce trouvée pour les IDs fournis.");
+        }
+
+        // Mise à jour du statut pour chaque annonce
+        annonces.forEach(annonce -> {
+            if (!annonce.isSupprime() && annonce.getStatut() != StatutAnnonce.REFUSER) {
+                annonce.setStatut(StatutAnnonce.ACCEPTER);
+            }
+        });
+
+        // Sauvegarde en batch
+        annonceRepository.saveAll(annonces);
+
+        // Retourne la liste des DTO mis à jour
+        return annonces.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public List<AnnonceResponseDTO> lister() {
         return annonceRepository.findAll().stream()
-                .filter(a -> !a.isSupprime())
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    // public List<AnnonceResponseDTO> listerInactifs() {
+    // return annonceRepository.findAll().stream()
+    // .filter(Annonce::)
+    // .map(this::toDto)
+    // .collect(Collectors.toList());
+    // }
+    public List<AnnonceResponseDTO> listerInactifs() {
+        return annonceRepository.findBySupprimeTrue().stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public List<AnnonceResponseDTO> listerActifs() {
+        return annonceRepository.findBySupprimeFalse().stream()
+                .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -86,19 +183,122 @@ public class AnnonceService {
                 .orElseThrow(() -> new EntityNotFoundException("Annonce introuvable pour l'id: " + id));
 
         verifierAccessibilite(annonce, id);
+
         return annonce;
     }
 
-    // public List<Annonce> listerParProprietaire(Long proprietaireId){
-    //      // Validation
-    //     Objects.requireNonNull(proprietaireId, "L'ID propriétaire est obligatoire");
+    @PreAuthorize("hasRole('BAILLEUR')")
+    @Transactional
+    // public List<AnnonceResponseDTO> listerParProprietaireActifs(Long
+    // proprietaireId) {
+    // // Validation
+    // Objects.requireNonNull(proprietaireId, "L'ID propriétaire est obligatoire");
 
-    //         if (!proprietaireRepository.existsByIdAndActifTrue(proprietaireId)) {
-    //     throw new AccessDeniedException("Accès refusé ou propriétaire invalide");
+    // if (!uRepository.existsByIdAndActifTrue(proprietaireId)) {
+    // throw new AccessDeniedException("Accès refusé ou propriétaire invalide");
     // }
 
+    // return annonceRepository.findByProprietaireId(proprietaireId).stream()
+    // .filter(a -> !a.isSupprime() && a.getStatut() == StatutAnnonce.ACCEPTER)
+    // .map(this::toDto)
+    // .collect(Collectors.toList());
+    // }
+    public List<AnnonceResponseDTO> listerParProprietaireActifs(Long proprietaireId) {
+        Objects.requireNonNull(proprietaireId, "L'ID propriétaire est obligatoire");
+
+        if (!uRepository.existsByIdAndActifTrue(proprietaireId)) {
+            throw new AccessDeniedException("Accès refusé ou propriétaire invalide");
+        }
+
+        return annonceRepository
+                .findByProprietaireIdAndSupprimeFalseAndStatut(proprietaireId, StatutAnnonce.ACCEPTER)
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @PreAuthorize("hasRole('BAILLEUR')")
+    @Transactional
+    public List<AnnonceResponseDTO> listerParProprietaireEnAttente(Long proprietaireId) {
+        Objects.requireNonNull(proprietaireId, "L'ID propriétaire est obligatoire");
+
+        if (!uRepository.existsByIdAndActifTrue(proprietaireId)) {
+            throw new AccessDeniedException("Accès refusé ou propriétaire invalide");
+        }
+
+        return annonceRepository
+                .findByProprietaireIdAndSupprimeFalseAndStatut(proprietaireId, StatutAnnonce.EN_ATTENTE)
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<AnnonceResponseDTO> parVille(String ville) {
+        return annonceRepository
+                .findByVilleIgnoreCaseAndSupprimeFalseAndStatut(ville, StatutAnnonce.ACCEPTER)
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<AnnonceResponseDTO> parCritere(TypeDeLogement type, Double minPrix, Double maxPrix) {
+        return annonceRepository.findByTypeDeLogementAndPrixBetween(type, minPrix, maxPrix).stream()
+                .filter(a -> !a.isSupprime() && a.getStatut() == StatutAnnonce.ACCEPTER)
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    // public List<Annonce> rechercheAvancee(TypeDeLogement type, String ville,
+    // Double minPrix, Double maxPrix) {
+    // return annonceRepository.rechercherAnnonces(type, ville, minPrix,
+    // maxPrix).stream()
+    // .filter(a -> !a.isSupprime() && a.getStatut() == StatutAnnonce.ACCEPTER)
+    // .collect(Collectors.toList());
     // }
 
+    public List<AnnonceResponseDTO> rechercheAvancee(TypeDeLogement type, String ville, Double minPrix,
+            Double maxPrix) {
+        return annonceRepository.rechercherAnnonces(type, ville, minPrix, maxPrix).stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @PreAuthorize("hasRole('BAILLEUR')")
+    public AnnonceResponseDTO update(Long annonceId, AnnonceUpdateDTO dto) {
+        // 1. Récupérer l'annonce existante
+        Annonce annonce = annonceRepository.findById(annonceId)
+                .orElseThrow(() -> new EntityNotFoundException("Annonce introuvable avec l'id : " + annonceId));
+
+        // 2. Mettre à jour les champs si présents dans le DTO
+        if (dto.getTitre() != null)
+            annonce.setTitre(dto.getTitre());
+        if (dto.getDescription() != null)
+            annonce.setDescription(dto.getDescription());
+        if (dto.getTypeDeLogement() != null)
+            annonce.setTypeDeLogement(dto.getTypeDeLogement());
+        if (dto.getPrix() != null)
+            annonce.setPrix(dto.getPrix());
+        if (dto.getAdresse() != null)
+            annonce.setAdresse(dto.getAdresse());
+        if (dto.getVille() != null)
+            annonce.setVille(dto.getVille());
+        if (dto.getSurface() >= 0)
+            annonce.setSurface(dto.getSurface());
+        if (dto.getNombreDeChambres() >= 0)
+            annonce.setNombreDeChambres(dto.getNombreDeChambres());
+        if (dto.getCapacite() >= 0)
+            annonce.setCapacite(dto.getCapacite());
+
+        annonce.setModifierA(LocalDateTime.now());
+
+        // 3. Sauvegarder l'annonce mise à jour
+        Annonce annonceUpdatee = annonceRepository.save(annonce);
+
+        // 4. Retourner le DTO de réponse
+        return toDto(annonceUpdatee);
+    }
+
+    // == methodes utilitaire ==
     private Utilisateur getCurrentAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -111,22 +311,6 @@ public class AnnonceService {
         if (dto == null) {
             throw new IllegalArgumentException("DTO ne peut pas être null");
         }
-    }
-
-    private Annonce mapDtoToEntity(AnnonceCreateDTO dto, Utilisateur proprietaire) {
-        return Annonce.builder()
-                .titre(dto.getTitre())
-                .description(dto.getDescription())
-                .typeDeLogement(dto.getTypeDeLogement())
-                .prix(dto.getPrix())
-                .adresse(dto.getAdresse())
-                .ville(dto.getVille())
-                .surface(dto.getSurface())
-                .nombreDeChambres(dto.getNombreDeChambres())
-                .salleDeBains(dto.getSalleDeBains())
-                .capacite(dto.getCapacite())
-                .proprietaire(proprietaire)
-                .build();
     }
 
     public boolean estBailleur(Utilisateur utilisateur) {
@@ -149,6 +333,44 @@ public class AnnonceService {
             throw new EntityNotFoundException("Annonce supprimée pour l'id: " + id);
         if (annonce.getProprietaire() == null)
             throw new IllegalStateException("Annonce corrompue: bailleur manquant pour l'id: " + id);
+    }
+
+    // == Definition des Mapping de maniere manuelle ==
+    private Annonce mapDtoToEntity(AnnonceCreateDTO dto, Utilisateur proprietaire) {
+        return Annonce.builder()
+                .titre(dto.getTitre())
+                .description(dto.getDescription())
+                .typeDeLogement(dto.getTypeDeLogement())
+                .prix(dto.getPrix())
+                .adresse(dto.getAdresse())
+                .ville(dto.getVille())
+                .surface(dto.getSurface())
+                .nombreDeChambres(dto.getNombreDeChambres())
+                .salleDeBains(dto.getSalleDeBains())
+                .capacite(dto.getCapacite())
+                .proprietaire(proprietaire)
+                .build();
+    }
+
+    private AnnonceResponseDTO toDto(Annonce annonce) {
+        return AnnonceResponseDTO.builder()
+                .id(annonce.getId())
+                .titre(annonce.getTitre())
+                .description(annonce.getDescription())
+                .typeDeLogement(annonce.getTypeDeLogement())
+                .prix(annonce.getPrix())
+                .adresse(annonce.getAdresse())
+                .ville(annonce.getVille())
+                .surface(annonce.getSurface())
+                .nombreDeChambres(annonce.getNombreDeChambres())
+                .salleDeBains(annonce.getSalleDeBains())
+                .capacite(annonce.getCapacite())
+                .datePublication(annonce.getDatePublication())
+                .statut(annonce.getStatut())
+                .proprietaireId(annonce.getProprietaire().getId())
+                .nomProprietaire(annonce.getProprietaire().getPrenom() + " " + annonce.getProprietaire().getNom())
+                .emailProprietaire(annonce.getProprietaire().getEmail())
+                .build();
     }
 
 }
