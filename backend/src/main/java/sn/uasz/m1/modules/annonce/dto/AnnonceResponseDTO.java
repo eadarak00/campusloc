@@ -2,6 +2,7 @@ package sn.uasz.m1.modules.annonce.dto;
 
 import java.time.LocalDateTime;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import sn.uasz.m1.modules.annonce.emuns.StatutAnnonce;
@@ -9,6 +10,7 @@ import sn.uasz.m1.modules.annonce.emuns.TypeDeLogement;
 
 @Getter
 @Setter
+@Builder
 public class AnnonceResponseDTO {
 
     private Long id;
