@@ -1,10 +1,5 @@
 package sn.uasz.m1.modules.annonce.dto;
 
-import java.time.LocalDateTime;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
