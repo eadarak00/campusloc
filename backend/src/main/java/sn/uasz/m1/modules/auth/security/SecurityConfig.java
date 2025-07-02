@@ -2,6 +2,7 @@ package sn.uasz.m1.modules.auth.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,7 +17,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import static org.springframework.security.config.Customizer.withDefaults;
-
 
 import lombok.RequiredArgsConstructor;
 import sn.uasz.m1.modules.user.service.UtilisateurDetailsService;
@@ -38,6 +38,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v1/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/v1/annonces/*/valider").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/v1/annonces/valider").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/v1/annonces/*/refuser").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/v1/annonces/refuser").hasRole("ADMIN")
+                        .requestMatchers("/api/annonces/proprietaire/**").hasRole("BAILLEUR")
                         .anyRequest().authenticated())
                 .userDetailsService(utilisateurDetailsService)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
@@ -60,7 +65,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.addAllowedOriginPattern("*"); 
+        config.addAllowedOriginPattern("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
