@@ -7,6 +7,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,9 +42,9 @@ public class AnnonceCreateDTO {
     @Positive(message = "Le nombre de chambres doit être positif")
     private int nombreDeChambres;
 
-    @Positive(message = "Le nombre de salles de bains doit être positif")
+    @PositiveOrZero(message = "Le nombre de salles de bains doit être positif")
     private int salleDeBains;
 
-    @Positive(message = "La capacité doit être positive")
+    @PositiveOrZero(message = "La capacité doit être positive")
     private int capacite;
 }
