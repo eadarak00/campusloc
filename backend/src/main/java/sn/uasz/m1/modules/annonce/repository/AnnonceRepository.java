@@ -18,6 +18,7 @@ public interface AnnonceRepository extends JpaRepository<Annonce, Long> {
        List<Annonce> findBySupprimeTrue();
 
        List<Annonce> findBySupprimeFalse();
+        List<Annonce> findBySupprimeFalseAndStatut(StatutAnnonce statut);
 
        List<Annonce> findByProprietaireIdAndSupprimeFalseAndStatut(Long proprietaireId, StatutAnnonce statut);
 
