@@ -35,7 +35,7 @@ public class AnnonceService {
 
     @PreAuthorize("hasRole('BAILLEUR')")
     @Transactional
-    public Annonce creerAnnonce(AnnonceCreateDTO dto) {
+    public AnnonceResponseDTO creerAnnonce(AnnonceCreateDTO dto) {
         try {
             log.info("Tentative de création d'annonce par {}", dto.toString());
 
@@ -52,7 +52,7 @@ public class AnnonceService {
             Annonce saved = annonceRepository.save(annonce);
             log.info("Annonce créée avec ID: {}", saved.getId());
 
-            return saved;
+            return toDto(saved);
 
         } catch (IllegalArgumentException e) {
             log.error("Erreur de validation: {}", e.getMessage());
@@ -67,6 +67,7 @@ public class AnnonceService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     public AnnonceResponseDTO validerAnnonce(Long annonceId) {
         Annonce annonce = trouverParId(annonceId);
 
@@ -171,6 +172,14 @@ public class AnnonceService {
     @Transactional
     public List<AnnonceResponseDTO> listerActifs() {
         return annonceRepository.findBySupprimeFalse().stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public List<AnnonceResponseDTO> listerEnAttente() {
+        return annonceRepository.findBySupprimeFalseAndStatut(StatutAnnonce.EN_ATTENTE).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
