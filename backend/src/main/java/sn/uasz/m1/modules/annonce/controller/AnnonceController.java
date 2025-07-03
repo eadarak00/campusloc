@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,10 @@ import sn.uasz.m1.modules.annonce.service.AnnonceService;
 @RequestMapping("/v1/annonces")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(
+    name = "Gestion des Annonces",
+    description = "API pour la gestion des annonces immobilières"
+)
 public class AnnonceController {
 
     private final AnnonceService annonceService;
