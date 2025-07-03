@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,15 +37,31 @@ public class AnnonceController {
 
     private final AnnonceService annonceService;
 
-     /**
+    /**
      * Créer une nouvelle annonce (réservé aux bailleurs)
      */
+    // @PostMapping
+    // @PreAuthorize("hasRole('BAILLEUR')")
+    // public ResponseEntity<AnnonceResponseDTO> creerAnnonce(
+    // @Valid @RequestBody AnnonceCreateDTO dto) {
+    // log.info("Reçu une demande de création d'annonce");
+
+    // AnnonceResponseDTO reponse = annonceService.creerAnnonce(dto);
+    // return ResponseEntity.status(HttpStatus.CREATED).body(reponse);
+    // }
+    @Operation(summary = "Créer une nouvelle annonce", description = "Endpoint réservé aux bailleurs pour publier une nouvelle annonce immobilière")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Annonce créée avec succès", content = @Content(schema = @Schema(implementation = AnnonceResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Données invalides", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Accès refusé (rôle BAILLEUR requis)"),
+            @ApiResponse(responseCode = "500", description = "Erreur interne du serveur")
+    })
     @PostMapping
     @PreAuthorize("hasRole('BAILLEUR')")
     public ResponseEntity<AnnonceResponseDTO> creerAnnonce(
-            @Valid @RequestBody AnnonceCreateDTO dto) {
-        log.info("Reçu une demande de création d'annonce");
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Payload de création d'annonce", required = true, content = @Content(schema = @Schema(implementation = AnnonceCreateDTO.class))) @Valid @RequestBody AnnonceCreateDTO dto) {
 
+        log.info("Reçu une demande de création d'annonce");
         AnnonceResponseDTO reponse = annonceService.creerAnnonce(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(reponse);
     }
@@ -73,7 +95,7 @@ public class AnnonceController {
         return ResponseEntity.ok(annoncesValidees);
     }
 
-     /**
+    /**
      * Refuser une annonce (changer son statut en REFUSER)
      * Accessible uniquement par les ADMIN.
      */
@@ -100,7 +122,6 @@ public class AnnonceController {
 
         return ResponseEntity.ok(annoncesRefusees);
     }
-
 
     /**
      * Lister toutes les annonces.
@@ -175,7 +196,7 @@ public class AnnonceController {
         return ResponseEntity.ok(annonces);
     }
 
-     /**
+    /**
      * Rechercher les annonces par ville (actives et acceptées).
      * Accessible à tous ou à un rôle spécifique selon besoin.
      */
@@ -200,7 +221,7 @@ public class AnnonceController {
         return ResponseEntity.ok(annonces);
     }
 
-     /**
+    /**
      * Recherche avancée avec critères optionnels : type, ville, fourchette de prix.
      * Accessible à tous ou sécurisé selon besoin.
      */
@@ -211,7 +232,8 @@ public class AnnonceController {
             @RequestParam(required = false) Double minPrix,
             @RequestParam(required = false) Double maxPrix) {
 
-        log.info("Recherche avancée annonces : type={}, ville={}, minPrix={}, maxPrix={}", type, ville, minPrix, maxPrix);
+        log.info("Recherche avancée annonces : type={}, ville={}, minPrix={}, maxPrix={}", type, ville, minPrix,
+                maxPrix);
         List<AnnonceResponseDTO> resultats = annonceService.rechercheAvancee(type, ville, minPrix, maxPrix);
         return ResponseEntity.ok(resultats);
     }
