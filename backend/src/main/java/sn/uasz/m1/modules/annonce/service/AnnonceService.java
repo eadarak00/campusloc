@@ -168,7 +168,6 @@ public class AnnonceService {
                 .collect(Collectors.toList());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public List<AnnonceResponseDTO> listerActifs() {
         return annonceRepository.findBySupprimeFalse().stream()
@@ -198,20 +197,6 @@ public class AnnonceService {
 
     @PreAuthorize("hasRole('BAILLEUR')")
     @Transactional
-    // public List<AnnonceResponseDTO> listerParProprietaireActifs(Long
-    // proprietaireId) {
-    // // Validation
-    // Objects.requireNonNull(proprietaireId, "L'ID propriétaire est obligatoire");
-
-    // if (!uRepository.existsByIdAndActifTrue(proprietaireId)) {
-    // throw new AccessDeniedException("Accès refusé ou propriétaire invalide");
-    // }
-
-    // return annonceRepository.findByProprietaireId(proprietaireId).stream()
-    // .filter(a -> !a.isSupprime() && a.getStatut() == StatutAnnonce.ACCEPTER)
-    // .map(this::toDto)
-    // .collect(Collectors.toList());
-    // }
     public List<AnnonceResponseDTO> listerParProprietaireActifs(Long proprietaireId) {
         Objects.requireNonNull(proprietaireId, "L'ID propriétaire est obligatoire");
 
