@@ -1,5 +1,7 @@
 package sn.uasz.m1.modules.annonce.dto;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -20,6 +22,7 @@ public class AnnonceCreateDTO {
     @Size(max = 2000, message = "La description ne doit pas dépasser 2000 caractères")
     private String description;
 
+    @Enumerated(EnumType.STRING)
     private TypeDeLogement typeDeLogement;
 
     @Positive(message = "Le prix doit être positif")

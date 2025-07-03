@@ -38,7 +38,7 @@ public class AnnonceController {
     @PreAuthorize("hasRole('BAILLEUR')")
     public ResponseEntity<AnnonceResponseDTO> creerAnnonce(
             @Valid @RequestBody AnnonceCreateDTO dto) {
-        log.info("📩 Reçu une demande de création d'annonce");
+        log.info("Reçu une demande de création d'annonce");
 
         AnnonceResponseDTO reponse = annonceService.creerAnnonce(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(reponse);
@@ -131,7 +131,6 @@ public class AnnonceController {
      * Accessible uniquement par les ADMIN.
      */
     @GetMapping("/actifs")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<AnnonceResponseDTO>> listerActifs() {
         log.info("Listing des annonces actives");
         List<AnnonceResponseDTO> annonces = annonceService.listerActifs();
