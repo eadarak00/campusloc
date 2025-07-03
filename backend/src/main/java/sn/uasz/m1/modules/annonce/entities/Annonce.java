@@ -40,10 +40,10 @@ public class Annonce extends BaseEntity {
     private String titre;
 
     @Column(columnDefinition = "TEXT")
+    @Size(max = 2000, message = "La description ne doit pas dépasser 2000 caractères")
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Size(max = 2000, message = "La description ne doit pas dépasser 2000 caractères")
     private TypeDeLogement typeDeLogement;
 
     @Positive(message = "Le prix doit être positif")
