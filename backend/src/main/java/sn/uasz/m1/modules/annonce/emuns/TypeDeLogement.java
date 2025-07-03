@@ -4,5 +4,6 @@ public enum TypeDeLogement {
     CHAMBRE_INDIVIDUELLE,
     CHAMBRE_PARTAGEE,
     APPARTEMENT,
-    MAISON
+    MAISON,
+    STUDIO
 }
