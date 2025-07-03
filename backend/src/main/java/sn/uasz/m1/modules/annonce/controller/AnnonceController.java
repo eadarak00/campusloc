@@ -135,7 +135,7 @@ public class AnnonceController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<AnnonceResponseDTO>> lister() {
-        log.info("Listing de toutes les annonces");
+        log.info("Lister de toutes les annonces");
         List<AnnonceResponseDTO> annonces = annonceService.lister();
         return ResponseEntity.ok(annonces);
     }
@@ -147,7 +147,7 @@ public class AnnonceController {
     @GetMapping("/inactifs")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<AnnonceResponseDTO>> listerInactifs() {
-        log.info("Listing des annonces inactives (supprimées)");
+        log.info("Lister des annonces inactives (supprimées)");
         List<AnnonceResponseDTO> annonces = annonceService.listerInactifs();
         return ResponseEntity.ok(annonces);
     }
@@ -157,8 +157,9 @@ public class AnnonceController {
      * Accessible uniquement par les ADMIN.
      */
     @GetMapping("/actifs")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<AnnonceResponseDTO>> listerActifs() {
-        log.info("Listing des annonces actives");
+        log.info("Lister des annonces actives");
         List<AnnonceResponseDTO> annonces = annonceService.listerActifs();
         return ResponseEntity.ok(annonces);
     }
@@ -170,7 +171,18 @@ public class AnnonceController {
     @GetMapping("/en-attente")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<AnnonceResponseDTO>> listerEnAttente() {
-        log.info("Listing des annonces en attente");
+        log.info("Lister des annonces en attente");
+        List<AnnonceResponseDTO> annonces = annonceService.listerEnAttente();
+        return ResponseEntity.ok(annonces);
+    }
+
+    /**
+     * Lister les annonces en attente de validation.
+     * Accessible par Tous.
+     */
+    @GetMapping("/valides")
+    public ResponseEntity<List<AnnonceResponseDTO>> listerValides() {
+        log.info("Lister des annonces valides");
         List<AnnonceResponseDTO> annonces = annonceService.listerEnAttente();
         return ResponseEntity.ok(annonces);
     }
@@ -183,7 +195,7 @@ public class AnnonceController {
     @PreAuthorize("hasRole('BAILLEUR')")
     public ResponseEntity<List<AnnonceResponseDTO>> listerParProprietaireActifs(
             @PathVariable("id") Long proprietaireId) {
-        log.info("Listing des annonces actives pour le propriétaire ID: {}", proprietaireId);
+        log.info("Lister des annonces actives pour le propriétaire ID: {}", proprietaireId);
         List<AnnonceResponseDTO> annonces = annonceService.listerParProprietaireActifs(proprietaireId);
         return ResponseEntity.ok(annonces);
     }
@@ -196,7 +208,7 @@ public class AnnonceController {
     @PreAuthorize("hasRole('BAILLEUR')")
     public ResponseEntity<List<AnnonceResponseDTO>> listerParProprietaireEnAttente(
             @PathVariable("id") Long proprietaireId) {
-        log.info("Listing des annonces en attente pour le propriétaire ID: {}", proprietaireId);
+        log.info("Lister des annonces en attente pour le propriétaire ID: {}", proprietaireId);
         List<AnnonceResponseDTO> annonces = annonceService.listerParProprietaireEnAttente(proprietaireId);
         return ResponseEntity.ok(annonces);
     }

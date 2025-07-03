@@ -156,21 +156,23 @@ public class AnnonceService {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
-    // public List<AnnonceResponseDTO> listerInactifs() {
-    // return annonceRepository.findAll().stream()
-    // .filter(Annonce::)
-    // .map(this::toDto)
-    // .collect(Collectors.toList());
-    // }
     public List<AnnonceResponseDTO> listerInactifs() {
         return annonceRepository.findBySupprimeTrue().stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public List<AnnonceResponseDTO> listerActifs() {
         return annonceRepository.findBySupprimeFalse().stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<AnnonceResponseDTO> listerValides(){
+        return annonceRepository.findBySupprimeFalseAndStatut(StatutAnnonce.ACCEPTER).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
