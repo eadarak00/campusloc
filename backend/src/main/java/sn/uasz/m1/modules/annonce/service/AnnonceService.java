@@ -1,6 +1,7 @@
 package sn.uasz.m1.modules.annonce.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -19,9 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 import sn.uasz.m1.modules.annonce.dto.AnnonceCreateDTO;
 import sn.uasz.m1.modules.annonce.dto.AnnonceResponseDTO;
 import sn.uasz.m1.modules.annonce.dto.AnnonceUpdateDTO;
+import sn.uasz.m1.modules.annonce.dto.MediaResponseDTO;
 import sn.uasz.m1.modules.annonce.emuns.StatutAnnonce;
 import sn.uasz.m1.modules.annonce.emuns.TypeDeLogement;
 import sn.uasz.m1.modules.annonce.entities.Annonce;
+import sn.uasz.m1.modules.annonce.entities.Media;
 import sn.uasz.m1.modules.annonce.repository.AnnonceRepository;
 import sn.uasz.m1.modules.user.entity.Utilisateur;
 import sn.uasz.m1.modules.user.repository.UtilisateurRepository;
@@ -106,7 +109,6 @@ public class AnnonceService {
                 .collect(Collectors.toList());
     }
 
-
     @PreAuthorize("hasRole('ADMIN')")
     public AnnonceResponseDTO refuserAnnonce(Long annonceId) {
         Annonce annonce = trouverParId(annonceId);
@@ -121,7 +123,7 @@ public class AnnonceService {
         return toDto(annonce);
     }
 
-     @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public List<AnnonceResponseDTO> refuserAnnonces(List<Long> annonceIds) {
         List<Annonce> annonces = annonceRepository.findAllById(annonceIds);
@@ -171,7 +173,7 @@ public class AnnonceService {
     }
 
     @Transactional
-    public List<AnnonceResponseDTO> listerValides(){
+    public List<AnnonceResponseDTO> listerValides() {
         return annonceRepository.findBySupprimeFalseAndStatut(StatutAnnonce.ACCEPTER).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
@@ -243,14 +245,6 @@ public class AnnonceService {
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
-
-    // public List<Annonce> rechercheAvancee(TypeDeLogement type, String ville,
-    // Double minPrix, Double maxPrix) {
-    // return annonceRepository.rechercherAnnonces(type, ville, minPrix,
-    // maxPrix).stream()
-    // .filter(a -> !a.isSupprime() && a.getStatut() == StatutAnnonce.ACCEPTER)
-    // .collect(Collectors.toList());
-    // }
 
     public List<AnnonceResponseDTO> rechercheAvancee(TypeDeLogement type, String ville, Double minPrix,
             Double maxPrix) {
@@ -366,7 +360,18 @@ public class AnnonceService {
                 .proprietaireId(annonce.getProprietaire().getId())
                 .nomProprietaire(annonce.getProprietaire().getPrenom() + " " + annonce.getProprietaire().getNom())
                 .emailProprietaire(annonce.getProprietaire().getEmail())
+                .medias(annonce.getMedias() != null
+                        ? annonce.getMedias().stream().map(this::toMediaDto).toList()
+                        : new ArrayList<>())
                 .build();
     }
 
+    private MediaResponseDTO toMediaDto(Media media) {
+        MediaResponseDTO dto = new MediaResponseDTO();
+        dto.setId(media.getId());
+        dto.setNomFichier(media.getNomFichier());
+        dto.setUrl(media.getUrl());
+        dto.setTypeMedia(media.getTypeMedia());
+        return dto;
+    }
 }
