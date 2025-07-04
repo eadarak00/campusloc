@@ -1,5 +1,6 @@
 package sn.uasz.m1.modules.annonce.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ import sn.uasz.m1.modules.annonce.entities.Media;
 import sn.uasz.m1.modules.annonce.service.MediaService;
 
 @RestController
-@RequestMapping("/api/v1/medias")
+@RequestMapping("/v1/medias")
 @RequiredArgsConstructor
 @Slf4j
 public class MediaController {
@@ -27,18 +28,18 @@ public class MediaController {
 
     /**
      * Upload de fichiers médias pour une annonce
+     * @throws IOException 
      */
-    @PostMapping("/upload/{annonceId}")
     @PreAuthorize("hasRole('BAILLEUR')")
+    @PostMapping("/{annonceId}/uploads")
     public ResponseEntity<List<Media>> uploadMedias(
             @PathVariable Long annonceId,
-            @RequestParam("files") List<MultipartFile> fichiers) {
+            @RequestParam("files") List<MultipartFile> fichiers) throws IOException {
 
         log.info("Upload de fichiers pour l'annonce {}", annonceId);
         List<Media> medias = mediaService.enregistrerFichiers(fichiers, annonceId);
         return ResponseEntity.ok(medias);
     }
-
     /**
      * Suppression d'un média par ID
      */
