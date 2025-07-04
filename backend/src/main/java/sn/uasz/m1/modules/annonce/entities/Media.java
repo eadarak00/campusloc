@@ -2,6 +2,8 @@ package sn.uasz.m1.modules.annonce.entities;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,7 +21,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import sn.uasz.m1.core.base.BaseEntity;
-import sn.uasz.m1.modules.annonce.emuns.StatutAnnonce;
 import sn.uasz.m1.modules.annonce.emuns.TypeMedia;
 
 
@@ -48,6 +49,7 @@ public class Media extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "annonce_id")
+    @JsonBackReference
     private Annonce annonce;
 
     @PrePersist
