@@ -1,7 +1,10 @@
 package sn.uasz.m1.modules.annonce.entities;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,6 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -75,11 +79,15 @@ public class Annonce extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private StatutAnnonce statut;
 
+    @OneToMany(mappedBy = "annonce", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Media> medias;
+
     @PrePersist
-    public void onCreate(){
+    public void onCreate() {
         this.datePublication = LocalDateTime.now();
         this.statut = StatutAnnonce.EN_ATTENTE;
         this.setCreerA(LocalDateTime.now());
         this.setSupprime(false);
+        this.medias = new ArrayList<>();
     }
 }
