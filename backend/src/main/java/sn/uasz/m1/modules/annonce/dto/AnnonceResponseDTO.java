@@ -1,6 +1,7 @@
 package sn.uasz.m1.modules.annonce.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -34,4 +35,6 @@ public class AnnonceResponseDTO {
     private Long proprietaireId;
     private String nomProprietaire;
     private String emailProprietaire;
+
+    private List<MediaResponseDTO> medias;
 }
