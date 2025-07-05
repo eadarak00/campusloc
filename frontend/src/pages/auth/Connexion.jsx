@@ -3,7 +3,7 @@ import { Eye, EyeOff, Fingerprint, Mail, Lock } from "lucide-react";
 import { notification } from "antd";
 import { login } from "../../api/auth";
 import "../../styles/auth/connexion.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Connexion = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +13,8 @@ const Connexion = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const navigate = useNavigate();
 
   // Configuration des notifications
   const [notificationApi, contextHolder] = notification.useNotification();
@@ -44,6 +46,158 @@ const Connexion = () => {
     }
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   if (!validateForm()) {
+  //     notification.warning({
+  //       message: "Formulaire incomplet",
+  //       description: "Veuillez corriger les erreurs dans le formulaire.",
+  //       placement: "topRight",
+  //       duration: 3,
+  //     });
+  //     return;
+  //   }
+
+  //   setIsLoading(true);
+
+  //   try {
+  //     // Appel API centralisé avec login()
+  //     const response = await login({
+  //       email: formData.email,
+  //       password: formData.password,
+  //     });
+
+  //     // Vérification du succès de la réponse
+  //     if (response.status === 200 || response.data.success) {
+  //       // Extraction des données utilisateur
+  //       const userData = response.data.data?.user || response.data.user;
+
+  //       const token =
+  //         response.data.data?.access_token ||
+  //         response.data.access_token ||
+  //         response.data.token;
+
+  //       notificationApi.success({
+  //         message: "Connexion réussie",
+  //         description: `Bienvenue ${
+  //           userData?.nom ||
+  //           userData?.name ||
+  //           userData?.prenom ||
+  //           "sur CampusLoc"
+  //         } !`,
+  //         placement: "topRight",
+  //         duration: 4,
+  //       });
+
+  //       // Stockage des informations d'authentification
+  //       if (token) {
+  //         localStorage.setItem("accessToken", token);
+  //         localStorage.setItem("user_data", JSON.stringify(userData));
+
+  //         // Stockage optionnel du refresh token si présent
+  //         const refreshToken =
+  //           response.data.data?.refresh_token || response.data.refresh_token;
+  //         if (refreshToken) {
+  //           localStorage.setItem("refreshToken", refreshToken);
+  //         }
+  //       }
+
+  //       // Log pour débogage
+  //       console.log("Utilisateur connecté:", userData);
+  //       console.log("Token stocké:", token);
+
+  //       // Redirection après connexion réussie
+  //       setTimeout(() => {
+  //         // Remplacez par votre logique de redirection
+  //         // window.location.href = '/dashboard';
+  //         // ou avec React Router : navigate('/dashboard');
+  //         console.log("Redirection vers le dashboard");
+  //       }, 1500);
+  //     }
+  //   } catch (error) {
+  //     console.error("Erreur de connexion:", error);
+
+  //     // Gestion des erreurs avec les codes de statut
+  //     if (error.response) {
+  //       const { status, data } = error.response;
+
+  //       switch (status) {
+  //         case 400:
+  //           notificationApi.error({
+  //             message: "Données invalides",
+  //             description:
+  //               data.message ||
+  //               data.error ||
+  //               "Vérifiez vos informations de connexion.",
+  //             placement: "topRight",
+  //             duration: 4,
+  //           });
+  //           break;
+
+  //         case 401:
+  //           notificationApi.error({
+  //             message: "Identifiants incorrects",
+  //             description: data.message || "Email ou mot de passe incorrect.",
+  //             placement: "topRight",
+  //             duration: 4,
+  //           });
+  //           break;
+
+  //         case 403:
+  //           notificationApi.error({
+  //             message: "Compte non autorisé",
+  //             description:
+  //               data.message || "Votre compte est désactivé ou bloqué",
+  //             placement: "topRight",
+  //             duration: 4,
+  //           });
+  //           break;
+
+  //         case 500:
+  //           notificationApi.error({
+  //             message: "Erreur serveur",
+  //             description:
+  //               "Une erreur est survenue côté serveur. Veuillez réessayer plus tard.",
+  //             placement: "topRight",
+  //             duration: 4,
+  //           });
+  //           break;
+
+  //         default:
+  //           notificationApi.error({
+  //             message: "Erreur de connexion",
+  //             description:
+  //               data.message ||
+  //               data.error ||
+  //               "Une erreur inattendue est survenue.",
+  //             placement: "topRight",
+  //             duration: 4,
+  //           });
+  //       }
+  //     } else if (error.request) {
+  //       // Erreur réseau
+  //       notificationApi.error({
+  //         message: "Erreur réseau",
+  //         description:
+  //           "Impossible de se connecter au serveur. Vérifiez votre connexion internet.",
+  //         placement: "topRight",
+  //         duration: 4,
+  //       });
+  //     } else {
+  //       // Erreur inattendue
+  //       notificationApi.error({
+  //         message: "Erreur inattendue",
+  //         description: "Une erreur inattendue est survenue.",
+  //         placement: "topRight",
+  //         duration: 4,
+  //       });
+  //     }
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -67,34 +221,33 @@ const Connexion = () => {
       });
 
       // Vérification du succès de la réponse
-      if (response.status === 200 || response.data.success) {
-        // Extraction des données utilisateur
-        const userData = response.data.data?.user || response.data.user;
-        const token =
-          response.data.data?.access_token ||
-          response.data.access_token ||
-          response.data.token;
+      if (response.status === 200) {
+        // Extraction des données directement de response.data
+        const { accessToken, refreshToken, userId, nom, prenom, email, role } =
+          response.data;
+
+        // Création de l'objet userData
+        const userData = {
+          userId,
+          nom,
+          prenom,
+          email,
+          role,
+        };
 
         notificationApi.success({
           message: "Connexion réussie",
-          description: `Bienvenue ${
-            userData?.nom ||
-            userData?.name ||
-            userData?.prenom ||
-            "sur CampusLoc"
-          } !`,
+          description: `Bienvenue ${prenom} ${nom} !`,
           placement: "topRight",
           duration: 4,
         });
 
         // Stockage des informations d'authentification
-        if (token) {
-          localStorage.setItem("accessToken", token);
+        if (accessToken) {
+          localStorage.setItem("accessToken", accessToken);
           localStorage.setItem("user_data", JSON.stringify(userData));
 
-          // Stockage optionnel du refresh token si présent
-          const refreshToken =
-            response.data.data?.refresh_token || response.data.refresh_token;
+          // Stockage du refresh token
           if (refreshToken) {
             localStorage.setItem("refreshToken", refreshToken);
           }
@@ -102,14 +255,19 @@ const Connexion = () => {
 
         // Log pour débogage
         console.log("Utilisateur connecté:", userData);
-        console.log("Token stocké:", token);
+        console.log("Token stocké:", accessToken);
 
-        // Redirection après connexion réussie
+        // Redirection après connexion réussie selon le rôle
         setTimeout(() => {
-          // Remplacez par votre logique de redirection
-          // window.location.href = '/dashboard';
-          // ou avec React Router : navigate('/dashboard');
-          console.log("Redirection vers le dashboard");
+          if (role === "BAILLEUR") {
+            navigate('/bailleur/dashboard');
+            console.log("Redirection vers le dashboard bailleur");
+          } else {
+            // Redirection vers le dashboard par défaut
+            // window.location.href = '/dashboard';
+            // ou avec React Router : navigate('/dashboard');
+            console.log("Redirection vers le dashboard");
+          }
         }, 1500);
       }
     } catch (error) {
