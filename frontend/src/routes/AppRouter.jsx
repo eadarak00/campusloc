@@ -28,6 +28,8 @@ import Inscription from '../pages/auth/Inscription';
 import DashboardBailleur from "../pages/bailleur/DashboardBailleur";
 import BailleurLayout from "../layouts/BailleurLayout";
 import ProtectedRoute from './ProtectedRoute';
+import AnnoncesBailleur from "../pages/bailleur/Annonces";
+import CreationAnnonce from "../pages/bailleur/CreationAnnonce";
 
 
 const AppRouter = () => (
@@ -50,6 +52,8 @@ const AppRouter = () => (
         }
       >
         <Route path={ROUTES.DASHBOARD_BAILLEUR} element={<DashboardBailleur />} />
+        <Route path={ROUTES.ANNONCES_BAILLEUR} element={<AnnoncesBailleur />} />
+        <Route path={ROUTES.CREATION_ANNONCE} element={<CreationAnnonce />} />
       </Route>
     </Routes>
   </Router>
