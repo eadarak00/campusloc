@@ -12,12 +12,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -48,15 +45,6 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final UtilisateurService utilisateurService;
     private final CodeValidationService validationService;
-
-    // Enregistrement (inscription)
-    // @PostMapping("/inscription")
-    // public ResponseEntity<UtilisateurResponseDTO> register(@Valid @RequestBody
-    // RegisterDTO dto) {
-    // Utilisateur utilisateur = utilisateurService.creerUtilisateur(dto);
-    // return ResponseEntity.status(HttpStatus.CREATED)
-    // .body(utilisateurService.mapToResponseDTO(utilisateur));
-    // }
 
     @PostMapping("/inscription")
     public ResponseEntity<UtilisateurResponseDTO> register(@Valid @RequestBody RegisterDTO dto) {
@@ -95,13 +83,6 @@ public class AuthController {
         }
     }
 
-    // @PostMapping("/inscription-bailleur")
-    // public ResponseEntity<UtilisateurResponseDTO> creerBailleur(@Valid
-    // @RequestBody RegisterDTO dto) {
-    // Utilisateur utilisateur = utilisateurService.creerBailleur(dto);
-    // return ResponseEntity.status(HttpStatus.CREATED)
-    // .body(utilisateurService.mapToResponseDTO(utilisateur));
-    // }
 
     @PostMapping("/inscription-bailleur")
     public ResponseEntity<UtilisateurResponseDTO> creerBailleur(@Valid @RequestBody RegisterDTO dto) {
@@ -257,13 +238,4 @@ public class AuthController {
 
         return ResponseEntity.ok(response);
     }
-
-    // Profil utilisateur connecté
-    // @GetMapping("/me")
-    // public ResponseEntity<UtilisateurResponseDTO> me(Authentication
-    // authentication) {
-    // String email = authentication.getName();
-    // Utilisateur utilisateur = utilisateurService.trouverParEmail(email);
-    // return ResponseEntity.ok(utilisateurService.mapToResponseDTO(utilisateur));
-    // }
 }

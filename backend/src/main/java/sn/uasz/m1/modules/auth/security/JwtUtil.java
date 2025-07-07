@@ -3,7 +3,6 @@ package sn.uasz.m1.modules.auth.security;
 import java.security.Key;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Base64;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -25,15 +24,6 @@ import sn.uasz.m1.modules.user.entity.Utilisateur;
 public class JwtUtil {
 
     private final Key signingKey;
-    // private final Duration expiration;
-
-    // public JwtUtil(@Value("${jwt.secret}") String base64Secret,
-    // @Value("${jwt.expiration}") long expirationMillis) {
-    // byte[] keyBytes = Decoders.BASE64.decode(base64Secret);
-    // this.signingKey = Keys.hmacShaKeyFor(keyBytes);
-    // this.expiration = Duration.ofMillis(expirationMillis);
-    // }
-
     private final Duration accessTokenExpiration;
     private final Duration refreshTokenExpiration;
 
@@ -46,19 +36,6 @@ public class JwtUtil {
         this.accessTokenExpiration = Duration.ofMillis(accessMillis);
         this.refreshTokenExpiration = Duration.ofMillis(refreshMillis);
     }
-
-    // public String genererToken(Utilisateur utilisateur) {
-    // Instant now = Instant.now();
-    // Instant expiry = now.plus(expiration);
-
-    // return Jwts.builder()
-    // .setSubject(utilisateur.getEmail())
-    // .claim("role", utilisateur.getRole().getNom())
-    // .setIssuedAt(Date.from(now))
-    // .setExpiration(Date.from(expiry))
-    // .signWith(signingKey, SignatureAlgorithm.HS512)
-    // .compact();
-    // }
 
     public String genererAccessToken(Utilisateur utilisateur) {
         return genererToken(utilisateur, accessTokenExpiration);
