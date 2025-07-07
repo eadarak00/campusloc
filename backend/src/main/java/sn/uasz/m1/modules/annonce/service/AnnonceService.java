@@ -268,16 +268,28 @@ public class AnnonceService {
             annonce.setTypeDeLogement(dto.getTypeDeLogement());
         if (dto.getPrix() != null)
             annonce.setPrix(dto.getPrix());
+        if (dto.getCaution() != null)
+            annonce.setCaution(dto.getCaution());
+        if (dto.getCharges() != null)
+            annonce.setCharges(dto.getCharges());
         if (dto.getAdresse() != null)
             annonce.setAdresse(dto.getAdresse());
         if (dto.getVille() != null)
             annonce.setVille(dto.getVille());
         if (dto.getSurface() >= 0)
+         if (dto.getPieces() >= 0)
+            annonce.setPieces(dto.getPieces());
             annonce.setSurface(dto.getSurface());
         if (dto.getNombreDeChambres() >= 0)
             annonce.setNombreDeChambres(dto.getNombreDeChambres());
         if (dto.getCapacite() >= 0)
             annonce.setCapacite(dto.getCapacite());
+        if(dto.isMeuble() != annonce.isMeuble())
+            annonce.setMeuble(dto.isMeuble());
+         if(dto.isDisponible() != annonce.isDisponible())
+            annonce.setDisponible(dto.isDisponible());
+          if(dto.isNegociable() != annonce.isNegociable())
+            annonce.setNegociable(dto.isNegociable());
 
         annonce.setModifierA(LocalDateTime.now());
 
@@ -332,12 +344,17 @@ public class AnnonceService {
                 .description(dto.getDescription())
                 .typeDeLogement(dto.getTypeDeLogement())
                 .prix(dto.getPrix())
+                .caution(dto.getCaution())
+                .Charges(dto.getCharges())
                 .adresse(dto.getAdresse())
                 .ville(dto.getVille())
                 .surface(dto.getSurface())
+                .pieces(dto.getPieces())
                 .nombreDeChambres(dto.getNombreDeChambres())
                 .salleDeBains(dto.getSalleDeBains())
                 .capacite(dto.getCapacite())
+                .meuble(dto.isMeuble())
+                .negociable(dto.isNegociable())
                 .proprietaire(proprietaire)
                 .build();
     }
@@ -349,12 +366,18 @@ public class AnnonceService {
                 .description(annonce.getDescription())
                 .typeDeLogement(annonce.getTypeDeLogement())
                 .prix(annonce.getPrix())
+                .caution(annonce.getCaution())
+                .charges(annonce.getCharges())
                 .adresse(annonce.getAdresse())
                 .ville(annonce.getVille())
                 .surface(annonce.getSurface())
+                .pieces(annonce.getPieces())
                 .nombreDeChambres(annonce.getNombreDeChambres())
                 .salleDeBains(annonce.getSalleDeBains())
                 .capacite(annonce.getCapacite())
+                .disponible(annonce.isDisponible())
+                .meuble(annonce.isMeuble())
+                .negociable(annonce.isNegociable())
                 .datePublication(annonce.getDatePublication())
                 .statut(annonce.getStatut())
                 .proprietaireId(annonce.getProprietaire().getId())

@@ -20,11 +20,14 @@ public class AnnonceResponseDTO {
     private String description;
     private TypeDeLogement typeDeLogement;
     private Double prix;
+    private Double caution;
+    private Double charges;
 
     private String adresse;
     private String ville;
 
     private int surface;
+    private int pieces;
     private int nombreDeChambres;
     private int salleDeBains;
     private int capacite;
@@ -35,6 +38,10 @@ public class AnnonceResponseDTO {
     private Long proprietaireId;
     private String nomProprietaire;
     private String emailProprietaire;
+
+    private boolean disponible;
+    private boolean meuble;
+    private boolean negociable;
 
     private List<MediaResponseDTO> medias;
 }

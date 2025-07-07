@@ -1,5 +1,7 @@
 package sn.uasz.m1.modules.annonce.dto;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -12,6 +14,7 @@ import sn.uasz.m1.modules.annonce.emuns.TypeDeLogement;
 @Getter
 @Setter
 public class AnnonceUpdateDTO {
+
     @NotBlank(message = "Le titre est obligatoire")
     @Size(max = 100, message = "Le titre ne doit pas dépasser 100 caractères")
     private String titre;
@@ -19,10 +22,17 @@ public class AnnonceUpdateDTO {
     @Size(max = 2000, message = "La description ne doit pas dépasser 2000 caractères")
     private String description;
 
+    @Enumerated(EnumType.STRING)
     private TypeDeLogement typeDeLogement;
 
     @Positive(message = "Le prix doit être positif")
     private Double prix;
+
+    @Positive(message = "La caution doit être positive ")
+    private Double caution;
+
+    @PositiveOrZero(message = "Les charges peuvent être positif positives ou nulles ")
+    private Double Charges;
 
     @NotBlank(message = "L'adresse est obligatoire")
     private String adresse;
@@ -33,6 +43,9 @@ public class AnnonceUpdateDTO {
     @Positive(message = "La surface doit être positive")
     private int surface;
 
+    @PositiveOrZero(message = "Le nombre de piece doit être positive")
+    private int pieces;
+
     @Positive(message = "Le nombre de chambres doit être positif")
     private int nombreDeChambres;
 
@@ -41,6 +54,10 @@ public class AnnonceUpdateDTO {
 
     @PositiveOrZero(message = "La capacité doit être positive")
     private int capacite;
+
+    private boolean disponible;
+    private boolean meuble;
+    private boolean negociable;
 
     private StatutAnnonce statut;
 }

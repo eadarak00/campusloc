@@ -28,6 +28,12 @@ public class AnnonceCreateDTO {
     @Positive(message = "Le prix doit être positif")
     private Double prix;
 
+    @Positive(message = "La caution doit être positive ")
+    private Double caution;
+
+    @PositiveOrZero(message = "Les charges peuvent être positif positives ou nulles ")
+    private Double Charges = 0.0;
+
     @NotBlank(message = "L'adresse est obligatoire")
     private String adresse;
 
@@ -37,12 +43,18 @@ public class AnnonceCreateDTO {
     @Positive(message = "La surface doit être positive")
     private int surface;
 
+    @PositiveOrZero(message = "Le nombre de piece doit être positive")
+    private int pieces = 0;
+
     @Positive(message = "Le nombre de chambres doit être positif")
-    private int nombreDeChambres;
+    private int nombreDeChambres = 0;
 
     @PositiveOrZero(message = "Le nombre de salles de bains doit être positif")
     private int salleDeBains;
 
     @PositiveOrZero(message = "La capacité doit être positive")
-    private int capacite;
+    private int capacite = 0;
+    
+    private boolean meuble;
+    private boolean negociable;
 }

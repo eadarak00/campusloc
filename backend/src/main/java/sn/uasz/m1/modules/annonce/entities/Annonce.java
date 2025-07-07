@@ -19,6 +19,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -55,6 +56,12 @@ public class Annonce extends BaseEntity {
     @Positive(message = "Le prix doit être positif")
     private Double prix;
 
+    @Positive(message = "La caution doit être positive ")
+    private Double caution;
+
+    @PositiveOrZero(message = "Les charges peuvent être positif positives ou nulles ")
+    private Double Charges;
+
     private LocalDateTime datePublication;
 
     @NotBlank(message = "La ville est obligatoire")
@@ -66,14 +73,21 @@ public class Annonce extends BaseEntity {
     @Positive(message = "La surface doit être positive")
     private int surface;
 
+    @PositiveOrZero(message = "Le nombre de piece doit être positive")
+    private int pieces;
+
     @Positive(message = "Le nombre de chambres doit être positif")
     private int nombreDeChambres;
 
-    @Positive(message = "Le nombre de salles de bains doit être positif")
+    @PositiveOrZero(message = "Le nombre de salles de bains doit être positif")
     private int salleDeBains;
 
-    @Positive(message = "La capacité doit être positive")
+    @PositiveOrZero(message = "La capacité doit être positive")
     private int capacite;
+
+    private boolean meuble;
+    private boolean negociable;
+    private boolean disponible;
 
     @ManyToOne
     private Utilisateur proprietaire;
@@ -88,6 +102,9 @@ public class Annonce extends BaseEntity {
     @PrePersist
     public void onCreate() {
         this.datePublication = LocalDateTime.now();
+        this.disponible = true;
+        this.negociable = false;
+        this.meuble = false;
         this.statut = StatutAnnonce.EN_ATTENTE;
         this.setCreerA(LocalDateTime.now());
         this.setSupprime(false);
