@@ -16,6 +16,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -38,8 +40,21 @@ public class SecurityConfig {
                 .cors(withDefaults())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/v1/auth/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                        // .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers(
+                                "/v1/auth/**",
+                                "/uploads/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/webjars/**",
+                                "/swagger-resources/**",
+                                "/debug/**" 
+                                )
+                        .permitAll()
+                        // .requestMatchers("/swagger-ui/**", "/v3/api-docs/**",
+                        // "/swagger-ui.html")
+                        // .permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/v1/annonces/*/valider").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/v1/annonces/valider").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/v1/annonces/*/refuser").hasRole("ADMIN")
@@ -75,5 +90,19 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
 
         return source;
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/api/uploads/**")
+                        .allowedOrigins("*")
+                        .allowedMethods("GET", "OPTIONS")
+                        .allowedHeaders("*")
+                        .exposedHeaders("Content-Disposition");
+            }
+        };
     }
 }
