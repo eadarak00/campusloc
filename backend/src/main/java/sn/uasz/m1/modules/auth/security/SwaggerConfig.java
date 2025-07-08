@@ -14,6 +14,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
+            .openapi("3.0.1")
             .info(new Info()
                 .title("CampusLoc API")
                 .version("1.0")

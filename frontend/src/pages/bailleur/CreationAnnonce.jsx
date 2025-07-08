@@ -39,7 +39,7 @@ import "../../styles/bailleur/create-annonce.css";
 import ApercuAnnonce from "../../components/bailleur/ApercuAnnonce";
 import ROUTES from "../../routes/routes";
 import { useNavigate } from "react-router-dom";
-import { createAnnonce } from "../../api/annonces";
+import { createAnnonce } from "../../api/annonceAPI";
 import { uploadMedias } from "../../api/media";
 
 const { Title, Text } = Typography;
@@ -465,7 +465,8 @@ const CreationAnnonce = () => {
   };
 
   const shouldShowChambres = () => {
-    return formData.type === "APPARTEMENT" || formData.type === "MAISON";
+      
+    return formData.type === "APPARTEMENT" || formData.type === "MAISON" ||  formData.type === "STUDIO";
   };
 
   // Fonctions pour l'aperçu

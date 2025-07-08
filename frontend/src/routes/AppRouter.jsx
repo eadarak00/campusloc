@@ -30,6 +30,7 @@ import BailleurLayout from "../layouts/BailleurLayout";
 import ProtectedRoute from './ProtectedRoute';
 import AnnoncesBailleur from "../pages/bailleur/Annonces";
 import CreationAnnonce from "../pages/bailleur/CreationAnnonce";
+import AnnonceEnAttentes from "../pages/bailleur/AnnoncesEnAttente";
 
 
 const AppRouter = () => (
@@ -54,6 +55,7 @@ const AppRouter = () => (
         <Route path={ROUTES.DASHBOARD_BAILLEUR} element={<DashboardBailleur />} />
         <Route path={ROUTES.ANNONCES_BAILLEUR} element={<AnnoncesBailleur />} />
         <Route path={ROUTES.CREATION_ANNONCE} element={<CreationAnnonce />} />
+        <Route path={ROUTES.ANNONCES_EN_ATTENTES} element={<AnnonceEnAttentes />} />
       </Route>
     </Routes>
   </Router>
