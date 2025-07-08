@@ -1,9 +1,11 @@
 package sn.uasz.m1.modules.annonce.service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
@@ -40,40 +43,56 @@ public class MediaService {
      * @param annonce  annonce à associer
      * @return liste des médias enregistrés
      */
-
-    public List<Media> enregistrerFichiers(List<MultipartFile> fichiers, Long annonceId) throws IOException {
+     public List<Media> enregistrerFichiers(List<MultipartFile> fichiers, Long annonceId) throws IOException {
         Annonce annonce = annonceService.trouverParId(annonceId);
         List<Media> medias = new ArrayList<>();
 
+        // 1. Créer le chemin complet : uploads/annonces/
+        Path dossierAnnonces = Paths.get(uploadDir, "annonces").toAbsolutePath().normalize();
+        
+        // 2. Créer les dossiers s'ils n'existent pas
+        if (!Files.exists(dossierAnnonces)) {
+            Files.createDirectories(dossierAnnonces);
+            System.out.println("Dossier créé: " + dossierAnnonces);
+        }
+
         for (MultipartFile fichier : fichiers) {
+            // 3. Valider le fichier
             validerTailleFichier(fichier);
 
-            String nomFichier = UUID.randomUUID() + "_" + fichier.getOriginalFilename();
+            // 4. Générer un nom unique
+            String nomFichier = UUID.randomUUID() + "_" + 
+                StringUtils.cleanPath(fichier.getOriginalFilename());
+            
+            // 5. Chemin complet du fichier
+            Path cheminComplet = dossierAnnonces.resolve(nomFichier);
 
-            // Construction du chemin absolu
-            Path cheminFichier = Paths.get(uploadDir).toAbsolutePath().normalize().resolve(nomFichier);
+            // 6. Sauvegarder le fichier physiquement
+            try (InputStream inputStream = fichier.getInputStream()) {
+                Files.copy(inputStream, cheminComplet, StandardCopyOption.REPLACE_EXISTING);
+            }
 
-            // Création du dossier si besoin
-            Files.createDirectories(cheminFichier.getParent());
+            // 7. Générer l'URL d'accès
+            String urlAcces = "/api/uploads/annonces/" + nomFichier;
 
-            // Écriture physique
-            fichier.transferTo(cheminFichier.toFile());
-
-            // Construction de l'URL relative
-            String url = "/uploads/annonces/" + nomFichier;
-
+            // 8. Créer l'entité Media
             Media media = Media.builder()
                     .nomFichier(nomFichier)
-                    .url(url)
+                    .url(urlAcces)
                     .typeMedia(detecterType(fichier.getContentType()))
                     .annonce(annonce)
                     .build();
 
             medias.add(mediaRepo.save(media));
+            
+            // 9. Log pour vérification
+            System.out.println("Fichier sauvegardé: " + cheminComplet);
+            System.out.println("URL d'accès: " + urlAcces);
         }
 
         return medias;
     }
+
 
     /**
      * Supprime un média d'une annonce (en base).
