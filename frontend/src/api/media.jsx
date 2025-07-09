@@ -10,3 +10,7 @@ export const uploadMedias = (annonceId, formData) => {
     },
   });
 };
+
+export const deleteMedia = async (imageId) => {
+  return api.delete(`${MEDIA_BASE}/${imageId}`);
+};
