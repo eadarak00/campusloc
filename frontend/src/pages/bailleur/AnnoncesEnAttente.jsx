@@ -50,7 +50,6 @@ const AnnonceEnAttentes = () => {
   };
 
   const proprietaireId = getUserData();
-  console.log(`Identifiant est ${proprietaireId}`);
 
   const fetchAnnoncesEnAttente = async (page = 1) => {
     if (!proprietaireId) {
