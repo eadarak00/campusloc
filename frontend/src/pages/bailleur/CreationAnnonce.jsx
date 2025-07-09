@@ -56,7 +56,7 @@ const CreationAnnonce = () => {
   const [createdAnnonceId, setCreatedAnnonceId] = useState(null);
   const [formData, setFormData] = useState({
     titre: "",
-    type: "APPARTEMENT",
+    typeDeLogement: "APPARTEMENT",
     description: "",
     surface: "",
     pieces: "",
@@ -111,7 +111,7 @@ const CreationAnnonce = () => {
   const validateCurrentStep = () => {
     switch (currentStep) {
       case 0:
-        if (!formData.titre || !formData.type || !formData.description) {
+        if (!formData.titre || !formData.typeDeLogement || !formData.description) {
           message.error("Veuillez remplir tous les champs obligatoires");
           return false;
         }
@@ -150,7 +150,7 @@ const CreationAnnonce = () => {
   const prepareDataForAPI = () => {
     const apiData = {
       titre: formData.titre,
-      type: formData.type,
+      typeDeLogement: formData.typeDeLogement,
       description: formData.description,
       surface: parseInt(formData.surface),
       adresse: formData.adresse,
@@ -374,7 +374,7 @@ const CreationAnnonce = () => {
   const resetForm = () => {
     setFormData({
       titre: "",
-      type: "APPARTEMENT",
+      typeDeLogement: "APPARTEMENT",
       description: "",
       surface: "",
       pieces: "",
@@ -451,22 +451,22 @@ const CreationAnnonce = () => {
   // Fonctions pour déterminer quels champs afficher selon le type
   const shouldShowCapacite = () => {
     return (
-      formData.type === "CHAMBRE_INDIVIDUELLE" ||
-      formData.type === "CHAMBRE_PARTAGEE"
+      formData.typeDeLogement === "CHAMBRE_INDIVIDUELLE" ||
+      formData.typeDeLogement === "CHAMBRE_PARTAGEE"
     );
   };
 
   const shouldShowPieces = () => {
     return (
-      formData.type === "APPARTEMENT" ||
-      formData.type === "MAISON" ||
-      formData.type === "STUDIO"
+      formData.typeDeLogement === "APPARTEMENT" ||
+      formData.typeDeLogement === "MAISON" ||
+      formData.typeDeLogement === "STUDIO"
     );
   };
 
   const shouldShowChambres = () => {
       
-    return formData.type === "APPARTEMENT" || formData.type === "MAISON" ||  formData.type === "STUDIO";
+    return formData.typeDeLogement === "APPARTEMENT" || formData.typeDeLogement === "MAISON" ||  formData.typeDeLogement === "STUDIO";
   };
 
   // Fonctions pour l'aperçu
@@ -524,7 +524,7 @@ const CreationAnnonce = () => {
                   </label>
                   <Select
                     placeholder="Sélectionner le type"
-                    value={formData.type}
+                    value={formData.typeDeLogement}
                     onChange={(value) => handleInputChange("type", value)}
                     className="creation-annonce__form-select"
                     size="large"
