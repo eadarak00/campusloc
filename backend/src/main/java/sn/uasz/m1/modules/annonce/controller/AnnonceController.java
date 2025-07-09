@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -34,10 +36,7 @@ import sn.uasz.m1.modules.annonce.service.AnnonceService;
 @RequestMapping("/v1/annonces")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(
-    name = "Gestion des Annonces",
-    description = "API pour la gestion des annonces immobilières"
-)
+@Tag(name = "Gestion des Annonces", description = "API pour la gestion des annonces immobilières")
 public class AnnonceController {
 
     private final AnnonceService annonceService;
@@ -268,5 +267,20 @@ public class AnnonceController {
         log.info("Mise à jour de l'annonce ID {} par un bailleur", annonceId);
         AnnonceResponseDTO updatedAnnonce = annonceService.update(annonceId, dto);
         return ResponseEntity.ok(updatedAnnonce);
+    }
+
+    /**
+     * recuperer l'annonce de l'id en parametre
+     */
+    @Operation(summary = "Récupérer une annonce par son ID", description = "Retourne les détails complets d'une annonce spécifique")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Annonce trouvée et retournée")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<AnnonceResponseDTO> getAnnonceById(
+            @Parameter(description = "ID de l'annonce à récupérer", required = true) @PathVariable("id") Long annonceId) {
+
+        AnnonceResponseDTO annonceResponseDTO = annonceService.getById(annonceId);
+        return ResponseEntity.ok(annonceResponseDTO);
     }
 }
