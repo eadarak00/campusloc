@@ -14,7 +14,17 @@ export const getAnnoncesEnAttentesParProprietaires = (proprietaireId) => {
 };
 
 // recuperer un annonce de par son ID
-
 export const getAnnonceById = (annonceId) =>{
   return api.get(`${ANNONCE_BASE}/${annonceId}`);
+}
+
+// modifier annonce de par son ID
+
+export const updateAnnonce = (id, updatedData) => {
+  return api.patch(`${ANNONCE_BASE}/${id}`, updatedData);
+};
+
+// supprimer annonce
+export const deleteAnnonce = (annonceId) => {
+  return api.delete(`${ANNONCE_BASE}/${annonceId}`);
 }
