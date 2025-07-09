@@ -289,9 +289,11 @@ public class AnnonceService {
         if (dto.getVille() != null)
             annonce.setVille(dto.getVille());
         if (dto.getSurface() >= 0)
+            annonce.setSurface(dto.getSurface());
+        if (dto.getSalleDeBains()>=0)
+            annonce.setSalleDeBains(dto.getSalleDeBains());
          if (dto.getPieces() >= 0)
             annonce.setPieces(dto.getPieces());
-            annonce.setSurface(dto.getSurface());
         if (dto.getNombreDeChambres() >= 0)
             annonce.setNombreDeChambres(dto.getNombreDeChambres());
         if (dto.getCapacite() >= 0)
@@ -310,6 +312,14 @@ public class AnnonceService {
 
         // 4. Retourner le DTO de réponse
         return toDto(annonceUpdatee);
+    }
+
+
+     public void supprimerLogiqueAnnonce(Long annonceId){
+        Annonce annonce = trouverParId(annonceId);
+        annonce.setSupprime(true);
+        annonce.setSupprimeA(LocalDateTime.now());
+        annonceRepository.save(annonce);
     }
 
     // == methodes utilitaire ==
@@ -391,6 +401,7 @@ public class AnnonceService {
                 .meuble(annonce.isMeuble())
                 .negociable(annonce.isNegociable())
                 .datePublication(annonce.getDatePublication())
+                .dateModification(annonce.getModifierA())
                 .statut(annonce.getStatut())
                 .proprietaireId(annonce.getProprietaire().getId())
                 .nomProprietaire(annonce.getProprietaire().getPrenom() + " " + annonce.getProprietaire().getNom())
