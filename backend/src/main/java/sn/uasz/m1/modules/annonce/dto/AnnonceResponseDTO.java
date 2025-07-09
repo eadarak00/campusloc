@@ -38,6 +38,7 @@ public class AnnonceResponseDTO {
     private Long proprietaireId;
     private String nomProprietaire;
     private String emailProprietaire;
+    private String telephoneProprietaire;
 
     private boolean disponible;
     private boolean meuble;
