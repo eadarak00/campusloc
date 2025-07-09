@@ -103,8 +103,6 @@ public class Annonce extends BaseEntity {
     public void onCreate() {
         this.datePublication = LocalDateTime.now();
         this.disponible = true;
-        this.negociable = false;
-        this.meuble = false;
         this.statut = StatutAnnonce.EN_ATTENTE;
         this.setCreerA(LocalDateTime.now());
         this.setSupprime(false);
