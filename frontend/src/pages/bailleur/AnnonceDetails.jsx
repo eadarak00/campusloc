@@ -25,6 +25,7 @@ import {
   Statistic,
   Timeline,
   FloatButton,
+  Popconfirm,
 } from "antd";
 import {
   HomeOutlined,
@@ -62,20 +63,26 @@ import {
   ShopOutlined,
   MedicineBoxOutlined,
   BookOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
 
 import "../../styles/bailleur/detail-annonce.css";
-import { useParams } from "react-router-dom";
-import { getAnnonceById } from "../../api/annonceAPI";
+import { useParams, useNavigate } from "react-router-dom";
+import { getAnnonceById, deleteAnnonce } from "../../api/annonceAPI";
 import { getImageUrl } from "../../api/ImageHelper";
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
+const { confirm } = Modal;
 
 const DetailAnnonce = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [annonce, setAnnonce] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [showContactModal, setShowContactModal] = useState(false);
@@ -161,6 +168,36 @@ const DetailAnnonce = () => {
     message.success("Lien copié dans le presse-papiers");
   };
 
+  // Fonction pour gérer la modification
+  const handleEdit = () => {
+    navigate(`/bailleur/annonce/modifier/${id}`);
+  };
+
+  // Fonction pour gérer la suppression
+  const handleDelete = () => {
+    confirm({
+      title: "Êtes-vous sûr de vouloir supprimer cette annonce ?",
+      icon: <ExclamationCircleOutlined />,
+      content:
+        "Cette action est irréversible. L'annonce sera définitivement supprimée.",
+      okText: "Oui, supprimer",
+      okType: "danger",
+      cancelText: "Annuler",
+      onOk: async () => {
+        try {
+          setDeleteLoading(true);
+          await deleteAnnonce(id);
+          message.success("Annonce supprimée avec succès");
+          navigate("/bailleur/annonces");
+        } catch (error) {
+          console.error("Erreur lors de la suppression:", error);
+          message.error("Erreur lors de la suppression de l'annonce");
+        } finally {
+          setDeleteLoading(false);
+        }
+      },
+    });
+  };
 
   const getCaracteristiques = () => {
     if (!annonce) return [];
@@ -183,11 +220,11 @@ const DetailAnnonce = () => {
       });
     }
 
-    if (annonce.chambres) {
+    if (annonce.nombreDeChambres) {
       caracteristiques.push({
         icon: <RestOutlined />,
         label: "Chambres",
-        value: annonce.chambres,
+        value: annonce.nombreDeChambres,
       });
     }
 
@@ -199,11 +236,11 @@ const DetailAnnonce = () => {
       });
     }
 
-    if (annonce.sallesBain) {
+    if (annonce.salleDeBains) {
       caracteristiques.push({
         icon: <BankOutlined />,
         label: "Salles de bain",
-        value: annonce.sallesBain,
+        value: annonce.salleDeBains,
       });
     }
 
@@ -279,24 +316,28 @@ const DetailAnnonce = () => {
           </div>
         </div>
 
-        {/* <div className="detail-annonce__header-right">
+        <div className="detail-annonce__header-right">
           <Space>
-            <div className="detail-annonce__stats">
-              <Space>
-                <Statistic
-                  title="Vues"
-                  value={annonce.stats.vues}
-                  prefix={<EyeOutlined />}
-                  valueStyle={{ fontSize: 14 }}
-                />
-                <Statistic
-                  title="Favoris"
-                  value={annonce.stats.favoris}
-                  prefix={<HeartOutlined />}
-                  valueStyle={{ fontSize: 14 }}
-                />
-              </Space>
-            </div>
+            <Tooltip title="Modifier l'annonce">
+              <Button
+                type="primary"
+                icon={<EditOutlined />}
+                onClick={handleEdit}
+              >
+                Modifier
+              </Button>
+            </Tooltip>
+            <Tooltip title="Supprimer l'annonce">
+              <Button
+                type="primary"
+                danger
+                icon={<DeleteOutlined />}
+                onClick={handleDelete}
+                loading={deleteLoading}
+              >
+                Supprimer
+              </Button>
+            </Tooltip>
             <Tooltip title="Ajouter aux favoris">
               <Button
                 icon={<HeartOutlined />}
@@ -309,7 +350,7 @@ const DetailAnnonce = () => {
               <Button icon={<ShareAltOutlined />} onClick={handleShare} />
             </Tooltip>
           </Space>
-        </div> */}
+        </div>
       </div>
 
       <div className="detail-annonce__content">
@@ -416,7 +457,7 @@ const DetailAnnonce = () => {
                   <Divider />
 
                   {/* Caractéristiques */}
-                  {/* <div className="detail-annonce__characteristics">
+                  <div className="detail-annonce__characteristics">
                     <Title level={4}>Caractéristiques</Title>
                     <Row gutter={[16, 16]}>
                       {getCaracteristiques().map((carac, index) => (
@@ -437,7 +478,7 @@ const DetailAnnonce = () => {
                         </Col>
                       ))}
                     </Row>
-                  </div> */}
+                  </div>
 
                   <Divider />
 
@@ -600,7 +641,13 @@ const DetailAnnonce = () => {
                   </Text>
                 </Timeline.Item>
                 <Timeline.Item dot={<ClockCircleOutlined />} color="blue">
-                  {/* <Text>Mis à jour le {new Date(annonce.dateModification).toLocaleDateString()}</Text> */}
+                  <Text>
+                    {annonce.dateModification
+                      ? `Mis à jour le ${new Date(
+                          annonce.dateModification
+                        ).toLocaleDateString()}`
+                      : "Jamais modifiée"}
+                  </Text>
                 </Timeline.Item>
               </Timeline>
             </Card>
