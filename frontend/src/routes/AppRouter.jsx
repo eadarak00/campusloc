@@ -31,6 +31,7 @@ import ProtectedRoute from './ProtectedRoute';
 import AnnoncesBailleur from "../pages/bailleur/Annonces";
 import CreationAnnonce from "../pages/bailleur/CreationAnnonce";
 import AnnonceEnAttentes from "../pages/bailleur/AnnoncesEnAttente";
+import DetailAnnonce from "../pages/bailleur/AnnonceDetails";
 
 
 const AppRouter = () => (
@@ -56,6 +57,9 @@ const AppRouter = () => (
         <Route path={ROUTES.ANNONCES_BAILLEUR} element={<AnnoncesBailleur />} />
         <Route path={ROUTES.CREATION_ANNONCE} element={<CreationAnnonce />} />
         <Route path={ROUTES.ANNONCES_EN_ATTENTES} element={<AnnonceEnAttentes />} />
+        <Route path={ROUTES.DETAIL_ANNONCE_BAILLEUR} element={<DetailAnnonce />} />
+        
+
       </Route>
     </Routes>
   </Router>

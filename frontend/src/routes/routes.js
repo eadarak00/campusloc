@@ -15,6 +15,8 @@ const ROUTES = {
   ANNONCES_BAILLEUR: "/bailleur/mes-annonces",
   ANNONCES_EN_ATTENTES: "/bailleur/annonces-attentes",
   CREATION_ANNONCE: "/bailleur/creation-annonce",
+  DETAIL_ANNONCE_BAILLEUR: "/bailleur/annonce/:id",
+
   TENANTS: "/tenants",
 
   NOT_FOUND: "*",
