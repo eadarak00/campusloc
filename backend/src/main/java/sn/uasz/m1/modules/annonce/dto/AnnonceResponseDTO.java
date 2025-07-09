@@ -33,6 +33,7 @@ public class AnnonceResponseDTO {
     private int capacite;
 
     private LocalDateTime datePublication;
+    private LocalDateTime dateModification;
     private StatutAnnonce statut;
 
     private Long proprietaireId;
