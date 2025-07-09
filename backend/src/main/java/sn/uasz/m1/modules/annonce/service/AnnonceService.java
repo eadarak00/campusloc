@@ -199,6 +199,18 @@ public class AnnonceService {
         return annonce;
     }
 
+    public AnnonceResponseDTO getById(Long id) {
+        // Validation d'entrée
+        Objects.requireNonNull(id, "L'id ne peut pas être null");
+
+        Annonce annonce = annonceRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Annonce introuvable pour l'id: " + id));
+
+        verifierAccessibilite(annonce, id);
+
+        return toDto(annonce);
+    }
+
     @PreAuthorize("hasRole('BAILLEUR')")
     @Transactional
     public List<AnnonceResponseDTO> listerParProprietaireActifs(Long proprietaireId) {
@@ -383,6 +395,7 @@ public class AnnonceService {
                 .proprietaireId(annonce.getProprietaire().getId())
                 .nomProprietaire(annonce.getProprietaire().getPrenom() + " " + annonce.getProprietaire().getNom())
                 .emailProprietaire(annonce.getProprietaire().getEmail())
+                .telephoneProprietaire(annonce.getProprietaire().getTelephone())
                 .medias(annonce.getMedias() != null
                         ? annonce.getMedias().stream().map(this::toMediaDto).toList()
                         : new ArrayList<>())
