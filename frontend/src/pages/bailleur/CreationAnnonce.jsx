@@ -62,7 +62,7 @@ const CreationAnnonce = () => {
     pieces: "",
     capacite: "",
     nombreDeChambres: "",
-    sallesDeBain: "",
+    salleDeBains: "",
     adresse: "",
     ville: "",
     prix: "",
@@ -165,7 +165,7 @@ const CreationAnnonce = () => {
     // Ajouter les champs optionnels seulement s'ils sont remplis
     if (formData.pieces) apiData.pieces = parseInt(formData.pieces);
     if (formData.nombreDeChambres) apiData.nombreDeChambres = parseInt(formData.nombreDeChambres);
-    if (formData.sallesDeBain) apiData.sallesDeBain = parseInt(formData.sallesDeBain);
+    if (formData.salleDeBains) apiData.salleDeBains = parseInt(formData.salleDeBains);
     if (formData.capacite) apiData.capacite = parseInt(formData.capacite);
     if (formData.charges) apiData.charges = parseInt(formData.charges);
 
@@ -243,43 +243,6 @@ const CreationAnnonce = () => {
       return false;
     }
   };
-
-  // const handleSubmit = async () => {
-  //   if (!validateCurrentStep()) return;
-
-  //   setLoading(true);
-  //   try {
-  //     console.log("Données du formulaire:", formData);
-  //     console.log("Fichiers uploadés:", fileList);
-
-  //     await new Promise((resolve) => setTimeout(resolve, 2000));
-  //     message.success("Annonce créée avec succès !");
-
-  //     setFormData({
-  //       titre: "",
-  //       type: "APPARTEMENT",
-  //       description: "",
-  //       surface: "",
-  //       pieces: "",
-  //       nombreDeChambres: "",
-  //       sallesDeBain: "",
-  //       adresse: "",
-  //       ville: "",
-  //       prix: "",
-  //       charges: "",
-  //       caution: "",
-  //       meuble: false,
-  //       negociable: false,
-  //     });
-  //     setFileList([]);
-  //     setCurrentStep(0);
-  //     setShowPreview(false);
-  //   } catch (error) {
-  //     message.error("Erreur lors de la création de l'annonce");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleSubmit = async () => {
     if (!validateCurrentStep()) return;
@@ -380,7 +343,7 @@ const CreationAnnonce = () => {
       pieces: "",
       capacite: "",
       nombreDeChambres: "",
-      sallesDeBain: "",
+      salleDeBains: "",
       adresse: "",
       ville: "",
       prix: "",
@@ -633,8 +596,8 @@ const CreationAnnonce = () => {
                     min={0}
                     className="creation-annonce__form-input creation-annonce__form-input--number"
                     size="large"
-                    value={formData.sallesDeBain}
-                    onChange={(value) => handleInputChange("sallesDeBain", value)}
+                    value={formData.salleDeBains}
+                    onChange={(value) => handleInputChange("salleDeBains", value)}
                   />
                 </div>
               </Col>
