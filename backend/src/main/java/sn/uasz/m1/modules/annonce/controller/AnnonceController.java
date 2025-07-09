@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.ErrorResponse;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -56,7 +56,7 @@ public class AnnonceController {
     @Operation(summary = "Créer une nouvelle annonce", description = "Endpoint réservé aux bailleurs pour publier une nouvelle annonce immobilière")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Annonce créée avec succès", content = @Content(schema = @Schema(implementation = AnnonceResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Données invalides", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Données invalides"),
             @ApiResponse(responseCode = "403", description = "Accès refusé (rôle BAILLEUR requis)"),
             @ApiResponse(responseCode = "500", description = "Erreur interne du serveur")
     })
@@ -282,5 +282,28 @@ public class AnnonceController {
 
         AnnonceResponseDTO annonceResponseDTO = annonceService.getById(annonceId);
         return ResponseEntity.ok(annonceResponseDTO);
+    }
+
+    /**
+     * Supprimer annonce de par son id
+     */
+    @Operation(summary = "Suppression logique d'une annonce", description = "Marque une annonce comme supprimée (archivée) tout en conservant les données en base. Accessible aux administrateurs et bailleurs propriétaires.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Suppression logique réussie - Pas de contenu retourné"),
+            @ApiResponse(responseCode = "401", description = "Non authentifié"),
+            @ApiResponse(responseCode = "403", description = "Permissions insuffisantes"),
+            @ApiResponse(responseCode = "404", description = "Annonce non trouvée"),
+            @ApiResponse(responseCode = "409", description = "Conflit - Annonce déjà supprimée")
+    })
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('BAILLEUR')))")
+    public ResponseEntity<Void> softDeleteAnnonce(
+            @Parameter(description = "ID de l'annonce à archiver", required = true) @PathVariable Long id) {
+
+        log.info("Début suppression logique annonce ID: {}", id);
+        annonceService.supprimerLogiqueAnnonce(id);
+        log.info("Suppression logique annonce ID {} réussie", id);
+
+        return ResponseEntity.noContent().build();
     }
 }
