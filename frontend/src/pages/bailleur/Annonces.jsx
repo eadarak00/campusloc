@@ -25,7 +25,7 @@ const AnnoncesBailleur = () => {
           <Card 
           bordered 
           hoverable
-          onClick={() =>  handleNavigate(ROUTES.ANNONCES_BAILLEUR)}
+          onClick={() =>  handleNavigate(ROUTES.ANNONCES_ACTIFS_BAILLEUR)}
           >
             <Card.Meta
               avatar={
