@@ -13,6 +13,12 @@ export const getAnnoncesEnAttentesParProprietaires = (proprietaireId) => {
   return api.get(`${ANNONCE_BASE}/proprietaire/${proprietaireId}/en-attente`);
 };
 
+// Lister les annonces en actives pour un propriétaire
+export const getAnnoncesActivesParProprietaires = (proprietaireId) => {
+  return api.get(`${ANNONCE_BASE}/proprietaire/${proprietaireId}/actifs`);
+};
+
+
 // recuperer un annonce de par son ID
 export const getAnnonceById = (annonceId) =>{
   return api.get(`${ANNONCE_BASE}/${annonceId}`);
