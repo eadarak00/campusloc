@@ -1,0 +1,426 @@
+/* AnnonceActive.css */
+
+/* Conteneur principal */
+.annonce-active {
+  padding: 24px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+/* Header */
+.annonce-active__header {
+  margin-bottom: 24px;
+  padding: 16px 0;
+}
+
+.annonce-active__title {
+  margin-bottom: 8px !important;
+  color: #1890ff;
+  font-weight: 600;
+}
+
+.annonce-active__subtitle {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Carte du tableau */
+.annonce-active__table-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.annonce-active__table {
+  background: white;
+}
+
+.annonce-active__table .ant-table-thead > tr > th {
+  background-color: #fafafa;
+  font-weight: 600;
+  color: #262626;
+  border-bottom: 2px solid #e8e8e8;
+}
+
+.annonce-active__table .ant-table-tbody > tr > td {
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.annonce-active__table .ant-table-tbody > tr:hover > td {
+  background-color: #f0f9ff;
+}
+
+.annonce-active__table .ant-table-tbody > tr {
+  transition: all 0.3s ease;
+}
+
+.annonce-active__table .ant-table-tbody > tr:hover {
+  cursor: pointer;
+}
+
+/* Colonnes spécifiques */
+.annonce-active__column-titre {
+  min-width: 200px;
+}
+
+.annonce-active__column-type {
+  width: 100px;
+  text-align: center;
+}
+
+.annonce-active__column-prix {
+  width: 150px;
+  text-align: right;
+}
+
+.annonce-active__column-localisation {
+  width: 150px;
+}
+
+.annonce-active__column-date {
+  width: 120px;
+}
+
+.annonce-active__column-statut {
+  width: 100px;
+  text-align: center;
+}
+
+.annonce-active__column-actions {
+  width: 120px;
+  text-align: center;
+}
+
+/* Éléments de texte du tableau */
+.annonce-active__titre-text {
+  color: #262626;
+  font-size: 14px;
+}
+
+.annonce-active__prix-text {
+  color: #52c41a;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.annonce-active__date-text {
+  color: #666;
+  font-size: 13px;
+}
+
+.annonce-active__type-tag,
+.annonce-active__statut-tag {
+  border-radius: 16px;
+  padding: 4px 12px;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+/* Bouton détails */
+.annonce-active__btn-details {
+  background-color: #1890ff;
+  border-color: #1890ff;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.annonce-active__btn-details:hover {
+  background-color: #40a9ff;
+  border-color: #40a9ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+}
+
+/* Pagination */
+.annonce-active__pagination {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.annonce-active__pagination .ant-pagination-total-text {
+  font-weight: 500;
+  color: #595959;
+}
+
+/* Modal */
+.annonce-active__modal .ant-modal-header {
+  background-color: #f0f9ff;
+  border-bottom: 2px solid #1890ff;
+}
+
+.annonce-active__modal .ant-modal-title {
+  color: #1890ff;
+  font-weight: 600;
+}
+
+.annonce-active__modal-content {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.annonce-active__modal-title {
+  color: #1890ff;
+  margin-bottom: 24px !important;
+  text-align: center;
+  border-bottom: 2px solid #e8e8e8;
+  padding-bottom: 16px;
+}
+
+.annonce-active__modal-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.annonce-active__modal-btn {
+  background-color: #f5f5f5;
+  border-color: #d9d9d9;
+  color: #595959;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.annonce-active__modal-btn:hover {
+  background-color: #e6f7ff;
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+/* Cartes de la modal */
+.annonce-active__info-card,
+.annonce-active__description-card,
+.annonce-active__proprietaire-card,
+.annonce-active__dates-card {
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.annonce-active__info-card:hover,
+.annonce-active__description-card:hover,
+.annonce-active__proprietaire-card:hover,
+.annonce-active__dates-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.annonce-active__info-card .ant-card-head-title {
+  color: #1890ff;
+  font-weight: 600;
+}
+
+.annonce-active__description-card .ant-card-head-title {
+  color: #52c41a;
+  font-weight: 600;
+}
+
+.annonce-active__proprietaire-card .ant-card-head-title {
+  color: #fa8c16;
+  font-weight: 600;
+}
+
+.annonce-active__dates-card .ant-card-head-title {
+  color: #722ed1;
+  font-weight: 600;
+}
+
+/* Descriptions */
+.annonce-active__descriptions .ant-descriptions-item-label {
+  font-weight: 600;
+  color: #595959;
+  width: 120px;
+}
+
+.annonce-active__descriptions .ant-descriptions-item-content {
+  color: #262626;
+}
+
+/* Textes spécifiques de la modal */
+.annonce-active__prix-detail {
+  color: #52c41a;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.annonce-active__description-text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #262626;
+  text-align: justify;
+}
+
+.annonce-active__localisation-text,
+.annonce-active__surface-text,
+.annonce-active__pieces-text,
+.annonce-active__etage-text {
+  color: #262626;
+  font-size: 14px;
+}
+
+.annonce-active__proprietaire-info,
+.annonce-active__telephone-text,
+.annonce-active__email-text {
+  color: #262626;
+  font-size: 14px;
+}
+
+.annonce-active__date-info {
+  color: #262626;
+  font-size: 14px;
+}
+
+/* Icônes */
+.annonce-active__icon {
+  margin-right: 8px;
+  color: #1890ff;
+}
+
+/* Animations */
+@keyframes annonceActiveFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.annonce-active__table-card {
+  animation: annonceActiveFadeIn 0.5s ease-in-out;
+}
+
+.annonce-active__info-card,
+.annonce-active__description-card,
+.annonce-active__proprietaire-card,
+.annonce-active__dates-card {
+  animation: annonceActiveFadeIn 0.3s ease-in-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .annonce-active {
+    padding: 16px;
+  }
+  
+  .annonce-active__modal-sections {
+    gap: 12px;
+  }
+  
+  .annonce-active__descriptions {
+    column-count: 1;
+  }
+  
+  .annonce-active__table .ant-table-tbody > tr > td {
+    padding: 12px 8px;
+  }
+  
+  .annonce-active__column-titre {
+    min-width: 150px;
+  }
+  
+  .annonce-active__column-prix {
+    text-align: left;
+  }
+  
+  .annonce-active__column-actions {
+    text-align: left;
+  }
+}
+
+@media (max-width: 576px) {
+  .annonce-active__title {
+    font-size: 20px;
+  }
+  
+  .annonce-active__modal {
+    width: 95% !important;
+    margin: 10px auto;
+  }
+  
+  .annonce-active__modal-content {
+    max-height: 60vh;
+  }
+  
+  .annonce-active__descriptions .ant-descriptions-item-label {
+    width: 100px;
+  }
+  
+  .annonce-active__column-titre {
+    min-width: 120px;
+  }
+  
+  .annonce-active__prix-text {
+    font-size: 14px;
+  }
+  
+  .annonce-active__btn-details {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+}
+
+/* États de chargement */
+.annonce-active__table .ant-spin-container {
+  min-height: 400px;
+}
+
+/* Styles supplémentaires pour éviter les conflits */
+.annonce-active .ant-table-wrapper {
+  background: transparent;
+}
+
+.annonce-active .ant-card-body {
+  padding: 0;
+}
+
+.annonce-active__table-card .ant-card-body {
+  padding: 0;
+}
+
+.annonce-active__modal .ant-modal-body {
+  padding: 20px;
+}
+
+.annonce-active__modal .ant-modal-footer {
+  border-top: 1px solid #e8e8e8;
+  padding: 16px 24px;
+  text-align: right;
+}
+
+/* Styles pour les états focus et active */
+.annonce-active__btn-details:focus,
+.annonce-active__btn-details:active {
+  background-color: #1890ff;
+  border-color: #1890ff;
+  outline: none;
+}
+
+.annonce-active__modal-btn:focus,
+.annonce-active__modal-btn:active {
+  background-color: #f5f5f5;
+  border-color: #d9d9d9;
+  outline: none;
+}
+
+/* Personnalisation des scrollbars pour la modal */
+.annonce-active__modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.annonce-active__modal-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.annonce-active__modal-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.annonce-active__modal-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
