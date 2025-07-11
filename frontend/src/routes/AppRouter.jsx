@@ -13,6 +13,8 @@ import AnnonceEnAttentes from "../pages/bailleur/AnnoncesEnAttente";
 import DetailAnnonce from "../pages/bailleur/AnnonceDetails";
 import ModifierAnnonce from "../pages/bailleur/ModifierAnnonce";
 import AnnonceActive from "../pages/bailleur/AnnoncesActives";
+import AdminLayout from "../layouts/AdminLayout";
+import DashboardAdmin from "../pages/admin/DashboardAdmin";
 
 const AppRouter = () => (
   <Router>
@@ -55,6 +57,22 @@ const AppRouter = () => (
           path={ROUTES.MODIFIER_ANNONCE_BAILLEUR}
           element={<ModifierAnnonce />}
         />
+      </Route>
+
+      {/* Routes protégées pour bailleurs */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute allowedRoles={["ADMIN"]}>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route
+          path={ROUTES.DASHBOARD_ADMIN}
+          element={<DashboardAdmin/>}
+        />
+
       </Route>
     </Routes>
   </Router>
