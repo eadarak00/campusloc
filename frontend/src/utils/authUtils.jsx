@@ -36,3 +36,20 @@ export const getBailleurFromStorage = () => {
   if (user?.role === "BAILLEUR") return user;
   return null;
 };
+
+/**
+ * Vérifie si l'utilisateur connecté est un administrateur
+ */
+export const isAdmin = () => {
+  const user = getUserData();
+  return user?.role === "ADMIN";
+};
+
+/**
+ * Retourne les données utilisateur uniquement si c'est un administrateur
+ */
+export const getAdminFromStorage = () => {
+  const user = getUserData();
+  if (isAdmin) return user;
+  return null;
+};
