@@ -18,8 +18,13 @@ const ROUTES = {
   CREATION_ANNONCE: "/bailleur/creation-annonce",
   DETAIL_ANNONCE_BAILLEUR: "/bailleur/annonce/:id",
   MODIFIER_ANNONCE_BAILLEUR: "/bailleur/annonce/modifier/:id",
-
   TENANTS: "/tenants",
+
+  // endpoints Administrateur
+  ANNONCES_ADMIN: "admin/annonces",
+  ANNONCES_EN_ATTENTES: "admin/annonces_attentes",
+  
+
 
   NOT_FOUND: "*",
 };
