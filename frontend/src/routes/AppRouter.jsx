@@ -15,6 +15,9 @@ import ModifierAnnonce from "../pages/bailleur/ModifierAnnonce";
 import AnnonceActive from "../pages/bailleur/AnnoncesActives";
 import AdminLayout from "../layouts/AdminLayout";
 import DashboardAdmin from "../pages/admin/DashboardAdmin";
+import AnnoncesAdmin from "../pages/admin/annonces-admin";
+import AnnonceAValider from "../pages/admin/AnnonceAValider";
+import AnnonceDetailsAdmin from "../pages/admin/AnnonceDetailsAdmin";
 
 const AppRouter = () => (
   <Router>
@@ -71,6 +74,20 @@ const AppRouter = () => (
         <Route
           path={ROUTES.DASHBOARD_ADMIN}
           element={<DashboardAdmin/>}
+        />
+         <Route
+          path={ROUTES.ANNONCES_ADMIN}
+          element={<AnnoncesAdmin/>}
+        />
+
+        <Route
+          path={ROUTES.ANNONCES_EN_ATTENTES_ADMIN}
+          element={<AnnonceAValider/>}
+        />
+
+         <Route
+          path={ROUTES.DETAIL_ANNONCE_ADMIN}
+          element={<AnnonceDetailsAdmin />}
         />
 
       </Route>
