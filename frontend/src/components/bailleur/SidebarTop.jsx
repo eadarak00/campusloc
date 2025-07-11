@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import {
   Home,
@@ -21,11 +21,26 @@ import {
 } from "lucide-react";
 import "../../styles/bailleur/sidetopbar.css";
 import ROUTES from "../../routes/routes";
+import { Avatar, Modal } from "antd";
+import { getBailleurFromStorage } from "../../utils/authUtils";
+import { logout } from "../../utils/authService";
 
 const SidebarTopbar = ({ children }) => {
   const [sidebarState, setSidebarState] = useState("collapsed");
   const [activeItem, setActiveItem] = useState("dashboard");
   const [isMobile, setIsMobile] = useState(false);
+
+  const navigate = useNavigate();
+  const user = getBailleurFromStorage();
+  
+    const fullName = user?.prenom + user?.nom;
+  
+    const getInitials = (name) =>
+    name
+      ?.split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase();
 
   // Détection mobile
   useEffect(() => {
@@ -114,6 +129,11 @@ const SidebarTopbar = ({ children }) => {
     }
   };
 
+  const handleLogout = () =>{
+    logout();
+    navigate(ROUTES.CONNEXION);
+}
+
   return (
     <div className="app-container">
       {/* Overlay pour mobile */}
@@ -199,7 +219,7 @@ const SidebarTopbar = ({ children }) => {
             <span className="sidebar__nav-text">Paramètres</span>
           </button>
 
-          <button className="sidebar__nav-button">
+          <button className="sidebar__nav-button" onClick={handleLogout}>
             <LogOut size={20} className="sidebar__nav-icon" />
             <span className="sidebar__nav-text">Se déconnecter</span>
           </button>
@@ -244,9 +264,12 @@ const SidebarTopbar = ({ children }) => {
               <MessageCircle size={20} />
             </button>
 
-            <div className="topbar__avatar" aria-label="Profil utilisateur">
+            {/* <div className="topbar__avatar" aria-label="Profil utilisateur">
               JD
-            </div>
+            </div> */}
+              <Avatar className= "topbar__avatar" src={user.photoUrl}>
+              {getInitials(fullName)}
+            </Avatar>
           </div>
         </div>
 
