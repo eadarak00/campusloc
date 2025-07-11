@@ -21,8 +21,8 @@ import {
 } from "lucide-react";
 import "../../styles/bailleur/sidetopbar.css";
 import ROUTES from "../../routes/routes";
-import { Avatar, Modal } from "antd";
-import { getBailleurFromStorage } from "../../utils/authUtils";
+import { Avatar } from "antd";
+import { getAdminFromStorage } from "../../utils/authUtils";
 import { logout } from "../../utils/authService";
 
 const Sidebar = ({ children }) => {
