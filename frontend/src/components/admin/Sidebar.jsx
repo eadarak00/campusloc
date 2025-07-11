@@ -65,7 +65,7 @@ const Sidebar = ({ children }) => {
       id: "annonces",
       label: "Annonces",
       icon: Building,
-      path: ROUTES.ANNONCES_BAILLEUR,
+      path: ROUTES.ANNONCES_ADMIN,
     },
 
   ];
