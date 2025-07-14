@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Tag, message, Popconfirm } from "antd";
-import { CheckOutlined, CloseOutlined, EyeOutlined } from "@ant-design/icons";
+import { Table, Button, Tag, message, Popconfirm, Space } from "antd";
+import {
+  CheckOutlined,
+  CloseOutlined,
+  EyeOutlined,
+} from "@ant-design/icons";
 import {
   acceptAnnonce,
   getPendingAnnonces,
@@ -11,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 const AnnonceAValider = () => {
   const [annonces, setAnnonces] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const navigate = useNavigate();
 
   const fetchAnnonces = async () => {
@@ -47,6 +52,27 @@ const AnnonceAValider = () => {
 
   const handleShowDetails = (id) => {
     navigate(`/admin/annonces/${id}`);
+  };
+
+  const handleBatchAction = async (action) => {
+    if (selectedRowKeys.length === 0) {
+      return message.warning("Aucune annonce sélectionnée.");
+    }
+
+    setLoading(true);
+    const actionFn = action === "accept" ? acceptAnnonce : refuseAnnonce;
+    const actionLabel = action === "accept" ? "acceptée(s)" : "refusée(s)";
+
+    try {
+      await Promise.all(selectedRowKeys.map((id) => actionFn(id)));
+      message.success(`Annonce(s) ${actionLabel} avec succès`);
+      setSelectedRowKeys([]);
+      fetchAnnonces();
+    } catch (error) {
+      message.error(`Erreur lors du traitement des annonces`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -86,14 +112,10 @@ const AnnonceAValider = () => {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
-        <div style={{ display: "flex", gap: 8 }}>
-          <Button
-            icon={<EyeOutlined />}
-            onClick={() => handleShowDetails(record.id)}
-          >
+        <Space>
+          <Button icon={<EyeOutlined />} onClick={() => handleShowDetails(record.id)}>
             Détails
           </Button>
-
           <Popconfirm
             title="Confirmer l'acceptation ?"
             onConfirm={() => handleAccept(record.id)}
@@ -102,7 +124,6 @@ const AnnonceAValider = () => {
           >
             <Button type="primary" icon={<CheckOutlined />} />
           </Popconfirm>
-
           <Popconfirm
             title="Confirmer le refus ?"
             onConfirm={() => handleRefuse(record.id)}
@@ -111,19 +132,50 @@ const AnnonceAValider = () => {
           >
             <Button danger icon={<CloseOutlined />} />
           </Popconfirm>
-        </div>
+        </Space>
       ),
     },
   ];
 
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: setSelectedRowKeys,
+  };
+
   return (
     <div style={{ padding: 24 }}>
       <h2>Annonces à valider</h2>
+
+      <Space style={{ marginBottom: 16 }}>
+        <Popconfirm
+          title="Confirmer l'acceptation des annonces sélectionnées ?"
+          onConfirm={() => handleBatchAction("accept")}
+          okText="Oui"
+          cancelText="Non"
+        >
+          <Button type="primary" icon={<CheckOutlined />} disabled={selectedRowKeys.length === 0}>
+            Accepter sélectionnées
+          </Button>
+        </Popconfirm>
+
+        <Popconfirm
+          title="Confirmer le refus des annonces sélectionnées ?"
+          onConfirm={() => handleBatchAction("refuse")}
+          okText="Oui"
+          cancelText="Non"
+        >
+          <Button danger icon={<CloseOutlined />} disabled={selectedRowKeys.length === 0}>
+            Refuser sélectionnées
+          </Button>
+        </Popconfirm>
+      </Space>
+
       <Table
         columns={columns}
         dataSource={annonces}
         rowKey="id"
         loading={loading}
+        rowSelection={rowSelection}
         pagination={{ pageSize: 10 }}
       />
     </div>
