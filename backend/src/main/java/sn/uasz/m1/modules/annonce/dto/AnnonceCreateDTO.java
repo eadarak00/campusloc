@@ -47,7 +47,7 @@ public class AnnonceCreateDTO {
     private int pieces = 0;
 
     @Positive(message = "Le nombre de chambres doit être positif")
-    private int nombreDeChambres = 0;
+    private int nombreDeChambres = 1;
 
     @PositiveOrZero(message = "Le nombre de salles de bains doit être positif")
     private int salleDeBains;
