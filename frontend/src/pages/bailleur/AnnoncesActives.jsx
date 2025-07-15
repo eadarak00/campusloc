@@ -22,10 +22,12 @@ import {
 import "../../styles/bailleur/annonceActive.css";
 import { getBailleurFromStorage } from "../../utils/authUtils";
 import { getAnnoncesActivesParProprietaires } from "../../api/annonceAPI";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
 const AnnonceActive = () => {
+  const navigate = useNavigate();
   const [annonces, setAnnonces] = useState([]);
   const [loading, setLoading] = useState(false);
   const [detailsVisible, setDetailsVisible] = useState(false);
@@ -55,15 +57,10 @@ const AnnonceActive = () => {
     fetchAnnonces();
   }, []);
 
-  const showDetails = (annonce) => {
-    setSelectedAnnonce(annonce);
-    setDetailsVisible(true);
+  const showDetails = (annonceId) => {
+    navigate(`/bailleur/annonce/${annonceId}`);
   };
 
-  const handleCloseDetails = () => {
-    setDetailsVisible(false);
-    setSelectedAnnonce(null);
-  };
 
   // Fonction pour formater le type de logement
   const formatTypeDeLogement = (type) => {
@@ -93,7 +90,7 @@ const AnnonceActive = () => {
   const formatStatut = (statut) => {
     const statutMap = {
       EN_ATTENTE: "En Attente",
-      REFUSER: "refuse",
+      REFUSER: "refuser",
       ACCEPTER: "accpter",
     };
     return statutMap[statut] || statut;
@@ -193,7 +190,7 @@ const AnnonceActive = () => {
         <Button
           type="primary"
           icon={<EyeOutlined />}
-          onClick={() => navigate(`/bailleur/annonce/${record.id}`)}
+          onClick={() => showDetails(record.id)}
           className="annonce-active__btn-details"
         >
           Détails

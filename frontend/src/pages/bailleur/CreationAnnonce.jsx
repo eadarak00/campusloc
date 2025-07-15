@@ -17,6 +17,7 @@ import {
   Space,
   Tag,
   Modal,
+  notification,
 } from "antd";
 import {
   UploadOutlined,
@@ -111,7 +112,11 @@ const CreationAnnonce = () => {
   const validateCurrentStep = () => {
     switch (currentStep) {
       case 0:
-        if (!formData.titre || !formData.typeDeLogement || !formData.description) {
+        if (
+          !formData.titre ||
+          !formData.typeDeLogement ||
+          !formData.description
+        ) {
           message.error("Veuillez remplir tous les champs obligatoires");
           return false;
         }
@@ -159,55 +164,20 @@ const CreationAnnonce = () => {
       caution: parseInt(formData.caution),
       meuble: formData.meuble,
       negociable: formData.negociable,
-      disponible: formData.disponible
+      disponible: formData.disponible,
     };
 
     // Ajouter les champs optionnels seulement s'ils sont remplis
     if (formData.pieces) apiData.pieces = parseInt(formData.pieces);
-    if (formData.nombreDeChambres) apiData.nombreDeChambres = parseInt(formData.nombreDeChambres);
-    if (formData.salleDeBains) apiData.salleDeBains = parseInt(formData.salleDeBains);
+    if (formData.nombreDeChambres)
+      apiData.nombreDeChambres = parseInt(formData.nombreDeChambres);
+    if (formData.salleDeBains)
+      apiData.salleDeBains = parseInt(formData.salleDeBains);
     if (formData.capacite) apiData.capacite = parseInt(formData.capacite);
     if (formData.charges) apiData.charges = parseInt(formData.charges);
 
     return apiData;
   };
-
-  // Fonction pour uploader les médias
-  // const uploadMediasAnnonce = async (annonceId) => {
-  //   if (fileList.length === 0) {
-  //     return true; // Pas d'images à uploader
-  //   }
-
-  //   try {
-  //     const formData = new FormData();
-
-  //     // Ajouter chaque fichier au FormData
-  //     fileList.forEach((file, index) => {
-  //       if (file.originFileObj) {
-  //         formData.append("medias", file.originFileObj);
-  //       }
-  //     });
-
-  //     message.loading("Upload des images en cours...", 0);
-
-  //     const response = await uploadMedias(annonceId, formData);
-
-  //     message.destroy(); // Fermer le message de loading
-
-  //     if (response.success) {
-  //       message.success(`${fileList.length} image(s) uploadée(s) avec succès`);
-  //       return true;
-  //     } else {
-  //       message.error("Erreur lors de l'upload des images");
-  //       return false;
-  //     }
-  //   } catch (error) {
-  //     message.destroy();
-  //     console.error("Erreur upload médias:", error);
-  //     message.error("Erreur lors de l'upload des images");
-  //     return false;
-  //   }
-  // };
 
   const uploadMediasAnnonce = async (annonceId) => {
     if (fileList.length === 0) {
@@ -262,30 +232,70 @@ const CreationAnnonce = () => {
       console.log("Données de reponse de l'API:", data);
       message.destroy(); // Fermer le message de loading
 
+      // if (data) {
+      //   const annonceId = data.id;
+      //   setCreatedAnnonceId(annonceId);
+
+      //   message.success("Annonce créée avec succès !");
+
+      //   // Étape 2: Uploader les médias si il y en a
+      //   if (fileList.length > 0) {
+      //     const uploadSuccess = await uploadMediasAnnonce(annonceId);
+
+      //     if (!uploadSuccess) {
+      //       // L'annonce est créée mais l'upload des images a échoué
+      //       message.warning(
+      //         "Annonce créée mais certaines images n'ont pas pu être uploadées"
+      //       );
+      //     }
+      //   }
+
+      //   // Étape 3: Réinitialiser le formulaire et rediriger
+      //   setTimeout(() => {
+      //     resetForm();
+      //     // Optionnel: rediriger vers la liste des annonces ou la page de détail
+      //     navigate(ROUTES.ANNONCES_BAILLEUR);
+      //     message.success("Annonce publiée avec succès !");
+      //   }, 1500);
       if (data) {
         const annonceId = data.id;
         setCreatedAnnonceId(annonceId);
 
-        message.success("Annonce créée avec succès !");
+        notification.success({
+          message: "Succès",
+          description: "Annonce créée avec succès.",
+          placement: "topRight",
+          showProgress: true,
+          duration: 4,
+        });
 
-        // Étape 2: Uploader les médias si il y en a
+        // Étape 2: Upload médias
         if (fileList.length > 0) {
           const uploadSuccess = await uploadMediasAnnonce(annonceId);
-
           if (!uploadSuccess) {
-            // L'annonce est créée mais l'upload des images a échoué
-            message.warning(
-              "Annonce créée mais certaines images n'ont pas pu être uploadées"
-            );
+            notification.warning({
+              message: "Upload partiel",
+              description:
+                "Annonce créée, mais certaines images n'ont pas pu être uploadées.",
+              placement: "topRight",
+              showProgress: true,
+              duration: 4,
+            });
           }
         }
 
-        // Étape 3: Réinitialiser le formulaire et rediriger
+        // Étape 3: Reset + redirection
         setTimeout(() => {
           resetForm();
-          // Optionnel: rediriger vers la liste des annonces ou la page de détail
           navigate(ROUTES.ANNONCES_BAILLEUR);
-          message.success("Annonce publiée avec succès !");
+          notification.success({
+            message: "Annonce publiée",
+            description:
+              "Votre annonce est maintenant visible sur la plateforme.",
+            placement: "topRight",
+            showProgress: true,
+            duration: 4,
+          });
         }, 1500);
       } else {
         message.error(
@@ -293,40 +303,70 @@ const CreationAnnonce = () => {
         );
       }
     } catch (error) {
-      message.destroy();
-      console.error("Erreur lors de la création:", error);
+      notification.destroy(); // pour éviter d'en empiler plusieurs
 
-      // Gestion des erreurs spécifiques
       if (error.response) {
         const status = error.response.status;
         const errorData = error.response.data;
 
         switch (status) {
           case 400:
-            message.error(
-              "Données invalides. Veuillez vérifier les informations saisies."
-            );
+            notification.error({
+              message: "Erreur de validation",
+              description:
+                "Données invalides. Veuillez vérifier les informations saisies.",
+              placement: "topRight",
+              showProgress: true,
+              duration: 5,
+            });
             break;
           case 401:
-            message.error("Vous devez être connecté pour créer une annonce.");
+            notification.error({
+              message: "Non autorisé",
+              description: "Vous devez être connecté pour créer une annonce.",
+              placement: "topRight",
+              showProgress: true,
+              duration: 5,
+            });
             break;
           case 403:
-            message.error(
-              "Vous n'avez pas les permissions pour créer une annonce."
-            );
+            notification.error({
+              message: "Accès refusé",
+              description:
+                "Vous n'avez pas les permissions pour créer une annonce.",
+              placement: "topRight",
+              showProgress: true,
+              duration: 5,
+            });
             break;
           case 500:
-            message.error("Erreur serveur. Veuillez réessayer plus tard.");
+            notification.error({
+              message: "Erreur serveur",
+              description: "Erreur serveur. Veuillez réessayer plus tard.",
+              placement: "topRight",
+              showProgress: true,
+              duration: 5,
+            });
             break;
           default:
-            message.error(
-              errorData.message || "Erreur lors de la création de l'annonce"
-            );
+            notification.error({
+              message: "Erreur",
+              description:
+                errorData.message || "Erreur lors de la création de l'annonce.",
+              placement: "topRight",
+              showProgress: true,
+              duration: 5,
+            });
         }
       } else {
-        message.error(
-          "Erreur de connexion. Veuillez vérifier votre connexion internet."
-        );
+        notification.error({
+          message: "Erreur de connexion",
+          description:
+            "Veuillez vérifier votre connexion internet ou réessayer plus tard.",
+          placement: "topRight",
+          showProgress: true,
+          duration: 5,
+        });
       }
     } finally {
       setLoading(false);
@@ -351,7 +391,7 @@ const CreationAnnonce = () => {
       caution: "",
       meuble: false,
       negociable: false,
-      disponible: true
+      disponible: true,
     });
     setFileList([]);
     setCurrentStep(0);
@@ -364,15 +404,6 @@ const CreationAnnonce = () => {
     message.info("Retour à la liste des annonces...");
     navigate(ANNONCES_BAILLEUR);
   };
-
-  // const uploadProps = {
-  //   fileList,
-  //   onChange: ({ fileList: newFileList }) => setFileList(newFileList),
-  //   beforeUpload: () => false,
-  //   multiple: true,
-  //   accept: "image/*",
-  //   maxCount: 10,
-  // };
 
   const uploadProps = {
     fileList,
@@ -428,8 +459,11 @@ const CreationAnnonce = () => {
   };
 
   const shouldShowChambres = () => {
-      
-    return formData.typeDeLogement === "APPARTEMENT" || formData.typeDeLogement === "MAISON" ||  formData.typeDeLogement === "STUDIO";
+    return (
+      formData.typeDeLogement === "APPARTEMENT" ||
+      formData.typeDeLogement === "MAISON" ||
+      formData.typeDeLogement === "STUDIO"
+    );
   };
 
   // Fonctions pour l'aperçu
@@ -488,7 +522,9 @@ const CreationAnnonce = () => {
                   <Select
                     placeholder="Sélectionner le type"
                     value={formData.typeDeLogement}
-                    onChange={(value) => handleInputChange("type", value)}
+                    onChange={(value) =>
+                      handleInputChange("typeDeLogement", value)
+                    }
                     className="creation-annonce__form-select"
                     size="large"
                   >
@@ -581,7 +617,9 @@ const CreationAnnonce = () => {
                       className="creation-annonce__form-input creation-annonce__form-input--number"
                       size="large"
                       value={formData.nombreDeChambres}
-                      onChange={(value) => handleInputChange("nombreDeChambres", value)}
+                      onChange={(value) =>
+                        handleInputChange("nombreDeChambres", value)
+                      }
                     />
                   </div>
                 </Col>
@@ -597,7 +635,9 @@ const CreationAnnonce = () => {
                     className="creation-annonce__form-input creation-annonce__form-input--number"
                     size="large"
                     value={formData.salleDeBains}
-                    onChange={(value) => handleInputChange("salleDeBains", value)}
+                    onChange={(value) =>
+                      handleInputChange("salleDeBains", value)
+                    }
                   />
                 </div>
               </Col>
@@ -858,7 +898,7 @@ const CreationAnnonce = () => {
                         Type:
                       </Text>
                       <Text className="creation-annonce__summary-value">
-                        {formData.type}
+                        {formData.typeDeLogement}
                       </Text>
                     </div>
                   </Col>
@@ -1029,10 +1069,7 @@ const CreationAnnonce = () => {
           className="creation-annonce__steps"
         />
         <div className="creation-annonce__step-info">
-          <Text className="creation-annonce__step-description">
-            Étape {currentStep + 1} sur {steps.length}:{" "}
-            {steps[currentStep].description}
-          </Text>
+          <Text className="creation-annonce__step-description"></Text>
         </div>
       </div>
 
@@ -1059,13 +1096,6 @@ const CreationAnnonce = () => {
           <Col>
             {currentStep < steps.length - 1 ? (
               <Space>
-                {/* <Button
-                  icon={<EyeOutlined />}
-                  onClick={() => handlePreview("modal")}
-                  className="creation-annonce__nav-button creation-annonce__nav-button--preview"
-                >
-                  Aperçu
-                </Button> */}
                 <Button
                   type="primary"
                   onClick={nextStep}
