@@ -22,10 +22,7 @@ const ROUTES = {
 
   // endpoints Administrateur
   ANNONCES_ADMIN: "/admin/annonces",
-  ANNONCES_ACTIVES_ADMIN: "/admin/annonces/actives",
   ANNONCES_EN_ATTENTES_ADMIN: "/admin/annonces/en-attente",
-  ANNONCES_A_VALIDER_ADMIN: "/admin/annonces/a-valider",
-  ANNONCES_A_REFUSER_ADMIN: "/admin/annonces/a-refuser",
   TOUTES_ANNONCES_ADMIN: "/admin/annonces/toutes",
   DETAIL_ANNONCE_ADMIN: "/admin/annonces/:id",
 
