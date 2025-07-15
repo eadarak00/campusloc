@@ -1,0 +1,459 @@
+/* Aperçu Annonce Styles */
+.apercu-annonce {
+  background: #f5f5f5;
+  min-height: 100vh;
+  padding: 0;
+}
+
+.apercu-annonce__header {
+  background: white;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e8e8e8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.apercu-annonce__header-left button {
+  font-size: 16px;
+  color: #666;
+  padding: 8px 16px;
+}
+
+.apercu-annonce__header-right .ant-space {
+  gap: 8px;
+}
+
+.apercu-annonce__content {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Galerie photos */
+.apercu-annonce__gallery {
+  margin-bottom: 24px;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.apercu-annonce__gallery .ant-card-body {
+  padding: 0;
+}
+
+.apercu-annonce__carousel-item {
+  height: 400px;
+  position: relative;
+  overflow: hidden;
+}
+
+.apercu-annonce__carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.apercu-annonce__carousel-dots {
+  bottom: 20px;
+}
+
+.apercu-annonce__carousel-dots .ant-carousel-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  border: 2px solid white;
+}
+
+.apercu-annonce__carousel-dots .ant-carousel-dot.ant-carousel-dot-active {
+  background: white;
+}
+
+.apercu-annonce__no-photos {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  border-radius: 8px;
+}
+
+/* Informations principales */
+.apercu-annonce__main-info {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.apercu-annonce__title-section {
+  margin-bottom: 24px;
+}
+
+.apercu-annonce__title-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.apercu-annonce__type-tag {
+  font-size: 14px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: none;
+}
+
+.apercu-annonce__date {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.apercu-annonce__title {
+  margin: 0 0 12px 0 !important;
+  font-size: 28px;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.3;
+}
+
+.apercu-annonce__location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+}
+
+.apercu-annonce__location-icon {
+  font-size: 16px;
+  color: #a0744a;
+}
+
+.apercu-annonce__location-text {
+  font-size: 16px;
+}
+
+/* Prix */
+.apercu-annonce__price-section {
+  margin: 24px 0;
+}
+
+.apercu-annonce__main-price {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.apercu-annonce__price-value {
+  margin: 0 !important;
+  font-size: 32px;
+  font-weight: 700;
+  color: #a0744a;
+}
+
+.apercu-annonce__price-period {
+  font-size: 18px;
+  color: #666;
+}
+
+.apercu-annonce__negotiable-tag {
+  margin-left: 8px;
+  border-radius: 20px;
+  font-size: 12px;
+  padding: 2px 8px;
+}
+
+.apercu-annonce__additional-costs {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.apercu-annonce__cost-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Caractéristiques */
+.apercu-annonce__characteristics {
+  margin: 24px 0;
+}
+
+.apercu-annonce__section-title {
+  margin: 0 0 16px 0 !important;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.apercu-annonce__characteristic-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  height: 100%;
+}
+
+.apercu-annonce__characteristic-icon {
+  font-size: 20px;
+  color: #a0744a;
+  min-width: 20px;
+}
+
+.apercu-annonce__characteristic-content {
+  flex: 1;
+}
+
+.apercu-annonce__characteristic-label {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.apercu-annonce__characteristic-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* Options */
+.apercu-annonce__options {
+  margin: 24px 0;
+}
+
+.apercu-annonce__option-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.apercu-annonce__option-icon {
+  font-size: 16px;
+}
+
+.apercu-annonce__option-icon--yes {
+  color: #52c41a;
+}
+
+.apercu-annonce__option-icon--no {
+  color: #ff4d4f;
+}
+
+/* Description */
+.apercu-annonce__description {
+  margin: 24px 0;
+}
+
+.apercu-annonce__description-text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  margin: 0;
+}
+
+/* Sidebar */
+.apercu-annonce__contact-card,
+.apercu-annonce__location-card,
+.apercu-annonce__cost-summary {
+  margin-bottom: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Carte contact */
+.apercu-annonce__contact-title {
+  margin: 0 0 16px 0 !important;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.apercu-annonce__contact-info {
+  margin-bottom: 20px;
+}
+
+.apercu-annonce__contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 8px 0;
+}
+
+.apercu-annonce__contact-icon {
+  font-size: 16px;
+  color: #a0744a;
+  min-width: 16px;
+}
+
+.apercu-annonce__contact-button {
+  background: #a0744a;
+  border-color: #a0744a;
+  border-radius: 8px;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.apercu-annonce__contact-button:hover {
+  background: #8b6441;
+  border-color: #8b6441;
+}
+
+/* Carte localisation */
+.apercu-annonce__location-title {
+  margin: 0 0 16px 0 !important;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.apercu-annonce__map-placeholder {
+  background: #f8f9fa;
+  border: 2px dashed #d9d9d9;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  color: #999;
+}
+
+.apercu-annonce__map-icon {
+  font-size: 48px;
+  color: #d9d9d9;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.apercu-annonce__map-address {
+  display: block;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Récapitulatif des coûts */
+.apercu-annonce__cost-title {
+  margin: 0 0 16px 0 !important;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.apercu-annonce__cost-breakdown {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.apercu-annonce__cost-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.apercu-annonce__cost-row:last-child {
+  margin-bottom: 0;
+}
+
+.apercu-annonce__cost-row--total {
+  padding-top: 12px;
+  border-top: 1px solid #e8e8e8;
+  font-size: 16px;
+}
+
+.apercu-annonce__total-price {
+  color: #a0744a;
+  font-size: 18px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .apercu-annonce__header {
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 12px;
+    position: static;
+  }
+
+  .apercu-annonce__header-left,
+  .apercu-annonce__header-right {
+    width: 100%;
+  }
+
+  .apercu-annonce__header-right {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .apercu-annonce__content {
+    padding: 16px;
+  }
+
+  .apercu-annonce__carousel-item {
+    height: 250px;
+  }
+
+  .apercu-annonce__title {
+    font-size: 24px !important;
+  }
+
+  .apercu-annonce__price-value {
+    font-size: 28px !important;
+  }
+
+  .apercu-annonce__main-price {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .apercu-annonce__additional-costs {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .apercu-annonce__characteristic-item {
+    padding: 12px;
+  }
+
+  .apercu-annonce__characteristic-value {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .apercu-annonce__header {
+    padding: 8px 12px;
+  }
+
+  .apercu-annonce__content {
+    padding: 12px;
+  }
+
+  .apercu-annonce__carousel-item {
+    height: 200px;
+  }
+
+  .apercu-annonce__title {
+    font-size: 20px !important;
+  }
+
+  .apercu-annonce__price-value {
+    font-size: 24px !important;
+  }
+}

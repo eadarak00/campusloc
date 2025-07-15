@@ -22,7 +22,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import sn.uasz.m1.core.base.BaseEntity;
 
-
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -62,11 +61,11 @@ public class Utilisateur extends BaseEntity implements UserDetails {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    //Implémentation des méthodes de UserDetails
+    // Implémentation des méthodes de UserDetails
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(() -> role.getNom());
+        return Collections.singleton(() -> "ROLE_" + role.getNom()); // ROLE_ADMIN
     }
 
     @Override
@@ -81,7 +80,7 @@ public class Utilisateur extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; 
+        return true;
     }
 
     @Override

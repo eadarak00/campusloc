@@ -12,12 +12,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -48,15 +45,6 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final UtilisateurService utilisateurService;
     private final CodeValidationService validationService;
-
-    // Enregistrement (inscription)
-    // @PostMapping("/inscription")
-    // public ResponseEntity<UtilisateurResponseDTO> register(@Valid @RequestBody
-    // RegisterDTO dto) {
-    // Utilisateur utilisateur = utilisateurService.creerUtilisateur(dto);
-    // return ResponseEntity.status(HttpStatus.CREATED)
-    // .body(utilisateurService.mapToResponseDTO(utilisateur));
-    // }
 
     @PostMapping("/inscription")
     public ResponseEntity<UtilisateurResponseDTO> register(@Valid @RequestBody RegisterDTO dto) {
@@ -95,11 +83,42 @@ public class AuthController {
         }
     }
 
+
     @PostMapping("/inscription-bailleur")
-    public ResponseEntity<UtilisateurResponseDTO> registerBailleur(@Valid @RequestBody RegisterDTO dto) {
-        Utilisateur utilisateur = utilisateurService.creerUtilisateur(dto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(utilisateurService.mapToResponseDTO(utilisateur));
+    public ResponseEntity<UtilisateurResponseDTO> creerBailleur(@Valid @RequestBody RegisterDTO dto) {
+        final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
+        // 1. Log début
+        logger.info("Tentative d'inscription d'un bailleur avec l'email: {}", dto.getEmail());
+        logger.debug("Données reçues - Prénom: {}, Nom: {}, Téléphone: {}",
+                dto.getPrenom(), dto.getNom(), dto.getTelephone());
+
+        try {
+            // 2. Création du bailleur
+            Utilisateur utilisateur = utilisateurService.creerBailleur(dto);
+
+            // 3. Log succès
+            logger.info("Bailleur inscrit avec succès - ID: {}, Email: {}",
+                    utilisateur.getId(), utilisateur.getEmail());
+
+            // 4. Conversion DTO et réponse
+            UtilisateurResponseDTO responseDTO = utilisateurService.mapToResponseDTO(utilisateur);
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+
+        } catch (DataIntegrityViolationException e) {
+            // 5. Conflit de données (email ou téléphone existant)
+            logger.error("Erreur d'intégrité - Email ou téléphone existant", e);
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Un bailleur existe déjà avec cet email ou ce numéro de téléphone");
+
+        } catch (Exception e) {
+            // 6. Erreur technique
+            logger.error("Erreur technique lors de l'inscription du bailleur", e);
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Une erreur technique est survenue lors de l'inscription du bailleur");
+        }
     }
 
     @PostMapping("/valider")
@@ -219,13 +238,4 @@ public class AuthController {
 
         return ResponseEntity.ok(response);
     }
-
-    // Profil utilisateur connecté
-    // @GetMapping("/me")
-    // public ResponseEntity<UtilisateurResponseDTO> me(Authentication
-    // authentication) {
-    // String email = authentication.getName();
-    // Utilisateur utilisateur = utilisateurService.trouverParEmail(email);
-    // return ResponseEntity.ok(utilisateurService.mapToResponseDTO(utilisateur));
-    // }
 }

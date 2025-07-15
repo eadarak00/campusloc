@@ -12,4 +12,5 @@ import sn.uasz.m1.modules.user.entity.Utilisateur;
 public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> {
     Optional<Utilisateur> findByEmail(String email);
     boolean existsByEmail(String email);
+    boolean existsByIdAndActifTrue(Long id);
 } 
