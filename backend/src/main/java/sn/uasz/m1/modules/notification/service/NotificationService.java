@@ -3,6 +3,7 @@ package sn.uasz.m1.modules.notification.service;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import sn.uasz.m1.core.utils.SessionManagerUtils;
 import sn.uasz.m1.modules.notification.dto.NotificationCreateDTO;
 import sn.uasz.m1.modules.notification.dto.NotificationResponseDTO;
 import sn.uasz.m1.modules.notification.entity.Notification;
@@ -16,21 +17,29 @@ import java.util.Optional;
 /**
  * Service de gestion des notifications dans l'application.
  * <p>
- * Fournit des méthodes pour créer, récupérer, mettre à jour et supprimer des notifications pour les utilisateurs.
+ * Fournit des méthodes pour créer, récupérer, mettre à jour et supprimer des
+ * notifications pour les utilisateurs.
  * </p>
  *
  * <ul>
- *   <li>{@link #creerNotification(NotificationCreateDTO, Utilisateur)} : Crée une nouvelle notification pour un utilisateur.</li>
- *   <li>{@link #getNotificationsUtilisateur(Long)} : Récupère toutes les notifications d'un utilisateur, triées par date d'envoi décroissante.</li>
- *   <li>{@link #getNotificationsNonLues(Long)} : Récupère toutes les notifications non lues d'un utilisateur.</li>
- *   <li>{@link #marquerCommeLue(Long)} : Marque une notification comme lue.</li>
- *   <li>{@link #supprimerNotification(Long)} : Supprime une notification par son identifiant.</li>
- *   <li>{@link #supprimerNotificationsUtilisateur(Long)} : Supprime toutes les notifications d'un utilisateur.</li>
+ * <li>{@link #creerNotification(NotificationCreateDTO, Utilisateur)} : Crée une
+ * nouvelle notification pour un utilisateur.</li>
+ * <li>{@link #getNotificationsUtilisateur(Long)} : Récupère toutes les
+ * notifications d'un utilisateur, triées par date d'envoi décroissante.</li>
+ * <li>{@link #getNotificationsNonLues(Long)} : Récupère toutes les
+ * notifications non lues d'un utilisateur.</li>
+ * <li>{@link #marquerCommeLue(Long)} : Marque une notification comme lue.</li>
+ * <li>{@link #supprimerNotification(Long)} : Supprime une notification par son
+ * identifiant.</li>
+ * <li>{@link #supprimerNotificationsUtilisateur(Long)} : Supprime toutes les
+ * notifications d'un utilisateur.</li>
  * </ul>
  *
  * <p>
- * Utilise en interne {@link NotificationRepository} pour les opérations de persistance et assure la conversion
- * entre les entités {@link Notification} et les objets de transfert de données {@link NotificationResponseDTO}.
+ * Utilise en interne {@link NotificationRepository} pour les opérations de
+ * persistance et assure la conversion
+ * entre les entités {@link Notification} et les objets de transfert de données
+ * {@link NotificationResponseDTO}.
  * </p>
  *
  */
@@ -51,6 +60,36 @@ public class NotificationService {
 
         Notification saved = notificationRepository.save(notification);
         return mapToDTO(saved);
+    }
+
+    /**
+     * Récupère la liste des notifications pour l'utilisateur actuellement authentifié.
+     * <p>
+     * Cette méthode obtient l'identifiant de l'utilisateur courant à partir du gestionnaire de session,
+     * récupère toutes les notifications adressées à cet utilisateur depuis le dépôt,
+     * les trie par date d'envoi décroissante, puis mappe chaque entité notification
+     * vers sa représentation DTO correspondante.
+     * </p>
+     *
+     * @return une liste de {@link NotificationResponseDTO} représentant les notifications
+     *         de l'utilisateur actuellement authentifié, triées de la plus récente à la plus ancienne.
+     */
+    public List<NotificationResponseDTO> getNotificationsCurrentUtilisateur() {
+        Long currentUserID = SessionManagerUtils.getCurrentAuthenticatedUserID();
+        return notificationRepository
+                .findByDestinataireIdOrderByDateEnvoieDesc(currentUserID)
+                .stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
+
+    public List<NotificationResponseDTO> getNotificationsCurrentUtilisateurNonLues() {
+         Long currentUserID = SessionManagerUtils.getCurrentAuthenticatedUserID();
+        return notificationRepository
+                .findByDestinataireIdAndLueFalseOrderByDateEnvoieDesc(currentUserID)
+                .stream()
+                .map(this::mapToDTO)
+                .toList();
     }
 
     // Récupérer toutes les notifications d’un utilisateur
@@ -76,20 +115,18 @@ public class NotificationService {
         Optional<Notification> notifOpt = notificationRepository.findById(notifId);
         notifOpt.ifPresent(notif -> {
             notif.setLue(true);
+            notif.setModifierA(LocalDateTime.now());
             notificationRepository.save(notif);
         });
     }
 
     // Supprimer une notification
     public void supprimerNotification(Long notifId) {
-        notificationRepository.deleteById(notifId);
-    }
-
-    // Supprimer toutes les notifications d’un utilisateur
-    public void supprimerNotificationsUtilisateur(Long userId) {
-        List<Notification> notifications = notificationRepository
-                .findByDestinataireIdOrderByDateEnvoieDesc(userId);
-        notificationRepository.deleteAll(notifications);
+        Optional<Notification> notifOpt = notificationRepository.findById(notifId);
+        notifOpt.ifPresent(notif -> {
+            notif.setSupprime(true);
+            notif.setSupprimeA(LocalDateTime.now());
+        });
     }
 
     // Mapper Notification → NotificationResponseDTO
