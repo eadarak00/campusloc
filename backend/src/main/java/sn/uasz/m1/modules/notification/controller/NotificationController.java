@@ -43,6 +43,19 @@ public class NotificationController {
         return ResponseEntity.status(201).body(responseDTO);
     }
 
+    @GetMapping
+    public ResponseEntity<List<NotificationResponseDTO>> getNotificationsUtilisateurCurrent() {
+        List<NotificationResponseDTO> list = notificationService.getNotificationsCurrentUtilisateur();
+        return ResponseEntity.ok(list);
+    }
+
+    // Liste des notifications non lues
+    @GetMapping("/non-lues")
+    public ResponseEntity<List<NotificationResponseDTO>> getNotificationsCurrentNonLues() {
+        List<NotificationResponseDTO> list = notificationService.getNotificationsCurrentUtilisateurNonLues();
+        return ResponseEntity.ok(list);
+    }
+
     // Liste des notifications d’un utilisateur
     @GetMapping("/utilisateur/{userId}")
     public ResponseEntity<List<NotificationResponseDTO>> getNotificationsUtilisateur(@PathVariable Long userId) {
@@ -71,10 +84,5 @@ public class NotificationController {
         return ResponseEntity.noContent().build();
     }
 
-    // Supprimer toutes les notifications d’un utilisateur
-    @DeleteMapping("/utilisateur/{userId}")
-    public ResponseEntity<Void> supprimerToutes(@PathVariable Long userId) {
-        notificationService.supprimerNotificationsUtilisateur(userId);
-        return ResponseEntity.noContent().build();
-    }
+
 }
