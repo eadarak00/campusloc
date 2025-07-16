@@ -18,7 +18,4 @@ public class NotificationCreateDTO {
 
     @NotNull(message = "L'identifiant du destinataire est requis.")
     private Utilisateur destinataire;
-
-    @NotBlank(message = "Le type de notification est requis.")
-    private String type;
 }
