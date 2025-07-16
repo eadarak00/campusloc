@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import sn.uasz.m1.modules.user.entity.Utilisateur;
 
 @Getter
 @Setter
@@ -16,7 +17,7 @@ public class NotificationCreateDTO {
     private String message;
 
     @NotNull(message = "L'identifiant du destinataire est requis.")
-    private Long destinataireId;
+    private Utilisateur destinataire;
 
     @NotBlank(message = "Le type de notification est requis.")
     private String type;
