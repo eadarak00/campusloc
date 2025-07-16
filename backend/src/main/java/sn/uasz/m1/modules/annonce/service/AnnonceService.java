@@ -9,14 +9,13 @@ import java.util.stream.Collectors;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import sn.uasz.m1.core.utils.SessionManagerUtils;
 import sn.uasz.m1.modules.annonce.dto.AnnonceCreateDTO;
 import sn.uasz.m1.modules.annonce.dto.AnnonceResponseDTO;
 import sn.uasz.m1.modules.annonce.dto.AnnonceUpdateDTO;
@@ -42,7 +41,7 @@ public class AnnonceService {
         try {
             log.info("Tentative de création d'annonce par {}", dto.toString());
 
-            Utilisateur proprietaire = getCurrentAuthenticatedUser();
+            Utilisateur proprietaire = SessionManagerUtils.getCurrentAuthenticatedUser();
 
             if (!estBailleur(proprietaire)) {
                 log.warn("Tentative de création par un non-bailleur: {}", proprietaire.getEmail());
@@ -323,13 +322,13 @@ public class AnnonceService {
     }
 
     // == methodes utilitaire ==
-    private Utilisateur getCurrentAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AccessDeniedException("Utilisateur non authentifié");
-        }
-        return (Utilisateur) authentication.getPrincipal();
-    }
+    // private Utilisateur getCurrentAuthenticatedUser() {
+    //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    //     if (authentication == null || !authentication.isAuthenticated()) {
+    //         throw new AccessDeniedException("Utilisateur non authentifié");
+    //     }
+    //     return (Utilisateur) authentication.getPrincipal();
+    // }
 
     private void validateAnnonceDTO(AnnonceCreateDTO dto) {
         if (dto == null) {
