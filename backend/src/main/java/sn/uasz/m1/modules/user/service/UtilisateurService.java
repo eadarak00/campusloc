@@ -254,4 +254,9 @@ public class UtilisateurService {
         return utilisateurRepo.findByEmail(email).isPresent();
     }
 
+      public  Long getAdminID(){
+        Utilisateur user = trouverParEmail("admin@campusloc.sn");
+        return user.getId();
+    }
+
 }
