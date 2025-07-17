@@ -30,15 +30,16 @@ import sn.uasz.m1.modules.notification.enums.NotificationType;
 import sn.uasz.m1.modules.notification.service.NotificationService;
 import sn.uasz.m1.modules.user.entity.Utilisateur;
 import sn.uasz.m1.modules.user.repository.UtilisateurRepository;
+import sn.uasz.m1.modules.user.service.UtilisateurService;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AnnonceService {
     private final AnnonceRepository annonceRepository;
+    private final UtilisateurService uService;
     private final UtilisateurRepository uRepository;
     private final NotificationService notificationService;
-    private final SessionManagerUtils sessionManagerUtils;
 
     @PreAuthorize("hasRole('BAILLEUR')")
     @Transactional
@@ -61,7 +62,7 @@ public class AnnonceService {
 
             // Création d'une notification
             NotificationCreateDTO notificationDTO = new NotificationCreateDTO();
-            notificationDTO.setDestinataireId(sessionManagerUtils.getAdminID());
+            notificationDTO.setDestinataireId(uService.getAdminID());
             notificationDTO.setTitre("Annonce à valider : " + saved.getTitre());
             notificationDTO.setMessage(String.format(
                     "L'annonce \"%s\" a été créée par %s (%s). Type : %s | Ville : %s.",
