@@ -9,6 +9,7 @@ import sn.uasz.m1.modules.notification.dto.NotificationResponseDTO;
 import sn.uasz.m1.modules.notification.entity.Notification;
 import sn.uasz.m1.modules.notification.repository.NotificationRepository;
 import sn.uasz.m1.modules.user.entity.Utilisateur;
+import sn.uasz.m1.modules.user.service.UtilisateurService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -48,31 +49,40 @@ import java.util.Optional;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final UtilisateurService uService;
 
     // Créer une nouvelle notification à partir du DTO
-    public NotificationResponseDTO creerNotification(NotificationCreateDTO dto, Utilisateur destinataire) {
+    public NotificationResponseDTO creerNotification(NotificationCreateDTO dto) {
+        Utilisateur user = uService.trouverParId(dto.getDestinataireId());
         Notification notification = new Notification();
         notification.setTitre(dto.getTitre());
         notification.setMessage(dto.getMessage());
-        notification.setDestinataire(destinataire);
+        notification.setDestinataire(user);
         notification.setLue(false);
         notification.setDateEnvoie(LocalDateTime.now());
+        notification.setReferenceId(dto.getReferenceId());
+        notification.setType(dto.getType());
 
         Notification saved = notificationRepository.save(notification);
         return mapToDTO(saved);
     }
 
     /**
-     * Récupère la liste des notifications pour l'utilisateur actuellement authentifié.
+     * Récupère la liste des notifications pour l'utilisateur actuellement
+     * authentifié.
      * <p>
-     * Cette méthode obtient l'identifiant de l'utilisateur courant à partir du gestionnaire de session,
-     * récupère toutes les notifications adressées à cet utilisateur depuis le dépôt,
+     * Cette méthode obtient l'identifiant de l'utilisateur courant à partir du
+     * gestionnaire de session,
+     * récupère toutes les notifications adressées à cet utilisateur depuis le
+     * dépôt,
      * les trie par date d'envoi décroissante, puis mappe chaque entité notification
      * vers sa représentation DTO correspondante.
      * </p>
      *
-     * @return une liste de {@link NotificationResponseDTO} représentant les notifications
-     *         de l'utilisateur actuellement authentifié, triées de la plus récente à la plus ancienne.
+     * @return une liste de {@link NotificationResponseDTO} représentant les
+     *         notifications
+     *         de l'utilisateur actuellement authentifié, triées de la plus récente
+     *         à la plus ancienne.
      */
     public List<NotificationResponseDTO> getNotificationsCurrentUtilisateur() {
         Long currentUserID = SessionManagerUtils.getCurrentAuthenticatedUserID();
@@ -84,7 +94,7 @@ public class NotificationService {
     }
 
     public List<NotificationResponseDTO> getNotificationsCurrentUtilisateurNonLues() {
-         Long currentUserID = SessionManagerUtils.getCurrentAuthenticatedUserID();
+        Long currentUserID = SessionManagerUtils.getCurrentAuthenticatedUserID();
         return notificationRepository
                 .findByDestinataireIdAndLueFalseOrderByDateEnvoieDesc(currentUserID)
                 .stream()
@@ -137,9 +147,12 @@ public class NotificationService {
         dto.setMessage(n.getMessage());
         dto.setLue(n.isLue());
         dto.setDateEnvoie(n.getDateEnvoie());
+        dto.setReferenceId(n.getReferenceId());
+        dto.setType(dto.getType());
         if (n.getDestinataire() != null) {
             dto.setDestinataireId(n.getDestinataire().getId());
-            dto.setDestinataireNom(n.getDestinataire().getNom());
+            dto.setDestinataireNom(n.getDestinataire().getPrenom() + " " + n.getDestinataire().getNom());
+            dto.setDestinataireEmail(n.getDestinataire().getEmail());
         }
         return dto;
     }
