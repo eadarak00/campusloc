@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import sn.uasz.m1.modules.user.entity.Utilisateur;
+import sn.uasz.m1.modules.notification.enums.NotificationType;
 
 @Getter
 @Setter
@@ -17,5 +17,9 @@ public class NotificationCreateDTO {
     private String message;
 
     @NotNull(message = "L'identifiant du destinataire est requis.")
-    private Utilisateur destinataire;
+    private Long destinataireId;
+
+    private NotificationType type;
+
+    private Long referenceId;
 }
