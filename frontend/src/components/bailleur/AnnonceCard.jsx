@@ -96,8 +96,8 @@ const AnnonceCard = ({ annonce }) => {
 
   const formatPrice = (price, charges = 0) => {
     return charges > 0
-      ? `${price}€/mois + ${charges}€ charges`
-      : `${price}€/mois`;
+      ? `${price}f/mois + ${charges}f charges`
+      : `${price}f/mois`;
   };
 
   const status = getStatusConfig(annonce.statut);
