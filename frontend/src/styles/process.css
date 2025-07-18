@@ -1,5 +1,6 @@
 .ps-container {
   padding: 40px 20px;
+  background: var(--color-bg) !important;
 }
 
 .ps-wrapper {
