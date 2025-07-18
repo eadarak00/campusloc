@@ -1,0 +1,53 @@
+.ps-container {
+  padding: 40px 20px;
+}
+
+.ps-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+
+.ps-step {
+  background: white;
+  padding: 30px;
+  border-left: 4px solid #ddd;
+}
+
+.ps-number {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.ps-title {
+  font-size: 18px;
+  color: #333;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+}
+
+.ps-description {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
+}
+
+@media (min-width: 768px) {
+  .ps-container {
+    padding: 60px 40px;
+  }
+
+  .ps-wrapper {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+
+  .ps-step {
+    padding: 40px 30px;
+  }
+}
