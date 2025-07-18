@@ -1,0 +1,229 @@
+.parallax-container {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.parallax__background-layer {
+  position: absolute;
+  top: -20%;
+  left: 0;
+  right: 0;
+  bottom: -20%;
+  background: linear-gradient(
+      rgba(0, 0, 0, 0.4), 
+      rgba(0, 0, 0, 0.4)
+    ),
+    /* linear-gradient(
+      135deg,
+      rgba(44, 62, 80, 0.7) 0%,
+      rgba(52, 152, 219, 0.6) 30%,
+      rgba(155, 89, 182, 0.5) 70%,
+      rgba(230, 126, 34, 0.7) 100%
+    ), */
+    url("../assets/img/para1.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  z-index: 1;
+}
+
+
+.parallax__content-layer {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 20px;
+  max-width: 100%;
+}
+
+.parallax__hero-content {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  border-radius: 25px;
+  padding: 30px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.parallax__main-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 16px;
+  line-height: 1.3;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.parallax__subtitle {
+  font-size: 16px;
+  color: #f8f9fa;
+  margin-bottom: 30px;
+  line-height: 1.5;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.parallax__button-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.parallax_search-btn {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #2c3e50;
+  height: 45px;
+  border-radius: 25px;
+  padding: 0 24px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.parallax__search-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.parallax__publish-btn {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  border: none;
+  height: 45px;
+  border-radius: 25px;
+  padding: 0 24px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.publish-btn:hover {
+  background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+}
+
+/* .parallax__content-section {
+  padding: 80px 20px;
+  background: #f8f9fa;
+}
+
+.parallax__content-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.parallax__content-wrapper h2 {
+  font-size: 28px;
+  color: #2c3e50;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+.parallax__content-wrapper p {
+  font-size: 16px;
+  color: #5a6c7d;
+  line-height: 1.6;
+  margin-bottom: 20px; 
+}
+*/
+
+/* Responsive Design - Mobile First */
+@media (min-width: 480px) {
+  .parallax__main-title {
+    font-size: 28px;
+  }
+
+  .parallax__subtitle {
+    font-size: 17px;
+  }
+
+  .parallax__hero-content {
+    padding: 40px 30px;
+  }
+}
+
+@media (min-width: 768px) {
+  .parallax__main-title {
+    font-size: 36px;
+  }
+
+  .parallax__subtitle {
+    font-size: 18px;
+  }
+
+  .parallax__hero-content {
+    padding: 50px 40px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .parallax__button-container {
+    gap: 20px;
+  }
+
+  /* .parallax__content-wrapper h2 {
+    font-size: 32px;
+  } */
+}
+
+@media (min-width: 1024px) {
+  .parallax__main-title {
+    font-size: 42px;
+  }
+
+  .parallax__subtitle {
+    font-size: 20px;
+  }
+
+  .parallax_hero-content {
+    padding: 60px 50px;
+    max-width: 700px;
+  }
+
+  .parallax__content-section {
+    padding: 100px 40px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .parallax__main-title {
+    font-size: 48px;
+  }
+
+  .parallax__hero-content {
+    max-width: 800px;
+  }
+}
+
+/* Animations pour améliorer l'expérience */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.parallax__hero-content {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+/* Optimisations pour les appareils tactiles */
+@media (hover: none) {
+  .parallax__search-btn:hover,
+  .parallax__publish-btn:hover {
+    transform: none;
+  }
+}
