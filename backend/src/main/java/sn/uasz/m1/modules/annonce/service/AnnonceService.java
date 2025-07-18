@@ -407,6 +407,14 @@ public class AnnonceService {
             throw new IllegalStateException("Annonce corrompue: bailleur manquant pour l'id: " + id);
     }
 
+    public List<AnnonceResponseDTO> getSixDernieresAnnonces() {
+        List<Annonce> annonces = annonceRepository
+                .findTop6ByStatutAndSupprimeFalseOrderByCreerADesc(StatutAnnonce.ACCEPTER);
+        return annonces.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
     // == Definition des Mapping de maniere manuelle ==
     private Annonce mapDtoToEntity(AnnonceCreateDTO dto, Utilisateur proprietaire) {
         return Annonce.builder()
