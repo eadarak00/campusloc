@@ -74,3 +74,8 @@ export const getAllInactivesAnnonces = () => {
 export const getPendingAnnonces = () => {
   return api.get(`${ANNONCE_BASE}/en-attente`)
 }
+
+// api/annonceAPI.js
+export const getAnnoncesRecentes = async () => {
+  return api.get(`${ANNONCE_BASE}/recentes`);
+};
