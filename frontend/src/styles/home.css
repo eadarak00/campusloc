@@ -1,0 +1,5 @@
+@import url("./global.css");
+
+.home__container{
+    background: var(--color-bg);
+}
