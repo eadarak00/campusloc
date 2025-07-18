@@ -52,4 +52,7 @@ public interface AnnonceRepository extends JpaRepository<Annonce, Long> {
                      @Param("minPrix") Double minPrix,
                      @Param("maxPrix") Double maxPrix);
 
+
+       List<Annonce> findTop6ByStatutAndSupprimeFalseOrderByCreerADesc(StatutAnnonce statut);
+
 }
