@@ -305,4 +305,11 @@ public class AnnonceController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/recentes")
+    public ResponseEntity<List<AnnonceResponseDTO>> getAnnoncesRecentes() {
+        List<AnnonceResponseDTO> recentes = annonceService.getSixDernieresAnnonces();
+        return ResponseEntity.ok(recentes);
+    }
+
 }
