@@ -5,6 +5,7 @@ const ROUTES = {
   INSCRIPTION: "/inscription",
   INSCRIPTION_BAILLEUR: "/inscription-bailleur",
   VALIDATION: "/validation",
+  ANNONCES: "/annonces",
 
   // Dashboards par rôle
   DASHBOARD_ADMIN: "/admin/dashboard",
