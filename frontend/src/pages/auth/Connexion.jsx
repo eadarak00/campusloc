@@ -266,6 +266,9 @@ const Connexion = () => {
           } else if (role === "ADMIN") {
             navigate(ROUTES.DASHBOARD_ADMIN);
             console.log("Redirection vers le dashboard administrateur");
+          } else if (role === "PROSPECT") {
+            navigate(ROUTES.DASHBOARD_PROSPECT);
+            console.log("Redirection vers l'accueil prospect");
           } 
           else {
             console.log("Redirection vers le dashboard");
