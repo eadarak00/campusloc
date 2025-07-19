@@ -20,6 +20,7 @@ import AnnonceAValider from "../pages/admin/AnnonceAValider";
 import AnnonceDetailsAdmin from "../pages/admin/AnnonceDetailsAdmin";
 import ListeAnnoncesAdmin from "../pages/admin/ListeAnnoncesAdmin";
 import AnnoncesPage from "../pages/Annonces";
+import ProspectLayout from "../layouts/ProspectLayout";
 
 const AppRouter = () => (
   <Router>
@@ -30,6 +31,25 @@ const AppRouter = () => (
         <Route path={ROUTES.CONNEXION} element={<Connexion />} />
         <Route path={ROUTES.INSCRIPTION} element={<Inscription />} />
         <Route path={ROUTES.ANNONCES} element={<AnnoncesPage />} />
+      </Route>
+
+       {/* Routes protégées pour prospecr */}
+      <Route
+        path="/prospect"
+        element={
+          <ProtectedRoute allowedRoles={["PROSPECT"]}>
+            <ProspectLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route
+         path={ROUTES.DASHBOARD_PROSPECT}
+         element = {<Home />}
+        />
+        <Route
+         path={ROUTES.ANNONCES_PROSPECT}
+         element = {<AnnoncesPage />}
+        />
       </Route>
 
       {/* Routes protégées pour bailleurs */}
