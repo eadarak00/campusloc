@@ -19,6 +19,7 @@ import AnnoncesAdmin from "../pages/admin/annonces-admin";
 import AnnonceAValider from "../pages/admin/AnnonceAValider";
 import AnnonceDetailsAdmin from "../pages/admin/AnnonceDetailsAdmin";
 import ListeAnnoncesAdmin from "../pages/admin/ListeAnnoncesAdmin";
+import AnnoncesPage from "../pages/Annonces";
 
 const AppRouter = () => (
   <Router>
@@ -28,6 +29,7 @@ const AppRouter = () => (
         <Route index element={<Home />} />
         <Route path={ROUTES.CONNEXION} element={<Connexion />} />
         <Route path={ROUTES.INSCRIPTION} element={<Inscription />} />
+        <Route path={ROUTES.ANNONCES} element={<AnnoncesPage />} />
       </Route>
 
       {/* Routes protégées pour bailleurs */}
