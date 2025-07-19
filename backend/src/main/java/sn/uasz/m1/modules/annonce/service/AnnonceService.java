@@ -415,6 +415,15 @@ public class AnnonceService {
                 .collect(Collectors.toList());
     }
 
+    public List<AnnonceResponseDTO> getAnnonceParType(TypeDeLogement typeLogement) {
+        return annonceRepository
+                .findTop6ByStatutAndTypeDeLogementAndSupprimeFalseOrderByCreerADesc(StatutAnnonce.ACCEPTER,
+                        typeLogement)
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
     // == Definition des Mapping de maniere manuelle ==
     private Annonce mapDtoToEntity(AnnonceCreateDTO dto, Utilisateur proprietaire) {
         return Annonce.builder()

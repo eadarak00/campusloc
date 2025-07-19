@@ -312,4 +312,11 @@ public class AnnonceController {
         return ResponseEntity.ok(recentes);
     }
 
+    @GetMapping("/recentes/type")
+    public ResponseEntity<List<AnnonceResponseDTO>> getAnnoncesRecentesParType(
+            @RequestParam("type") TypeDeLogement typeLogement) {
+        List<AnnonceResponseDTO> annonces = annonceService.getAnnonceParType(typeLogement);
+        return ResponseEntity.ok(annonces);
+    }
+
 }
