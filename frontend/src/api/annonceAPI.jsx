@@ -79,3 +79,10 @@ export const getPendingAnnonces = () => {
 export const getAnnoncesRecentes = async () => {
   return api.get(`${ANNONCE_BASE}/recentes`);
 };
+
+
+export const getAnnoncesRecentesParType = async (type) => {
+  return api.get(`${ANNONCE_BASE}/recentes/type`, {
+    params: { type }
+  });
+};
