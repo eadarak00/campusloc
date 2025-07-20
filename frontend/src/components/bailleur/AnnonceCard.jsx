@@ -9,6 +9,7 @@ import {
   Avatar,
   Modal,
   Image,
+  notification,
 } from "antd";
 import {
   ClockCircleOutlined,
@@ -31,12 +32,14 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { getImageUrl } from "../../api/ImageHelper";
 import { useNavigate } from "react-router-dom";
+import { ajouterFavori, supprimerFavori } from "../../api/favorisAPI";
 
 const { Title, Text } = Typography;
 
-const AnnonceCard = ({ annonce }) => {
+const AnnonceCard = ({ annonce, isFavorite = false, onFavoriteChange }) => {
   const navigate = useNavigate();
-  const [liked, setLiked] = useState(false);
+  const [liked, setLiked] = useState(isFavorite);
+  const [loadingFavorite, setLoadingFavorite] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -44,11 +47,164 @@ const AnnonceCard = ({ annonce }) => {
   const [isHovered, setIsHovered] = useState(false);
   const autoPlayRef = useRef(null);
 
+  const [notificationApi, contextHolder] = notification.useNotification();
+
+  // Mettre à jour l'état liked quand isFavorite change
+  useEffect(() => {
+    setLiked(isFavorite);
+  }, [isFavorite]);
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("fr-FR", {
       day: "numeric",
       month: "short",
     });
+  };
+
+  // Gérer les favoris
+  // const handleFavoriteToggle = async (e) => {
+  //   e.stopPropagation();
+
+  //   if (loadingFavorite) return;
+
+  //   setLoadingFavorite(true);
+
+  //   try {
+  //     if (liked) {
+  //       // Retirer des favoris
+  //       await supprimerFavori(annonce.id);
+  //       setLiked(false);
+  //       message.success("Retiré des favoris");
+
+  //       // Notifier le parent si une callback est fournie
+  //       if (onFavoriteChange) {
+  //         onFavoriteChange(annonce.id, false);
+  //       }
+  //     } else {
+  //       // Ajouter aux favoris
+  //       await ajouterFavori(annonce.id);
+  //       setLiked(true);
+  //       message.success("Ajouté aux favoris");
+
+  //       // Notifier le parent si une callback est fournie
+  //       if (onFavoriteChange) {
+  //         onFavoriteChange(annonce.id, true);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("Erreur lors de la gestion des favoris:", error);
+
+  //     // Messages d'erreur plus spécifiques
+  //     if (error.response?.status === 401) {
+  //       message.error("Vous devez être connecté pour gérer vos favoris");
+  //     } else if (error.response?.status === 404) {
+  //       message.error("Annonce introuvable");
+  //     } else {
+  //       message.error(
+  //         liked
+  //           ? "Erreur lors de la suppression du favori"
+  //           : "Erreur lors de l'ajout aux favoris"
+  //       );
+  //     }
+
+  //     // Ne pas changer l'état en cas d'erreur
+  //   } finally {
+  //     setLoadingFavorite(false);
+  //   }
+  // };
+
+  // const handleFavoriteToggle = async (e) => {
+  //   e.stopPropagation();
+  //   if (loadingFavorite) return;
+
+  //   setLoadingFavorite(true);
+
+  //   const action = liked ? supprimerFavori : ajouterFavori;
+  //   const successMessage = liked ? "Retiré des favoris" : "Ajouté aux favoris";
+  //   const errorMessage = liked
+  //     ? "Erreur lors de la suppression du favori"
+  //     : "Erreur lors de l'ajout aux favoris";
+
+  //   try {
+  //     await action(annonce.id);
+  //     setLiked(!liked);
+  //     message.success(successMessage);
+  //     if (onFavoriteChange) {
+  //       onFavoriteChange(annonce.id, !liked);
+  //     }
+  //   } catch (error) {
+  //     console.error("Erreur favoris:", error);
+
+  //     if (error?.response?.status === 401) {
+  //       message.error("Vous devez être connecté pour gérer vos favoris");
+  //     } else {
+  //       message.error(errorMessage);
+  //     }
+  //   } finally {
+  //     setLoadingFavorite(false);
+  //   }
+  // };
+
+  const handleFavoriteToggle = async (e) => {
+    e.stopPropagation();
+    if (loadingFavorite) return;
+
+    setLoadingFavorite(true);
+
+    const action = liked ? supprimerFavori : ajouterFavori;
+    const successMessage = liked
+      ? "Annonce retirée de vos favoris"
+      : "Annonce ajoutée à vos favoris";
+    const errorMessage = liked
+      ? "Erreur lors de la suppression du favori"
+      : "Erreur lors de l'ajout du favori";
+
+    try {
+      await action(annonce.id);
+      setLiked(!liked);
+
+      notificationApi.success({
+        message: "Favoris mis à jour",
+        description: successMessage,
+        placement: "topRight",
+      });
+
+      if (onFavoriteChange) {
+        onFavoriteChange(annonce.id, !liked);
+      }
+    } catch (error) {
+      console.error("Erreur favoris:", error);
+
+      if (error?.response?.status === 403) {
+        notificationApi.warning({
+          message: "Connexion requise",
+          description: "Vous devez être connecté pour gérer vos favoris.",
+          placement: "topRight",
+          showProgress: true,
+          duration: 4,
+        });
+
+        // Redirection après 2 secondes
+        setTimeout(() => {
+          navigate("/connexion");
+        }, 2000);
+      } else {
+        notificationApi.error({
+          message: "Erreur",
+          description: errorMessage,
+          placement: "topRight",
+          showProgress: true,
+          duration: 1.5,
+        });
+
+         // Redirection après 2 secondes
+        setTimeout(() => {
+          navigate("/connexion");
+        }, 2000);
+      }
+    } finally {
+      setLoadingFavorite(false);
+    }
   };
 
   const getStatusConfig = (status) => {
@@ -149,6 +305,8 @@ const AnnonceCard = ({ annonce }) => {
 
   return (
     <>
+      {contextHolder}
+
       <div className="group relative bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden border border-gray-100 w-80 h-96">
         {/* Section Image */}
         <div
@@ -248,7 +406,9 @@ const AnnonceCard = ({ annonce }) => {
                 className="bg-black/50 backdrop-blur border-0 w-7 h-7 flex items-center justify-center hover:bg-black/70"
               />
             </Tooltip>
-            <Tooltip title={liked ? "Retirer des favoris" : "Ajouter aux favoris"}>
+            <Tooltip
+              title={liked ? "Retirer des favoris" : "Ajouter aux favoris"}
+            >
               <Button
                 type="text"
                 shape="circle"
@@ -259,12 +419,13 @@ const AnnonceCard = ({ annonce }) => {
                     <HeartOutlined className="text-xs text-white" />
                   )
                 }
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setLiked(!liked);
-                }}
+                onClick={handleFavoriteToggle}
+                loading={loadingFavorite}
+                disabled={loadingFavorite}
                 className={`backdrop-blur border-0 w-7 h-7 flex items-center justify-center transition-all duration-300 ${
-                  liked ? "bg-white/90 hover:bg-white" : "bg-black/50 hover:bg-black/70"
+                  liked
+                    ? "bg-white/90 hover:bg-white"
+                    : "bg-black/50 hover:bg-black/70"
                 } ${liked ? "scale-110" : "scale-100"}`}
               />
             </Tooltip>
@@ -431,7 +592,8 @@ const AnnonceCard = ({ annonce }) => {
 
       <style jsx>{`
         @keyframes pulse {
-          0%, 100% {
+          0%,
+          100% {
             opacity: 1;
           }
           50% {
