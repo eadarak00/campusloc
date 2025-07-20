@@ -175,7 +175,7 @@ const AnnonceCard = ({ annonce, isFavorite = false, onFavoriteChange }) => {
     } catch (error) {
       console.error("Erreur favoris:", error);
 
-      if (error?.response?.status === 403) {
+      if (error?.response?.status === 403 || error?.response?.status === 401 ) {
         notificationApi.warning({
           message: "Connexion requise",
           description: "Vous devez être connecté pour gérer vos favoris.",
