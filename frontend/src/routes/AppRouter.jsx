@@ -21,6 +21,7 @@ import AnnonceDetailsAdmin from "../pages/admin/AnnonceDetailsAdmin";
 import ListeAnnoncesAdmin from "../pages/admin/ListeAnnoncesAdmin";
 import AnnoncesPage from "../pages/Annonces";
 import ProspectLayout from "../layouts/ProspectLayout";
+import FavorisPage from "../pages/prospect/FavorisPage";
 
 const AppRouter = () => (
   <Router>
@@ -49,6 +50,10 @@ const AppRouter = () => (
         <Route
          path={ROUTES.ANNONCES_PROSPECT}
          element = {<AnnoncesPage />}
+        />
+        <Route
+         path={ROUTES.FAVORI_PROSPECT}
+         element = {<FavorisPage />}
         />
       </Route>
 
