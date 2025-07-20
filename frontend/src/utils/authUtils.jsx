@@ -53,3 +53,21 @@ export const getAdminFromStorage = () => {
   if (isAdmin) return user;
   return null;
 };
+
+
+/**
+ * Vérifie si l'utilisateur connecté est un administrateur
+ */
+export const isProspect = () => {
+  const user = getUserData();
+  return user?.role === "PROSPECT";
+};
+
+/**
+ * Retourne les données utilisateur uniquement si c'est un administrateur
+ */
+export const getProspectFromStorage = () => {
+  const user = getUserData();
+  if (isProspect) return user;
+  return null;
+};

@@ -23,7 +23,7 @@ const AnnoncesBailleur = () => {
       <Row gutter={[24, 24]}>
         <Col xs={24} md={12} xl={8}>
           <Card 
-          bordered 
+           variant="borderless"  
           hoverable
           onClick={() =>  handleNavigate(ROUTES.ANNONCES_ACTIFS_BAILLEUR)}
           >
@@ -38,7 +38,7 @@ const AnnoncesBailleur = () => {
         </Col>
 
         <Col xs={24} md={12} xl={8}>
-          <Card bordered hoverable
+          <Card  variant="borderless"  hoverable
           onClick={() =>  handleNavigate(ROUTES.CREATION_ANNONCE)
 
           }
@@ -56,7 +56,7 @@ const AnnoncesBailleur = () => {
         </Col>
 
         <Col xs={24} md={12} xl={8}>
-          <Card bordered hoverable
+          <Card  variant="borderless"  hoverable
            onClick={() =>  handleNavigate(ROUTES.ANNONCES_EN_ATTENTES)}
           >
             <Card.Meta

@@ -1,0 +1,54 @@
+/* AnnoncesPopulaires.css */
+
+.annonces-container {
+  padding: 1rem;
+  /* background-color: #fdfcf9;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd; */
+}
+
+.annonces-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.annonces-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+.filter-btn,
+.dropdown-btn {
+  background-color: #e8c5a1;
+  border: none;
+  color: #000;
+  font-weight: 500;
+}
+
+.voir-tous-btn {
+  background-color: #000;
+  color: #e8c5a1;
+  border-radius: 9999px;
+  padding: 0.4rem 1.2rem;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  border: none;
+}
+
+/* Desktop adjustments */
+@media (min-width: 768px) {
+  .annonces-filters {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .voir-tous-btn {
+    align-self: flex-end;
+    margin-left: auto;
+  }
+}

@@ -12,7 +12,7 @@ const PublicLayout= () => {
       
       {/* Contenu central */}
       <main className="flex-grow-1">
-        <div className="container-fluid h-100">
+        <div className="h-100">
           <Outlet />
         </div>
       </main>

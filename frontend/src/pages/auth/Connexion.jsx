@@ -4,6 +4,7 @@ import { notification } from "antd";
 import { login } from "../../api/auth";
 import "../../styles/auth/connexion.css";
 import { Link, useNavigate } from "react-router-dom";
+import ROUTES from "../../routes/routes";
 
 const Connexion = () => {
   const [formData, setFormData] = useState({
@@ -260,12 +261,16 @@ const Connexion = () => {
         // Redirection après connexion réussie selon le rôle
         setTimeout(() => {
           if (role === "BAILLEUR") {
-            navigate('/bailleur/dashboard');
+            navigate(ROUTES.DASHBOARD_BAILLEUR);
             console.log("Redirection vers le dashboard bailleur");
-          } else {
-            // Redirection vers le dashboard par défaut
-            // window.location.href = '/dashboard';
-            // ou avec React Router : navigate('/dashboard');
+          } else if (role === "ADMIN") {
+            navigate(ROUTES.DASHBOARD_ADMIN);
+            console.log("Redirection vers le dashboard administrateur");
+          } else if (role === "PROSPECT") {
+            navigate(ROUTES.DASHBOARD_PROSPECT);
+            console.log("Redirection vers l'accueil prospect");
+          } 
+          else {
             console.log("Redirection vers le dashboard");
           }
         }, 1500);

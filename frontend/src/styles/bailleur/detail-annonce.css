@@ -395,30 +395,42 @@
 
 /* Sidebar */
 .detail-annonce__owner-card {
-  margin-bottom: 24px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.detail-annonce__owner-header {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.detail-annonce__owner-avatar {
-  border: 3px solid #3b82f6;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
 }
 
 .detail-annonce__owner-info {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-annonce__info-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-annonce__info-row .info-icon {
+  color: #4b5563;
 }
 
 .detail-annonce__owner-name {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
+}
+
+.detail-annonce__owner-name .info-icon {
+  color: #4b5563;
+}
+
+.info-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .detail-annonce__verified-icon {
@@ -563,40 +575,40 @@
   .detail-annonce {
     padding: 16px;
   }
-  
+
   .detail-annonce__header {
     flex-direction: column;
     gap: 16px;
   }
-  
+
   .detail-annonce__header-right {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .detail-annonce__title {
     font-size: 1.8rem !important;
   }
-  
+
   .detail-annonce__carousel-item {
     height: 300px;
   }
-  
+
   .detail-annonce__thumbnail-strip {
     padding: 4px;
   }
-  
+
   .detail-annonce__thumbnail {
     width: 60px;
     height: 45px;
   }
-  
+
   .detail-annonce__owner-header {
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
-  
+
   .detail-annonce__stats {
     flex-direction: column;
     gap: 12px;
@@ -607,16 +619,16 @@
   .detail-annonce__title {
     font-size: 1.5rem !important;
   }
-  
+
   .detail-annonce__carousel-item {
     height: 250px;
   }
-  
+
   .detail-annonce__characteristic-item {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .detail-annonce__equipement-item {
     flex-direction: column;
     text-align: center;

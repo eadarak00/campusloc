@@ -13,6 +13,15 @@ import AnnonceEnAttentes from "../pages/bailleur/AnnoncesEnAttente";
 import DetailAnnonce from "../pages/bailleur/AnnonceDetails";
 import ModifierAnnonce from "../pages/bailleur/ModifierAnnonce";
 import AnnonceActive from "../pages/bailleur/AnnoncesActives";
+import AdminLayout from "../layouts/AdminLayout";
+import DashboardAdmin from "../pages/admin/DashboardAdmin";
+import AnnoncesAdmin from "../pages/admin/annonces-admin";
+import AnnonceAValider from "../pages/admin/AnnonceAValider";
+import AnnonceDetailsAdmin from "../pages/admin/AnnonceDetailsAdmin";
+import ListeAnnoncesAdmin from "../pages/admin/ListeAnnoncesAdmin";
+import AnnoncesPage from "../pages/Annonces";
+import ProspectLayout from "../layouts/ProspectLayout";
+import FavorisPage from "../pages/prospect/FavorisPage";
 
 const AppRouter = () => (
   <Router>
@@ -22,6 +31,30 @@ const AppRouter = () => (
         <Route index element={<Home />} />
         <Route path={ROUTES.CONNEXION} element={<Connexion />} />
         <Route path={ROUTES.INSCRIPTION} element={<Inscription />} />
+        <Route path={ROUTES.ANNONCES} element={<AnnoncesPage />} />
+      </Route>
+
+       {/* Routes protégées pour prospecr */}
+      <Route
+        path="/prospect"
+        element={
+          <ProtectedRoute allowedRoles={["PROSPECT"]}>
+            <ProspectLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route
+         path={ROUTES.DASHBOARD_PROSPECT}
+         element = {<Home />}
+        />
+        <Route
+         path={ROUTES.ANNONCES_PROSPECT}
+         element = {<AnnoncesPage />}
+        />
+        <Route
+         path={ROUTES.FAVORI_PROSPECT}
+         element = {<FavorisPage />}
+        />
       </Route>
 
       {/* Routes protégées pour bailleurs */}
@@ -55,6 +88,40 @@ const AppRouter = () => (
           path={ROUTES.MODIFIER_ANNONCE_BAILLEUR}
           element={<ModifierAnnonce />}
         />
+      </Route>
+
+      {/* Routes protégées pour bailleurs */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute allowedRoles={["ADMIN"]}>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route
+          path={ROUTES.DASHBOARD_ADMIN}
+          element={<DashboardAdmin/>}
+        />
+         <Route
+          path={ROUTES.ANNONCES_ADMIN}
+          element={<AnnoncesAdmin/>}
+        />
+
+        <Route
+          path={ROUTES.ANNONCES_EN_ATTENTES_ADMIN}
+          element={<AnnonceAValider/>}
+        />
+
+        <Route
+          path={ROUTES.DETAIL_ANNONCE_ADMIN}
+          element={<AnnonceDetailsAdmin />}
+        />
+        <Route
+          path={ROUTES.TOUTES_ANNONCES_ADMIN}
+          element={<ListeAnnoncesAdmin/>}
+        />
+
       </Route>
     </Routes>
   </Router>

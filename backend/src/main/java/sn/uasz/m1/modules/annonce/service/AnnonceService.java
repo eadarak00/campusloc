@@ -9,14 +9,13 @@ import java.util.stream.Collectors;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import sn.uasz.m1.core.utils.SessionManagerUtils;
 import sn.uasz.m1.modules.annonce.dto.AnnonceCreateDTO;
 import sn.uasz.m1.modules.annonce.dto.AnnonceResponseDTO;
 import sn.uasz.m1.modules.annonce.dto.AnnonceUpdateDTO;
@@ -26,15 +25,21 @@ import sn.uasz.m1.modules.annonce.emuns.TypeDeLogement;
 import sn.uasz.m1.modules.annonce.entities.Annonce;
 import sn.uasz.m1.modules.annonce.entities.Media;
 import sn.uasz.m1.modules.annonce.repository.AnnonceRepository;
+import sn.uasz.m1.modules.notification.dto.NotificationCreateDTO;
+import sn.uasz.m1.modules.notification.enums.NotificationType;
+import sn.uasz.m1.modules.notification.service.NotificationService;
 import sn.uasz.m1.modules.user.entity.Utilisateur;
 import sn.uasz.m1.modules.user.repository.UtilisateurRepository;
+import sn.uasz.m1.modules.user.service.UtilisateurService;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AnnonceService {
     private final AnnonceRepository annonceRepository;
+    private final UtilisateurService uService;
     private final UtilisateurRepository uRepository;
+    private final NotificationService notificationService;
 
     @PreAuthorize("hasRole('BAILLEUR')")
     @Transactional
@@ -42,7 +47,7 @@ public class AnnonceService {
         try {
             log.info("Tentative de création d'annonce par {}", dto.toString());
 
-            Utilisateur proprietaire = getCurrentAuthenticatedUser();
+            Utilisateur proprietaire = SessionManagerUtils.getCurrentAuthenticatedUser();
 
             if (!estBailleur(proprietaire)) {
                 log.warn("Tentative de création par un non-bailleur: {}", proprietaire.getEmail());
@@ -54,6 +59,23 @@ public class AnnonceService {
 
             Annonce saved = annonceRepository.save(annonce);
             log.info("Annonce créée avec ID: {}", saved.getId());
+
+            // Création d'une notification
+            NotificationCreateDTO notificationDTO = new NotificationCreateDTO();
+            notificationDTO.setDestinataireId(uService.getAdminID());
+            notificationDTO.setTitre("Annonce à valider : " + saved.getTitre());
+            notificationDTO.setMessage(String.format(
+                    "L'annonce \"%s\" a été créée par %s (%s). Type : %s | Ville : %s.",
+                    saved.getTitre(),
+                    proprietaire.getNom(),
+                    proprietaire.getEmail(),
+                    saved.getTypeDeLogement().toString().toLowerCase().replace("_", " "),
+                    saved.getVille()));
+
+            notificationDTO.setType(NotificationType.ANNONCE_CREEE);
+            notificationDTO.setReferenceId(saved.getId());
+
+            notificationService.creerNotification(notificationDTO);
 
             return toDto(saved);
 
@@ -74,14 +96,27 @@ public class AnnonceService {
     public AnnonceResponseDTO validerAnnonce(Long annonceId) {
         Annonce annonce = trouverParId(annonceId);
 
-        // Mettre à jour le statut
+        // Mettre à jour le statut de l’annonce
         annonce.setStatut(StatutAnnonce.ACCEPTER);
+        Annonce saved = annonceRepository.save(annonce);
 
-        // Sauvegarder l'entité
-        annonceRepository.save(annonce);
+        // Créer la notification pour le propriétaire
+        NotificationCreateDTO notificationDTO = new NotificationCreateDTO();
+        notificationDTO.setDestinataireId(saved.getProprietaire().getId());
+        notificationDTO.setTitre("Annonce validée : " + saved.getTitre());
+        notificationDTO.setMessage(String.format(
+                "Votre annonce \"%s\" a été validée avec succès. Type : %s | Ville : %s.",
+                saved.getTitre(),
+                saved.getTypeDeLogement().toString().toLowerCase().replace("_", " "),
+                saved.getVille()));
+        notificationDTO.setType(NotificationType.ANNONCE_VALIDEE);
+        notificationDTO.setReferenceId(saved.getId());
+
+        // Enregistrer la notification
+        notificationService.creerNotification(notificationDTO);
 
         // Retourner le DTO mis à jour
-        return toDto(annonce);
+        return toDto(saved);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -115,12 +150,25 @@ public class AnnonceService {
 
         // Mettre à jour le statut
         annonce.setStatut(StatutAnnonce.REFUSER);
+        Annonce saved = annonceRepository.save(annonce);
 
-        // Sauvegarder l'entité
-        annonceRepository.save(annonce);
+        // Créer une notification pour le propriétaire
+        NotificationCreateDTO notificationDTO = new NotificationCreateDTO();
+        notificationDTO.setDestinataireId(saved.getProprietaire().getId());
+        notificationDTO.setTitre("Annonce refusée : " + saved.getTitre());
+        notificationDTO.setMessage(String.format(
+                "Votre annonce \"%s\" a été refusée. Type : %s | Ville : %s.",
+                saved.getTitre(),
+                saved.getTypeDeLogement().toString().toLowerCase().replace("_", " "),
+                saved.getVille()));
+        notificationDTO.setType(NotificationType.ANNONCE_REJETEE);
+        notificationDTO.setReferenceId(saved.getId());
+
+        // Enregistrer la notification
+        notificationService.creerNotification(notificationDTO);
 
         // Retourner le DTO mis à jour
-        return toDto(annonce);
+        return toDto(saved);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -290,19 +338,19 @@ public class AnnonceService {
             annonce.setVille(dto.getVille());
         if (dto.getSurface() >= 0)
             annonce.setSurface(dto.getSurface());
-        if (dto.getSalleDeBains()>=0)
+        if (dto.getSalleDeBains() >= 0)
             annonce.setSalleDeBains(dto.getSalleDeBains());
-         if (dto.getPieces() >= 0)
+        if (dto.getPieces() >= 0)
             annonce.setPieces(dto.getPieces());
         if (dto.getNombreDeChambres() >= 0)
             annonce.setNombreDeChambres(dto.getNombreDeChambres());
         if (dto.getCapacite() >= 0)
             annonce.setCapacite(dto.getCapacite());
-        if(dto.isMeuble() != annonce.isMeuble())
+        if (dto.isMeuble() != annonce.isMeuble())
             annonce.setMeuble(dto.isMeuble());
-         if(dto.isDisponible() != annonce.isDisponible())
+        if (dto.isDisponible() != annonce.isDisponible())
             annonce.setDisponible(dto.isDisponible());
-          if(dto.isNegociable() != annonce.isNegociable())
+        if (dto.isNegociable() != annonce.isNegociable())
             annonce.setNegociable(dto.isNegociable());
 
         annonce.setModifierA(LocalDateTime.now());
@@ -314,8 +362,7 @@ public class AnnonceService {
         return toDto(annonceUpdatee);
     }
 
-
-     public void supprimerLogiqueAnnonce(Long annonceId){
+    public void supprimerLogiqueAnnonce(Long annonceId) {
         Annonce annonce = trouverParId(annonceId);
         annonce.setSupprime(true);
         annonce.setSupprimeA(LocalDateTime.now());
@@ -323,13 +370,14 @@ public class AnnonceService {
     }
 
     // == methodes utilitaire ==
-    private Utilisateur getCurrentAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AccessDeniedException("Utilisateur non authentifié");
-        }
-        return (Utilisateur) authentication.getPrincipal();
-    }
+    // private Utilisateur getCurrentAuthenticatedUser() {
+    // Authentication authentication =
+    // SecurityContextHolder.getContext().getAuthentication();
+    // if (authentication == null || !authentication.isAuthenticated()) {
+    // throw new AccessDeniedException("Utilisateur non authentifié");
+    // }
+    // return (Utilisateur) authentication.getPrincipal();
+    // }
 
     private void validateAnnonceDTO(AnnonceCreateDTO dto) {
         if (dto == null) {
@@ -357,6 +405,23 @@ public class AnnonceService {
             throw new EntityNotFoundException("Annonce supprimée pour l'id: " + id);
         if (annonce.getProprietaire() == null)
             throw new IllegalStateException("Annonce corrompue: bailleur manquant pour l'id: " + id);
+    }
+
+    public List<AnnonceResponseDTO> getSixDernieresAnnonces() {
+        List<Annonce> annonces = annonceRepository
+                .findTop6ByStatutAndSupprimeFalseOrderByCreerADesc(StatutAnnonce.ACCEPTER);
+        return annonces.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<AnnonceResponseDTO> getAnnonceParType(TypeDeLogement typeLogement) {
+        return annonceRepository
+                .findTop6ByStatutAndTypeDeLogementAndSupprimeFalseOrderByCreerADesc(StatutAnnonce.ACCEPTER,
+                        typeLogement)
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
 
     // == Definition des Mapping de maniere manuelle ==

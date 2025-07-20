@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from 'react-router-dom';
 
 import {
   Home,
@@ -21,23 +21,26 @@ import {
 } from "lucide-react";
 import "../../styles/bailleur/sidetopbar.css";
 import ROUTES from "../../routes/routes";
+import { Avatar } from "antd";
 import { getAdminFromStorage } from "../../utils/authUtils";
+import { logout } from "../../utils/authService";
 
 const Sidebar = ({ children }) => {
   const [sidebarState, setSidebarState] = useState("collapsed");
   const [activeItem, setActiveItem] = useState("dashboard");
   const [isMobile, setIsMobile] = useState(false);
-  
+
+  const navigate = useNavigate();
   const user = getAdminFromStorage();
-
-  const fullName = user?.prenom + user?.nom;
-
-  const getInitials = (name) =>
-  name
-    ?.split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase();
+  
+    const fullName = user?.prenom + user?.nom;
+  
+    const getInitials = (name) =>
+    name
+      ?.split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase();
 
   // Détection mobile
   useEffect(() => {
@@ -56,18 +59,15 @@ const Sidebar = ({ children }) => {
       id: "dashboard",
       label: "Tableau de bord",
       icon: Home,
-      path: ROUTES.DASHBOARD_BAILLEUR,
+      path: ROUTES.DASHBOARD_ADMIN,
     },
     {
       id: "annonces",
       label: "Annonces",
       icon: Building,
-      path: ROUTES.ANNONCES_BAILLEUR,
+      path: ROUTES.ANNONCES_ADMIN,
     },
-    // { id: "tenants", label: "Locataires", icon: Users, path: "/tenants" },
-    // { id: "contracts", label: "Contrats", icon: FileText, path: "/contracts" },
-    // // { id: 'finances', label: 'Finances', icon: TrendingUp, path: '/finances' },
-    // { id: "calendar", label: "Calendrier", icon: Calendar, path: "/calendar" },
+
   ];
 
   const handleItemClick = (id) => {
@@ -126,6 +126,11 @@ const Sidebar = ({ children }) => {
     }
   };
 
+  const handleLogout = () =>{
+    logout();
+    navigate(ROUTES.CONNEXION);
+}
+
   return (
     <div className="app-container">
       {/* Overlay pour mobile */}
@@ -144,7 +149,7 @@ const Sidebar = ({ children }) => {
             <div className="sidebar__logo-icon">C</div>
             <div className="sidebar__logo-text">
               <h2 className="sidebar__logo-title">Campusloc</h2>
-              <p className="sidebar__logo-subtitle">Espace ADMIN</p>
+              <p className="sidebar__logo-subtitle">Espace admin</p>
             </div>
           </div>
           <button
@@ -155,6 +160,29 @@ const Sidebar = ({ children }) => {
             {getToggleIcon()}
           </button>
         </div>
+
+        {/* Navigation */}
+        {/* <nav className="sidebar__nav">
+          <ul className="sidebar__nav-list">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeItem === item.id;
+              
+              return (
+                <li key={item.id} className="sidebar__nav-item">
+                  <button
+                    onClick={() => handleItemClick(item.id)}
+                    className={`sidebar__nav-button ${isActive ? 'sidebar__nav-button--active' : ''}`}
+                    aria-label={item.label}
+                  >
+                    <Icon size={20} className="sidebar__nav-icon" />
+                    <span className="sidebar__nav-text">{item.label}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </nav> */}
 
         <nav className="sidebar__nav">
           <ul className="sidebar__nav-list">
@@ -188,7 +216,7 @@ const Sidebar = ({ children }) => {
             <span className="sidebar__nav-text">Paramètres</span>
           </button>
 
-          <button className="sidebar__nav-button">
+          <button className="sidebar__nav-button" onClick={handleLogout}>
             <LogOut size={20} className="sidebar__nav-icon" />
             <span className="sidebar__nav-text">Se déconnecter</span>
           </button>
@@ -236,7 +264,7 @@ const Sidebar = ({ children }) => {
             {/* <div className="topbar__avatar" aria-label="Profil utilisateur">
               JD
             </div> */}
-            <Avatar src={user.photoUrl} style={{ backgroundColor: "#f56a00" }}>
+              <Avatar className= "topbar__avatar" src={user.photoUrl}>
               {getInitials(fullName)}
             </Avatar>
           </div>
@@ -247,7 +275,7 @@ const Sidebar = ({ children }) => {
           {children || (
             <div className="demo-content">
               <div className="demo-card">
-                <h1 className="demo-title">Bienvenue sur BailleurPro</h1>
+                <h1 className="demo-title">Bienvenue sur l'espace administrateur</h1>
                 <p className="demo-text">
                   Votre tableau de bord pour la gestion immobilière. Utilisez la
                   sidebar pour naviguer entre les différentes sections.

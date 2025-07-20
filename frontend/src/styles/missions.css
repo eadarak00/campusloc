@@ -1,0 +1,316 @@
+/* missions.css */
+
+/* Animations keyframes */
+@keyframes campusloc-pulse {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes campusloc-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Section principale */
+.campusloc-missions-section {
+  padding: 10px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Éléments décoratifs de fond */
+.campusloc-missions-bg-decoration-1 {
+  position: absolute;
+  top: 80px;
+  left: 40px;
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.1),
+    rgba(147, 51, 234, 0.1)
+  );
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 0;
+}
+
+.campusloc-missions-bg-decoration-2 {
+  position: absolute;
+  bottom: 80px;
+  right: 40px;
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(
+    135deg,
+    rgba(251, 146, 60, 0.1),
+    rgba(236, 72, 153, 0.1)
+  );
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 0;
+}
+
+/* Container principal */
+.campusloc-missions-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Grille layout */
+.campusloc-missions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 64px;
+  align-items: center;
+}
+
+/* Section image/illustration */
+.campusloc-missions-image-section {
+  position: relative;
+}
+
+.campusloc-missions-image-card {
+  position: relative;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  transform: rotate(3deg);
+  transition: transform 0.5s ease;
+  cursor: pointer;
+}
+
+.campusloc-missions-image-card:hover {
+  transform: rotate(0deg);
+}
+
+.campusloc-missions-image-content {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 32px;
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.campusloc-missions-image-text {
+  text-align: center;
+  color: white;
+}
+
+.campusloc-missions-image-icon {
+  margin: 0 auto 16px;
+  opacity: 0.8;
+}
+
+.campusloc-missions-image-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  margin-top: 0;
+}
+
+.campusloc-missions-image-subtitle {
+  font-size: 18px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* Section contenu */
+.campusloc-missions-content-section {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.campusloc-missions-header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.campusloc-missions-title {
+  font-size: 2.1rem;
+  font-weight: bold;
+  color: #1f2937;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.campusloc-missions-title-highlight {
+  background: var(--gradient-dark);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.campusloc-missions-description {
+  font-size: 20px;
+  color: #374151;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.campusloc-missions-description-highlight-secure {
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+.campusloc-missions-description-highlight-clear {
+  font-weight: 600;
+  color: #059669;
+}
+
+.campusloc-missions-description-highlight-human {
+  font-weight: 600;
+  color: #e8b98f;
+}
+
+/* Liste des missions */
+.campusloc-missions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.campusloc-missions-item {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.campusloc-missions-item:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+}
+
+.campusloc-missions-item-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-black);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+  background-color: var(--color-primary);
+}
+
+/* .campusloc-missions-item-icon-blue {
+  background: #2563eb;
+}
+
+.campusloc-missions-item-icon-orange {
+  background: #e8b98f;
+}
+
+.campusloc-missions-item-icon-green {
+  background: #059669;
+}
+
+.campusloc-missions-item-icon-purple {
+  background: #7c3aed;
+} */
+
+.campusloc-missions-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.campusloc-missions-item-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  transition: color 0.3s ease;
+}
+
+
+.campusloc-missions-item:nth-child(odd) .campusloc-missions-item-title {
+  color: var(--color-black);
+}
+
+.campusloc-missions-item:nth-child(even) .campusloc-missions-item-title {
+  color: var(--color-primary-dark);
+}
+
+.campusloc-missions-item-description {
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .campusloc-missions-section {
+    padding: 60px 0;
+  }
+
+  .campusloc-missions-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .campusloc-missions-title {
+    font-size: 36px;
+  }
+
+  .campusloc-missions-description {
+    font-size: 18px;
+  }
+
+
+}
+
+@media (max-width: 480px) {
+  .campusloc-missions-container {
+    padding: 0 16px;
+  }
+
+  .campusloc-missions-title {
+    font-size: 28px;
+  }
+
+  .campusloc-missions-description {
+    font-size: 16px;
+  }
+
+  .campusloc-missions-item {
+    padding: 20px;
+  }
+
+  .campusloc-missions-image-card {
+    padding: 24px;
+  }
+
+  .campusloc-missions-image-content {
+    height: 250px;
+    padding: 24px;
+  }
+}

@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -306,4 +305,18 @@ public class AnnonceController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/recentes")
+    public ResponseEntity<List<AnnonceResponseDTO>> getAnnoncesRecentes() {
+        List<AnnonceResponseDTO> recentes = annonceService.getSixDernieresAnnonces();
+        return ResponseEntity.ok(recentes);
+    }
+
+    @GetMapping("/recentes/type")
+    public ResponseEntity<List<AnnonceResponseDTO>> getAnnoncesRecentesParType(
+            @RequestParam("type") TypeDeLogement typeLogement) {
+        List<AnnonceResponseDTO> annonces = annonceService.getAnnonceParType(typeLogement);
+        return ResponseEntity.ok(annonces);
+    }
+
 }

@@ -34,3 +34,55 @@ export const updateAnnonce = (id, updatedData) => {
 export const deleteAnnonce = (annonceId) => {
   return api.delete(`${ANNONCE_BASE}/${annonceId}`);
 }
+
+// valider annonce
+export const acceptAnnonce = (annonceID) => {
+  return api.patch(`${ANNONCE_BASE}/${annonceID}/valider`);
+}
+
+// valider une liste d'annonce
+export const acceptAnnonces = () => {
+  return api.post(`${ANNONCE_BASE}/valider`);
+}
+
+// refuser une annonce
+export const refuseAnnonce = (annonceID) => {
+  return api.patch(`${ANNONCE_BASE}/${annonceID}/refuser`);
+}
+
+//refuser une liste d'annonce
+export const refuseAnnonces = () => {
+  return api.post(`${ANNONCE_BASE}/refuser`)
+}
+
+// Toutes les annonces
+export const getAllAnnonces = () => {
+  return api.get(`${ANNONCE_BASE}`)
+}
+
+// Toutes les annonces actives
+export const getAllActivesAnnonces = () => {
+  return api.get(`${ANNONCE_BASE}/actifs`)
+}
+
+// Toutes les annonces Inactives
+export const getAllInactivesAnnonces = () => {
+  return api.get(`${ANNONCE_BASE}/inactifs`)
+}
+
+// Toutes les annonces en attentes
+export const getPendingAnnonces = () => {
+  return api.get(`${ANNONCE_BASE}/en-attente`)
+}
+
+// api/annonceAPI.js
+export const getAnnoncesRecentes = async () => {
+  return api.get(`${ANNONCE_BASE}/recentes`);
+};
+
+
+export const getAnnoncesRecentesParType = async (type) => {
+  return api.get(`${ANNONCE_BASE}/recentes/type`, {
+    params: { type }
+  });
+};

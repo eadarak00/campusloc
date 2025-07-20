@@ -13,6 +13,7 @@ body {
   font-family: var(--font-main);
   background-color: var(--color-bg);
   color: var(--color-dark);
+  width: 100%;
 }
 a {
   text-decoration: none !important;

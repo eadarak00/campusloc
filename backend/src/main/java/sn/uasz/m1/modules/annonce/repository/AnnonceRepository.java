@@ -18,7 +18,8 @@ public interface AnnonceRepository extends JpaRepository<Annonce, Long> {
        List<Annonce> findBySupprimeTrue();
 
        List<Annonce> findBySupprimeFalse();
-        List<Annonce> findBySupprimeFalseAndStatut(StatutAnnonce statut);
+
+       List<Annonce> findBySupprimeFalseAndStatut(StatutAnnonce statut);
 
        List<Annonce> findByProprietaireIdAndSupprimeFalseAndStatut(Long proprietaireId, StatutAnnonce statut);
 
@@ -35,11 +36,12 @@ public interface AnnonceRepository extends JpaRepository<Annonce, Long> {
                      StatutAnnonce statut);
 
        // @Query("SELECT a FROM Annonce a WHERE " +
-       //               "(:type IS NULL OR a.typeDeLogement = :type) AND " +
-       //               "(:ville IS NULL OR LOWER(a.ville) = LOWER(:ville)) AND " +
-       //               "(:minPrix IS NULL OR a.prix >= :minPrix) AND " +
-       //               "(:maxPrix IS NULL OR a.prix <= :maxPrix)")
-       // List<Annonce> rechercherAnnonces(TypeDeLogement type, String ville, Double minPrix, Double maxPrix);
+       // "(:type IS NULL OR a.typeDeLogement = :type) AND " +
+       // "(:ville IS NULL OR LOWER(a.ville) = LOWER(:ville)) AND " +
+       // "(:minPrix IS NULL OR a.prix >= :minPrix) AND " +
+       // "(:maxPrix IS NULL OR a.prix <= :maxPrix)")
+       // List<Annonce> rechercherAnnonces(TypeDeLogement type, String ville, Double
+       // minPrix, Double maxPrix);
 
        @Query("SELECT a FROM Annonce a WHERE " +
                      "(:type IS NULL OR a.typeDeLogement = :type) AND " +
@@ -51,5 +53,11 @@ public interface AnnonceRepository extends JpaRepository<Annonce, Long> {
                      @Param("ville") String ville,
                      @Param("minPrix") Double minPrix,
                      @Param("maxPrix") Double maxPrix);
+
+       List<Annonce> findTop6ByStatutAndSupprimeFalseOrderByCreerADesc(StatutAnnonce statut);
+
+       List<Annonce> findTop6ByStatutAndTypeDeLogementAndSupprimeFalseOrderByCreerADesc(
+                     StatutAnnonce statut,
+                     TypeDeLogement typeDeLogement);
 
 }

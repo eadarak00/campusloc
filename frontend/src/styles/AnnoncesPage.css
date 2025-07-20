@@ -1,0 +1,109 @@
+@import url('./global.css');
+
+/* === Base === */
+:root {
+  --color-bg: #f9f9fb;
+  --color-text: #1f1f1f;
+  --color-accent: #008080;
+  --color-section-line: #e0e0e0;
+}
+
+.ap-container {
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1rem;
+}
+
+/* === Héros Section === */
+.ap-hero-section {
+  text-align: center;
+  padding: 4rem 1.5rem 2rem;
+}
+
+.ap-hero-title {
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.ap-hero-subtitle {
+  font-size: 1.2rem;
+  max-width: 700px;
+  margin: 0 auto;
+  opacity: 0.8;
+}
+
+/* === Section Header avec trait === */
+.ap-section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 3rem 0 1.5rem;
+}
+
+.ap-section-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--color-dark);
+}
+
+.ap-section-line {
+  flex-grow: 1;
+  height: 2px;
+  background-color: var(--color-section-line);
+  border-radius: 1px;
+}
+.ap-highlight{
+  color: var(--color-primary-dark) !important;
+}
+/* === Section Annonces === */
+.ap-annonces-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* === Grille d'annonces === */
+.ap-annonces-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.ap-annonce-wrapper {
+  flex: 1 1 calc(33.333% - 2rem);
+  max-width: 400px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease;
+}
+
+.ap-annonce-wrapper:hover {
+  transform: translateY(-5px);
+}
+
+/* === Responsive === */
+@media (max-width: 1024px) {
+  .ap-annonce-wrapper {
+    flex: 1 1 calc(50% - 2rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .ap-annonce-wrapper {
+    flex: 1 1 100%;
+  }
+
+  .ap-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
