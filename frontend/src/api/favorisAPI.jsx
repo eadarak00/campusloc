@@ -10,10 +10,10 @@ export const ajouterFavori = async (annonceId) => {
 
 // Supprimer une annonce des favoris
 export const supprimerFavori = async (annonceId) => {
-  return api.delete(`/api/favoris/${annonceId}`);
+  return api.delete(`${FAVORIS_BASE}/${annonceId}`);
 };
 
 // Lister les annonces favorites du prospect
 export const listerFavoris = async () => {
-   return api.get(`/api/favoris`);
+   return api.get(`${FAVORIS_BASE}`);
 };
