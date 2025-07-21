@@ -51,7 +51,9 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/debug/**" ,
                                 "/v1/annonces/recentes",
-                                "/v1/annonces/recentes/**"                      
+                                "/v1/annonces/recentes/**",
+                                "/v1/annonces/*"
+
                                 )
                         .permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/v1/annonces/*/valider").hasRole("ADMIN")
