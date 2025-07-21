@@ -23,6 +23,8 @@ import AnnoncesPage from "../pages/Annonces";
 import ProspectLayout from "../layouts/ProspectLayout";
 import FavorisPage from "../pages/prospect/FavorisPage";
 import AnnonceDetailsProspect from "../pages/prospect/DetailsAnnonce";
+import ContactsPage from "../pages/prospect/ContactPages";
+import ContactsBailleurPage from "../components/bailleur/ContactsBailleurPages";
 
 const AppRouter = () => (
   <Router>
@@ -61,6 +63,10 @@ const AppRouter = () => (
          path={ROUTES.FAVORI_PROSPECT}
          element = {<FavorisPage />}
         />
+        <Route
+         path={ROUTES.CONTACTS_PROSPECT}
+         element = {<ContactsPage />}
+        />
       </Route>
 
       {/* Routes protégées pour bailleurs */}
@@ -93,6 +99,10 @@ const AppRouter = () => (
         <Route
           path={ROUTES.MODIFIER_ANNONCE_BAILLEUR}
           element={<ModifierAnnonce />}
+        />
+        <Route
+          path={ROUTES.CONTACTS_BAILLEUR}
+          element={<ContactsBailleurPage />}
         />
       </Route>
 

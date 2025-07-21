@@ -20,6 +20,7 @@ const ROUTES = {
   CREATION_ANNONCE: "/bailleur/creation-annonce",
   DETAIL_ANNONCE_BAILLEUR: "/bailleur/annonce/:id",
   MODIFIER_ANNONCE_BAILLEUR: "/bailleur/annonce/modifier/:id",
+  CONTACTS_BAILLEUR : "/bailleur/contacts",
   TENANTS: "/tenants",
 
   // endpoints Administrateur
@@ -33,6 +34,7 @@ const ROUTES = {
   ANNONCES_PROSPECT: "/prospect/annonces",
   FAVORI_PROSPECT: "/prospect/favoris",
   ANNONCES_DETAILS_PROSPECT: "/prospect/annonces/:id",
+  CONTACTS_PROSPECT: "/prospect/contacts",
 
   NOT_FOUND: "*",
 };
