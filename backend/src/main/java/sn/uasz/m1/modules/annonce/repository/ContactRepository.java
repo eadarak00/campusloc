@@ -4,7 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import sn.uasz.m1.modules.annonce.emuns.StatutContact;
+import sn.uasz.m1.modules.annonce.entities.Annonce;
 import sn.uasz.m1.modules.annonce.entities.Contact;
+import sn.uasz.m1.modules.user.entity.Utilisateur;
 
 import java.util.List;
 
@@ -28,4 +30,17 @@ public interface ContactRepository extends JpaRepository<Contact, Long> {
 
     // Compter les contacts non supprimés d’une annonce
     long countByAnnonce_IdAndSupprimeFalse(Long annonceId);
+
+    // verifier si un contact avec l'annonce et le prospect e
+    boolean existsByAnnonceAndProspectAndStatutAndAnnonce_SupprimeFalse(Annonce annonce, Utilisateur prospect,
+            StatutContact statut);
+
+    boolean existsByAnnonceAndProspectAndAnnonce_SupprimeFalseAndSupprimeFalseAndStatutIn(
+            Annonce annonce,
+            Utilisateur prospect,
+            List<StatutContact> statuts);
+
+    List<Contact> findByAnnonce_Proprietaire_IdAndAnnonce_SupprimeFalseAndSupprimeFalse(Long bailleurId);
+
+
 }
