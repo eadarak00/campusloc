@@ -69,6 +69,11 @@ public class ContactService {
                                 .id(contact.getId())
                                 .annonceId(contact.getAnnonce().getId())
                                 .titreAnnonce(contact.getAnnonce().getTitre())
+                                .idProprietaire(contact.getAnnonce().getProprietaire().getId())
+                                .nomProprietaire(contact.getAnnonce().getProprietaire().getPrenom() + " "
+                                                + contact.getAnnonce().getProprietaire().getNom())
+                                .emailProprietaire(contact.getAnnonce().getProprietaire().getEmail())
+                                .telephoneProprietaire(contact.getAnnonce().getProprietaire().getTelephone())
                                 .prospectId(contact.getProspect().getId())
                                 .nomProspect(contact.getProspect().getPrenom() + " " + contact.getProspect().getNom())
                                 .dateContact(contact.getDateContact())
@@ -83,6 +88,7 @@ public class ContactService {
                                 .findByAnnonce_Proprietaire_IdAndAnnonce_SupprimeFalseAndSupprimeFalse(bailleurId);
 
                 return contacts.stream()
+                                .filter(contact -> contact.getStatut() == StatutContact.ACCEPTE)
                                 .map(this::toDto)
                                 .collect(Collectors.toList());
         }

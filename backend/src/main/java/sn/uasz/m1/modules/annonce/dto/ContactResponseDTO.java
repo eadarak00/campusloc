@@ -14,6 +14,10 @@ public class ContactResponseDTO {
     private Long id;
     private Long annonceId;
     private String titreAnnonce;
+    private Long idProprietaire;
+    private String nomProprietaire;
+    private String emailProprietaire;
+    private String telephoneProprietaire;
     private Long prospectId;
     private String nomProspect;
     private LocalDateTime dateContact;
