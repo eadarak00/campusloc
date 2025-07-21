@@ -22,6 +22,7 @@ import ListeAnnoncesAdmin from "../pages/admin/ListeAnnoncesAdmin";
 import AnnoncesPage from "../pages/Annonces";
 import ProspectLayout from "../layouts/ProspectLayout";
 import FavorisPage from "../pages/prospect/FavorisPage";
+import AnnonceDetailsProspect from "../pages/prospect/DetailsAnnonce";
 
 const AppRouter = () => (
   <Router>
@@ -32,6 +33,7 @@ const AppRouter = () => (
         <Route path={ROUTES.CONNEXION} element={<Connexion />} />
         <Route path={ROUTES.INSCRIPTION} element={<Inscription />} />
         <Route path={ROUTES.ANNONCES} element={<AnnoncesPage />} />
+        <Route path={ROUTES.ANNONCES_DETAILS} element={<AnnonceDetailsProspect />} />
       </Route>
 
        {/* Routes protégées pour prospecr */}
@@ -50,6 +52,10 @@ const AppRouter = () => (
         <Route
          path={ROUTES.ANNONCES_PROSPECT}
          element = {<AnnoncesPage />}
+        />
+        <Route
+         path={ROUTES.ANNONCES_DETAILS_PROSPECT}
+         element = {<AnnonceDetailsProspect />}
         />
         <Route
          path={ROUTES.FAVORI_PROSPECT}

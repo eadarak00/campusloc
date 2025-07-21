@@ -6,6 +6,7 @@ const ROUTES = {
   INSCRIPTION_BAILLEUR: "/inscription-bailleur",
   VALIDATION: "/validation",
   ANNONCES: "/annonces",
+  ANNONCES_DETAILS: "/annonces/:id",
 
   // Dashboards par rôle
   DASHBOARD_ADMIN: "/admin/dashboard",
@@ -31,7 +32,7 @@ const ROUTES = {
   //endpoint pour les prospects
   ANNONCES_PROSPECT: "/prospect/annonces",
   FAVORI_PROSPECT: "/prospect/favoris",
-
+  ANNONCES_DETAILS_PROSPECT: "/prospect/annonces/:id",
 
   NOT_FOUND: "*",
 };
