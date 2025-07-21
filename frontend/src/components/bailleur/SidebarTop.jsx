@@ -68,7 +68,7 @@ const SidebarTopbar = ({ children }) => {
       path: ROUTES.ANNONCES_BAILLEUR,
     },
     { id: "tenants", label: "Locataires", icon: Users, path: "/tenants" },
-    { id: "contracts", label: "Contrats", icon: FileText, path: "/contracts" },
+    { id: "contacts", label: "contact", icon: FileText, path: ROUTES.CONTACTS_BAILLEUR },
     // { id: 'finances', label: 'Finances', icon: TrendingUp, path: '/finances' },
     { id: "calendar", label: "Calendrier", icon: Calendar, path: "/calendar" },
   ];
