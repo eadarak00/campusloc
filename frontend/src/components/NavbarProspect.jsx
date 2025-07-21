@@ -27,6 +27,7 @@ import "antd/dist/reset.css";
 import "../styles/navbar.css";
 import ROUTES from "../routes/routes";
 import { getNombreFavoris } from "../utils/CountUtils";
+import { logout } from "../utils/authService";
 
 const { Header } = Layout;
 
@@ -36,7 +37,6 @@ export default function NavbarProspect({ user }) {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [nombreFavoris, setNombreFavoris] = useState(0);
 
-  console.log("utilisateur ", user);
 
   useEffect(() => {
     getNombreFavoris().then(setNombreFavoris);
@@ -104,10 +104,10 @@ export default function NavbarProspect({ user }) {
       ),
     },
     {
-      key: "/contact",
+      key: ROUTES.CONTACTS_PROSPECT,
       icon: <ContactsOutlined style={{ fontSize: "16px" }} />,
       label: (
-        <Link to="/contact" onClick={() => setDrawerVisible(false)}>
+        <Link to={ROUTES.CONTACTS_PROSPECT} onClick={() => setDrawerVisible(false)}>
           Contact
         </Link>
       ),
@@ -140,6 +140,7 @@ export default function NavbarProspect({ user }) {
 
   function handleLogout() {
     console.log("Déconnexion...");
+    logout();
     navigate("/");
   }
 
@@ -270,7 +271,7 @@ export default function NavbarProspect({ user }) {
               transition: "all 0.3s ease",
             }}
             className="navbar-icon-btn"
-            onClick={() => navigate("/contacts")}
+            onClick={() => navigate(ROUTES.CONTACTS_PROSPECT)}
           />
         </Tooltip>
 
@@ -568,7 +569,7 @@ export default function NavbarProspect({ user }) {
                   border: "1px solid rgba(197, 138, 81, 0.2)",
                 }}
                 onClick={() => {
-                  navigate("/contacts");
+                  navigate(ROUTES.CONTACTS_PROSPECT);
                   setDrawerVisible(false);
                 }}
               />
