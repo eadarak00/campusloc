@@ -90,11 +90,8 @@ const AnnonceDetailsAdmin = () => {
   const navigate = useNavigate();
   const [annonce, setAnnonce] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [showContactModal, setShowContactModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
-  const [visitsCount, setVisitsCount] = useState(0);
 
   // Appel du API pour recuperer l'annonce
   useEffect(() => {
