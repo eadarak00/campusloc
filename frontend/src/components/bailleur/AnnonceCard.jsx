@@ -33,6 +33,7 @@ import "react-lazy-load-image-component/src/effects/blur.css";
 import { getImageUrl } from "../../api/ImageHelper";
 import { useNavigate } from "react-router-dom";
 import { ajouterFavori, supprimerFavori } from "../../api/favorisAPI";
+import { getProspectFromStorage, isProspect } from "../../utils/authUtils";
 
 const { Title, Text } = Typography;
 
@@ -49,6 +50,15 @@ const AnnonceCard = ({ annonce, isFavorite = false, onFavoriteChange }) => {
 
   const [notificationApi, contextHolder] = notification.useNotification();
 
+  const handleAnnonce = async () => {
+    const user = getProspectFromStorage();
+    if (user.role === "PROSPECT") {
+      navigate(`/prospect/annonces/${annonce.id}`);
+    } else {
+      navigate(`/annonces/${annonce.id}`);
+    }
+  };
+
   // Mettre à jour l'état liked quand isFavorite change
   useEffect(() => {
     setLiked(isFavorite);
@@ -60,90 +70,6 @@ const AnnonceCard = ({ annonce, isFavorite = false, onFavoriteChange }) => {
       month: "short",
     });
   };
-
-  // Gérer les favoris
-  // const handleFavoriteToggle = async (e) => {
-  //   e.stopPropagation();
-
-  //   if (loadingFavorite) return;
-
-  //   setLoadingFavorite(true);
-
-  //   try {
-  //     if (liked) {
-  //       // Retirer des favoris
-  //       await supprimerFavori(annonce.id);
-  //       setLiked(false);
-  //       message.success("Retiré des favoris");
-
-  //       // Notifier le parent si une callback est fournie
-  //       if (onFavoriteChange) {
-  //         onFavoriteChange(annonce.id, false);
-  //       }
-  //     } else {
-  //       // Ajouter aux favoris
-  //       await ajouterFavori(annonce.id);
-  //       setLiked(true);
-  //       message.success("Ajouté aux favoris");
-
-  //       // Notifier le parent si une callback est fournie
-  //       if (onFavoriteChange) {
-  //         onFavoriteChange(annonce.id, true);
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error("Erreur lors de la gestion des favoris:", error);
-
-  //     // Messages d'erreur plus spécifiques
-  //     if (error.response?.status === 401) {
-  //       message.error("Vous devez être connecté pour gérer vos favoris");
-  //     } else if (error.response?.status === 404) {
-  //       message.error("Annonce introuvable");
-  //     } else {
-  //       message.error(
-  //         liked
-  //           ? "Erreur lors de la suppression du favori"
-  //           : "Erreur lors de l'ajout aux favoris"
-  //       );
-  //     }
-
-  //     // Ne pas changer l'état en cas d'erreur
-  //   } finally {
-  //     setLoadingFavorite(false);
-  //   }
-  // };
-
-  // const handleFavoriteToggle = async (e) => {
-  //   e.stopPropagation();
-  //   if (loadingFavorite) return;
-
-  //   setLoadingFavorite(true);
-
-  //   const action = liked ? supprimerFavori : ajouterFavori;
-  //   const successMessage = liked ? "Retiré des favoris" : "Ajouté aux favoris";
-  //   const errorMessage = liked
-  //     ? "Erreur lors de la suppression du favori"
-  //     : "Erreur lors de l'ajout aux favoris";
-
-  //   try {
-  //     await action(annonce.id);
-  //     setLiked(!liked);
-  //     message.success(successMessage);
-  //     if (onFavoriteChange) {
-  //       onFavoriteChange(annonce.id, !liked);
-  //     }
-  //   } catch (error) {
-  //     console.error("Erreur favoris:", error);
-
-  //     if (error?.response?.status === 401) {
-  //       message.error("Vous devez être connecté pour gérer vos favoris");
-  //     } else {
-  //       message.error(errorMessage);
-  //     }
-  //   } finally {
-  //     setLoadingFavorite(false);
-  //   }
-  // };
 
   const handleFavoriteToggle = async (e) => {
     e.stopPropagation();
@@ -175,7 +101,7 @@ const AnnonceCard = ({ annonce, isFavorite = false, onFavoriteChange }) => {
     } catch (error) {
       console.error("Erreur favoris:", error);
 
-      if (error?.response?.status === 403 || error?.response?.status === 401 ) {
+      if (error?.response?.status === 403 || error?.response?.status === 401) {
         notificationApi.warning({
           message: "Connexion requise",
           description: "Vous devez être connecté pour gérer vos favoris.",
@@ -197,7 +123,7 @@ const AnnonceCard = ({ annonce, isFavorite = false, onFavoriteChange }) => {
           duration: 1.5,
         });
 
-         // Redirection après 2 secondes
+        // Redirection après 2 secondes
         setTimeout(() => {
           navigate("/connexion");
         }, 2000);
@@ -324,9 +250,6 @@ const AnnonceCard = ({ annonce, isFavorite = false, onFavoriteChange }) => {
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
 
-          {/* Overlay gradient
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" /> */}
-
           {/* Navigation des images */}
           {images.length > 1 && (
             <>
@@ -436,7 +359,7 @@ const AnnonceCard = ({ annonce, isFavorite = false, onFavoriteChange }) => {
                 icon={<EyeOutlined className="text-xs text-white" />}
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/bailleur/annonce/${annonce.id}`);
+                  handleAnnonce();
                 }}
                 className="bg-black/50 backdrop-blur border-0 w-7 h-7 flex items-center justify-center hover:bg-black/70"
               />
