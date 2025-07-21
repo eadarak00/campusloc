@@ -31,6 +31,7 @@ public class ContactService {
                                 .existsByAnnonceAndProspectAndAnnonce_SupprimeFalseAndSupprimeFalseAndStatutIn(
                                                 annonce, prospect,
                                                 List.of(StatutContact.EN_ATTENTE, StatutContact.ACCEPTE));
+
                 if (!dejaContacte) {
                         Contact contact = Contact.builder()
                                         .annonce(annonce)
@@ -42,6 +43,7 @@ public class ContactService {
                 Utilisateur bailleur = annonce.getProprietaire();
 
                 return CoordonneesDTO.builder()
+                                .statut(dejaContacte ? "EXISTANT" : "NOUVEAU")
                                 .nom(bailleur.getNom())
                                 .prenom(bailleur.getPrenom())
                                 .email(bailleur.getEmail())
