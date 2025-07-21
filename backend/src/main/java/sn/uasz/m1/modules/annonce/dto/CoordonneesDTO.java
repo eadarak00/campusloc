@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class CoordonneesDTO {
+    private String statut;
     private String nom;
     private String prenom;
     private String email;
