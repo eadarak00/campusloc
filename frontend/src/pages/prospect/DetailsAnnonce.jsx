@@ -25,6 +25,10 @@ import {
   Statistic,
   Timeline,
   FloatButton,
+  Popconfirm,
+  notification,
+  Form,
+  Input,
 } from "antd";
 import {
   HomeOutlined,
@@ -62,25 +66,34 @@ import {
   ShopOutlined,
   MedicineBoxOutlined,
   BookOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
 
 import "../../styles/bailleur/detail-annonce.css";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getAnnonceById } from "../../api/annonceAPI";
 import { getImageUrl } from "../../api/ImageHelper";
+import { Mail, Phone, User, X } from "lucide-react";
+import ROUTES from "../../routes/routes";
+import { debloquerCoordonnees } from "../../api/ContactAPI";
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
+const { TextArea } = Input;
 
-const DetailAnnonce = () => {
+const AnnonceDetailsProspect = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [annonce, setAnnonce] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [showContactModal, setShowContactModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const [visitsCount, setVisitsCount] = useState(0);
+
+  const [notificationApi, contextHolder] = notification.useNotification();
 
   // Appel du API pour recuperer l'annonce
   useEffect(() => {
@@ -104,6 +117,91 @@ const DetailAnnonce = () => {
       fetchAnnonce();
     }
   }, [id]);
+
+  const handleContact = async () => {
+    try {
+      const res = await debloquerCoordonnees(annonce.id);
+      const data = res.data;
+
+      if (data.statut === "EXISTANT") {
+        notificationApi.warning({
+          message: "Vous avez déjà contacté ce bailleur",
+          description: (
+            <>
+              <p>
+                <b>Nom :</b> {data.nom} {data.prenom}
+              </p>
+            </>
+          ),
+          placement: "topRight",
+          duration: 2,
+        });
+      } else {
+        notificationApi.success({
+          message: "Contact enregistré",
+          description: (
+            <>
+              <p>
+                <b>Nom :</b> {data.nom} {data.prenom}
+              </p>
+              <p>
+                <b>Email :</b> {data.email}
+              </p>
+              <p>
+                <b>Téléphone :</b> {data.telephone}
+              </p>
+            </>
+          ),
+          placement: "topRight",
+          duration: 2,
+        });
+      }
+    } catch (error) {
+      if (error.response?.status === 403 || error.response?.status === 401) {
+        notificationApi.warning({
+          message: "Connexion requise",
+          description:
+            "Veuillez vous connecter pour contacter le propriétaire.",
+          placement: "topRight",
+          duration: 3,
+          onClose: () => navigate("/connexion"),
+        });
+      } else if (error.response?.status === 409) {
+        notification.info({
+          message: "Déjà contacté",
+          description: "Vous avez déjà fait une demande pour cette annonce.",
+          placement: "topRight",
+          duration: 4,
+        });
+      } else {
+        notificationApi.error({
+          message: "Erreur",
+          description: "Une erreur est survenue lors de la demande de contact.",
+          placement: "topRight",
+          duration: 3,
+        });
+        console.error(error);
+      }
+    }
+  };
+
+  const handleFavoriteToggle = () => {
+    setIsFavorite(!isFavorite);
+    message.success(isFavorite ? "Retiré des favoris" : "Ajouté aux favoris");
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: annonce.titre,
+        text: annonce.description,
+        url: window.location.href,
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      message.success("Lien copié dans le presse-papiers");
+    }
+  };
 
   const getImages = () => {
     if (annonce?.medias?.length > 0) {
@@ -151,28 +249,6 @@ const DetailAnnonce = () => {
     return colors[type] || "default";
   };
 
-  const handleFavorite = () => {
-    setIsFavorite(!isFavorite);
-    message.success(isFavorite ? "Retiré des favoris" : "Ajouté aux favoris");
-  };
-
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    message.success("Lien copié dans le presse-papiers");
-  };
-
-  const handleContact = (method) => {
-    if (method === "phone") {
-      window.open(`tel:${annonce.telephoneProprietaire}`);
-    } else if (method === "email") {
-      window.open(`mailto:${annonce.emailProprietaire}`);
-    }
-    // } else if (method === "whatsapp") {
-    //   window.open(`https://wa.me/${annonce.proprietaire.telephone.replace(/\s/g, '')}`);
-    // }
-    setShowContactModal(false);
-  };
-
   const getCaracteristiques = () => {
     if (!annonce) return [];
 
@@ -194,11 +270,11 @@ const DetailAnnonce = () => {
       });
     }
 
-    if (annonce.chambres) {
+    if (annonce.nombreDeChambres) {
       caracteristiques.push({
         icon: <RestOutlined />,
         label: "Chambres",
-        value: annonce.chambres,
+        value: annonce.nombreDeChambres,
       });
     }
 
@@ -210,15 +286,21 @@ const DetailAnnonce = () => {
       });
     }
 
-    if (annonce.sallesBain) {
+    if (annonce.salleDeBains) {
       caracteristiques.push({
         icon: <BankOutlined />,
         label: "Salles de bain",
-        value: annonce.sallesBain,
+        value: annonce.salleDeBains,
       });
     }
 
     return caracteristiques;
+  };
+
+  // Fonction pour flouter le texte
+  const getBlurredText = (text, showLength = 3) => {
+    if (!text) return "•••••••";
+    return text.substring(0, showLength) + "•••••••";
   };
 
   if (loading) {
@@ -248,12 +330,12 @@ const DetailAnnonce = () => {
 
   return (
     <div className="detail-annonce">
+      {contextHolder}
       {/* Breadcrumb */}
       <Breadcrumb className="detail-annonce__breadcrumb">
         <Breadcrumb.Item>
           <HomeOutlined />
         </Breadcrumb.Item>
-        <Breadcrumb.Item>Bailleur</Breadcrumb.Item>
         <Breadcrumb.Item>Annonces</Breadcrumb.Item>
         <Breadcrumb.Item>{annonce.titre}</Breadcrumb.Item>
       </Breadcrumb>
@@ -265,10 +347,10 @@ const DetailAnnonce = () => {
             <div className="detail-annonce__title-top">
               <Space>
                 <Tag
-                  color={getTypeColor(annonce.type)}
+                  color={getTypeColor(annonce.typeDeLogement)}
                   className="detail-annonce__type-tag"
                 >
-                  {getTypeLabel(annonce.type)}
+                  {getTypeLabel(annonce.typeDeLogement)}
                 </Tag>
                 {annonce.verified && (
                   <Tag color="green" icon={<CheckCircleOutlined />}>
@@ -290,37 +372,20 @@ const DetailAnnonce = () => {
           </div>
         </div>
 
-        {/* <div className="detail-annonce__header-right">
+        <div className="detail-annonce__header-right">
           <Space>
-            <div className="detail-annonce__stats">
-              <Space>
-                <Statistic
-                  title="Vues"
-                  value={annonce.stats.vues}
-                  prefix={<EyeOutlined />}
-                  valueStyle={{ fontSize: 14 }}
-                />
-                <Statistic
-                  title="Favoris"
-                  value={annonce.stats.favoris}
-                  prefix={<HeartOutlined />}
-                  valueStyle={{ fontSize: 14 }}
-                />
-              </Space>
-            </div>
             <Tooltip title="Ajouter aux favoris">
               <Button
-                icon={<HeartOutlined />}
                 type={isFavorite ? "primary" : "default"}
-                onClick={handleFavorite}
-                className={isFavorite ? "detail-annonce__favorite-active" : ""}
+                icon={<HeartOutlined />}
+                onClick={handleFavoriteToggle}
               />
             </Tooltip>
             <Tooltip title="Partager">
               <Button icon={<ShareAltOutlined />} onClick={handleShare} />
             </Tooltip>
           </Space>
-        </div> */}
+        </div>
       </div>
 
       <div className="detail-annonce__content">
@@ -330,7 +395,7 @@ const DetailAnnonce = () => {
             {/* Galerie photos */}
             <Card className="detail-annonce__gallery">
               <div className="detail-annonce__gallery-header">
-                <Title level={4}>Photos ({annonce.medias.length})</Title>
+                <Title level={4}>Photos ({images.length})</Title>
                 <Button
                   icon={<FullscreenOutlined />}
                   onClick={() => setShowImageModal(true)}
@@ -339,7 +404,7 @@ const DetailAnnonce = () => {
                 </Button>
               </div>
 
-              {annonce.medias && images.length > 0 ? (
+              {images.length > 0 ? (
                 <div className="detail-annonce__carousel-container">
                   <Carousel
                     autoplay
@@ -427,7 +492,7 @@ const DetailAnnonce = () => {
                   <Divider />
 
                   {/* Caractéristiques */}
-                  {/* <div className="detail-annonce__characteristics">
+                  <div className="detail-annonce__characteristics">
                     <Title level={4}>Caractéristiques</Title>
                     <Row gutter={[16, 16]}>
                       {getCaracteristiques().map((carac, index) => (
@@ -437,10 +502,16 @@ const DetailAnnonce = () => {
                               {carac.icon}
                             </div>
                             <div className="detail-annonce__characteristic-content">
-                              <Text type="secondary" className="detail-annonce__characteristic-label">
+                              <Text
+                                type="secondary"
+                                className="detail-annonce__characteristic-label"
+                              >
                                 {carac.label}
                               </Text>
-                              <Text strong className="detail-annonce__characteristic-value">
+                              <Text
+                                strong
+                                className="detail-annonce__characteristic-value"
+                              >
                                 {carac.value}
                               </Text>
                             </div>
@@ -448,7 +519,7 @@ const DetailAnnonce = () => {
                         </Col>
                       ))}
                     </Row>
-                  </div> */}
+                  </div>
 
                   <Divider />
 
@@ -460,36 +531,6 @@ const DetailAnnonce = () => {
                     </Paragraph>
                   </div>
                 </TabPane>
-
-                {/* <TabPane tab="Équipements" key="equipements">
-                  <div className="detail-annonce__equipements">
-                    <Title level={4}>Équipements et services</Title>
-                    <Row gutter={[16, 16]}>
-                      {annonce.equipements.map((equipement, index) => (
-                        <Col xs={12} sm={8} md={6} key={index}>
-                          <div className={`detail-annonce__equipement-item ${
-                            equipement.available ? "available" : "unavailable"
-                          }`}>
-                            <div className="detail-annonce__equipement-icon">
-                              {equipement.icon}
-                            </div>
-                            <Text className="detail-annonce__equipement-name">
-                              {equipement.nom}
-                            </Text>
-                            <div className="detail-annonce__equipement-status">
-                              {equipement.available ? (
-                                <CheckCircleOutlined className="available" />
-                              ) : (
-                                <CloseCircleOutlined className="unavailable" />
-                              )}
-                            </div>
-                          </div>
-                        </Col>
-                      ))}
-                    </Row>
-                  </div>
-                </TabPane> */}
-
                 <TabPane tab="Localisation" key="localisation">
                   <div className="detail-annonce__localisation">
                     <Title level={4}>Localisation et proximité</Title>
@@ -507,23 +548,6 @@ const DetailAnnonce = () => {
                         </Text>
                       </div>
                     </div>
-
-                    {/* Points d'intérêt */}
-                    {/* <div className="detail-annonce__proximite">
-                      <Title level={5}>Points d'intérêt à proximité</Title>
-                      <List
-                        dataSource={annonce.proximite}
-                        renderItem={(item) => (
-                          <List.Item>
-                            <List.Item.Meta
-                              avatar={<Avatar icon={item.icon} />}
-                              title={item.nom}
-                              description={`À ${item.distance}`}
-                            />
-                          </List.Item>
-                        )}
-                      />
-                    </div> */}
                   </div>
                 </TabPane>
               </Tabs>
@@ -532,73 +556,54 @@ const DetailAnnonce = () => {
 
           {/* Sidebar */}
           <Col xs={24} lg={8}>
-            {/* Carte contact propriétaire */}
+            {/* Informations du propriétaire (floutées) */}
             <Card className="detail-annonce__owner-card">
-              <div className="detail-annonce__owner-header">
-                {/* <Avatar
-                  size={64}
-                  src={annonce.proprietaire.avatar}
-                  className="detail-annonce__owner-avatar"
-                /> */}
-                <div className="detail-annonce__owner-info">
-                  <div className="detail-annonce__owner-name">
-                    <Text strong>{annonce.nomProprietaire}</Text>
-                    {/* {annonce.proprietaire.verified && (
-                      <CheckCircleOutlined className="detail-annonce__verified-icon" />
-                    )} */}
-                  </div>
-                  {/* <Rate
-                    disabled
-                    defaultValue={annonce.proprietaire.rating}
-                    className="detail-annonce__owner-rating"
-                  /> */}
-                  {/* <Text type="secondary" className="detail-annonce__owner-stats">
-                    {annonce.proprietaire.totalAnnonces} annonces • 
-                    Membre depuis {annonce.proprietaire.memberSince}
-                  </Text> */}
+              <Title level={4} className="detail-annonce__owner-header">
+                Informations du propriétaire
+              </Title>
+              <div className="detail-annonce__owner-info detail-annonce__owner-info--blurred">
+                <div className="detail-annonce__owner-name">
+                  <User className="info-icon" size={18} />
+                  <Text strong style={{ filter: "blur(3px)" }}>
+                    {getBlurredText(annonce.nomProprietaire)}
+                  </Text>
+                </div>
+                <div className="detail-annonce__info-row">
+                  <Mail className="info-icon" size={18} />
+                  <Text strong style={{ filter: "blur(3px)" }}>
+                    {getBlurredText(annonce.emailProprietaire)}
+                  </Text>
+                </div>
+                <div className="detail-annonce__info-row">
+                  <Phone className="info-icon" size={18} />
+                  <Text strong style={{ filter: "blur(3px)" }}>
+                    {getBlurredText(annonce.telephoneProprietaire)}
+                  </Text>
                 </div>
               </div>
 
-              {/* <div className="detail-annonce__owner-features">
-                <div className="detail-annonce__owner-feature">
-                  <ClockCircleOutlined />
-                  <Text>Répond en {annonce.proprietaire.responseTime}</Text>
-                </div>
-              </div> */}
-
               <Divider />
 
-              <div className="detail-annonce__contact-actions">
+              <div className="detail-annonce__contact-section">
                 <Button
                   type="primary"
                   size="large"
-                  icon={<PhoneOutlined />}
+                  icon={<MessageOutlined />}
+                  onClick={handleContact}
                   block
-                  onClick={() => setShowContactModal(true)}
-                  className="detail-annonce__contact-button"
                 >
-                  Contacter
+                  Contacter le propriétaire
                 </Button>
-                <Row gutter={8} style={{ marginTop: 12 }}>
-                  <Col span={12}>
-                    <Button
-                      icon={<MessageOutlined />}
-                      block
-                      onClick={() => handleContact("email")}
-                    >
-                      Message
-                    </Button>
-                  </Col>
-                  {/* <Col span={12}>
-                    <Button
-                      icon={<WhatsAppOutlined />}
-                      block
-                      onClick={() => handleContact("whatsapp")}
-                    >
-                      WhatsApp
-                    </Button>
-                  </Col> */}
-                </Row>
+                <Text
+                  type="secondary"
+                  style={{
+                    textAlign: "center",
+                    display: "block",
+                    marginTop: 8,
+                  }}
+                >
+                  Connectez-vous pour voir les informations complètes
+                </Text>
               </div>
             </Card>
 
@@ -633,43 +638,6 @@ const DetailAnnonce = () => {
               </div>
             </Card>
 
-            {/* Statistiques */}
-            {/* <Card className="detail-annonce__stats-card">
-              <Title level={4}>Statistiques</Title>
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Statistic
-                    title="Vues"
-                    value={annonce.stats.vues}
-                    prefix={<EyeOutlined />}
-                  />
-                </Col>
-                <Col span={12}>
-                  <Statistic
-                    title="Favoris"
-                    value={annonce.stats.favoris}
-                    prefix={<HeartOutlined />}
-                  />
-                </Col>
-              </Row>
-              <Row gutter={16} style={{ marginTop: 16 }}>
-                <Col span={12}>
-                  <Statistic
-                    title="Contacts"
-                    value={annonce.stats.contacts}
-                    prefix={<PhoneOutlined />}
-                  />
-                </Col>
-                <Col span={12}>
-                  <Statistic
-                    title="Visites"
-                    value={annonce.stats.visits}
-                    prefix={<TeamOutlined />}
-                  />
-                </Col>
-              </Row>
-            </Card> */}
-
             {/* Infos publication */}
             <Card className="detail-annonce__publication-info">
               <Title level={4}>Informations</Title>
@@ -680,68 +648,29 @@ const DetailAnnonce = () => {
                     {new Date(annonce.datePublication).toLocaleDateString()}
                   </Text>
                 </Timeline.Item>
-                <Timeline.Item dot={<ClockCircleOutlined />} color="blue">
-                  {/* <Text>Mis à jour le {new Date(annonce.dateModification).toLocaleDateString()}</Text> */}
+                <Timeline.Item dot={<EyeOutlined />} color="blue">
+                  <Text>{visitsCount} vues</Text>
                 </Timeline.Item>
+                {annonce.dateModification && (
+                  <Timeline.Item dot={<ClockCircleOutlined />} color="orange">
+                    <Text>
+                      Mis à jour le{" "}
+                      {new Date(annonce.dateModification).toLocaleDateString()}
+                    </Text>
+                  </Timeline.Item>
+                )}
               </Timeline>
             </Card>
           </Col>
         </Row>
       </div>
 
-      {/* Modal contact */}
-      <Modal
-        title="Contacter le propriétaire"
-        visible={showContactModal}
-        onCancel={() => setShowContactModal(false)}
-        footer={null}
-        className="detail-annonce__contact-modal"
-      >
-        <div className="detail-annonce__contact-options">
-          <div
-            className="detail-annonce__contact-option"
-            onClick={() => handleContact("phone")}
-          >
-            <PhoneOutlined className="detail-annonce__contact-option-icon" />
-            <div>
-              <Text strong>Appeler</Text>
-              <br />
-              <Text type="secondary">{annonce.telephoneProprietaire}</Text>
-            </div>
-          </div>
-
-          <div
-            className="detail-annonce__contact-option"
-            onClick={() => handleContact("email")}
-          >
-            <MailOutlined className="detail-annonce__contact-option-icon" />
-            <div>
-              <Text strong>Envoyer un email</Text>
-              <br />
-              <Text type="secondary">{annonce.emailProprietaire}</Text>
-            </div>
-          </div>
-
-          <div
-            className="detail-annonce__contact-option"
-            onClick={() => handleContact("whatsapp")}
-          >
-            <WhatsAppOutlined className="detail-annonce__contact-option-icon" />
-            <div>
-              <Text strong>WhatsApp</Text>
-              <br />
-              <Text type="secondary">Message instantané</Text>
-            </div>
-          </div>
-        </div>
-      </Modal>
-
       {/* Modal galerie plein écran */}
       <Modal
         visible={showImageModal}
         onCancel={() => setShowImageModal(false)}
         footer={null}
-        width="50%"
+        width="90%"
         className="detail-annonce__media-modal"
       >
         <Carousel
@@ -756,37 +685,14 @@ const DetailAnnonce = () => {
                 src={image.fullUrl}
                 alt={`Photo ${index + 1}`}
                 style={{ width: "100%", height: "70vh", objectFit: "contain" }}
+                preview={false}
               />
             </div>
           ))}
         </Carousel>
       </Modal>
-
-      {/* Boutons flottants */}
-      <FloatButton.Group
-        trigger="hover"
-        type="primary"
-        style={{ right: 24 }}
-        icon={<CustomerServiceOutlined />}
-      >
-        <FloatButton
-          icon={<PhoneOutlined />}
-          tooltip="Appeler"
-          onClick={() => handleContact("phone")}
-        />
-        <FloatButton
-          icon={<WhatsAppOutlined />}
-          tooltip="WhatsApp"
-          onClick={() => handleContact("whatsapp")}
-        />
-        <FloatButton
-          icon={<MailOutlined />}
-          tooltip="Email"
-          onClick={() => handleContact("email")}
-        />
-      </FloatButton.Group>
     </div>
   );
 };
 
-export default DetailAnnonce;
+export default AnnonceDetailsProspect;
