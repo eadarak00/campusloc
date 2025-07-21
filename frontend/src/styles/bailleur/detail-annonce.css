@@ -280,70 +280,8 @@
   color: #1a202c;
 }
 
-/* Equipment */
-.detail-annonce__equipements {
-  margin-bottom: 32px;
-}
 
-.detail-annonce__equipement-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
-  background: #f8fafc;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  transition: all 0.3s ease;
-  position: relative;
-}
 
-.detail-annonce__equipement-item.available {
-  border-color: #10b981;
-  background: #ecfdf5;
-}
-
-.detail-annonce__equipement-item.unavailable {
-  border-color: #ef4444;
-  background: #fef2f2;
-  opacity: 0.7;
-}
-
-.detail-annonce__equipement-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  font-size: 16px;
-}
-
-.detail-annonce__equipement-item.available .detail-annonce__equipement-icon {
-  background: #10b981;
-  color: white;
-}
-
-.detail-annonce__equipement-item.unavailable .detail-annonce__equipement-icon {
-  background: #ef4444;
-  color: white;
-}
-
-.detail-annonce__equipement-name {
-  flex: 1;
-  font-weight: 500;
-}
-
-.detail-annonce__equipement-status {
-  font-size: 18px;
-}
-
-.detail-annonce__equipement-status .available {
-  color: #10b981;
-}
-
-.detail-annonce__equipement-status .unavailable {
-  color: #ef4444;
-}
 
 /* Description */
 .detail-annonce__description {
@@ -469,6 +407,14 @@
   font-weight: 600;
   font-size: 16px;
   border-radius: 8px;
+}
+
+.detail-annonce__contact-section button{
+  background: var(--color-primary);
+}
+
+.detail-annonce__contact-section button:hover{
+  background: var(--color-primary-dark) !important;
 }
 
 /* Cost summary */
