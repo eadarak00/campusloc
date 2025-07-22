@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tag, Typography, Spin, Card, Segmented, Badge, Button, message } from "antd";
+import {
+  Table,
+  Tag,
+  Typography,
+  Spin,
+  Card,
+  Segmented,
+  Badge,
+  Button,
+  message,
+} from "antd";
 import {
   UserOutlined,
   CheckCircleOutlined,
@@ -10,6 +20,8 @@ import {
   PhoneOutlined,
 } from "@ant-design/icons";
 import { listerContactsParProspect } from "../../api/ContactAPI";
+import { initierPaiement } from "../../api/PaiementAPI";
+import PaymentModal from "../../components/PaiementCard";
 
 const { Title, Text } = Typography;
 
@@ -18,6 +30,8 @@ const ContactsPage = () => {
   const [filteredContacts, setFilteredContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState("EN_ATTENTE");
+  const [showPaiementModal, setShowPaiementModal] = useState(false);
+  const [selectedContactId, setSelectedContactId] = useState(null);
 
   useEffect(() => {
     const fetchContacts = async () => {
@@ -36,33 +50,56 @@ const ContactsPage = () => {
   }, []);
 
   useEffect(() => {
-    setFilteredContacts(contacts.filter(c => c.statut === filterType));
+    setFilteredContacts(contacts.filter((c) => c.statut === filterType));
   }, [contacts, filterType]);
 
   const getStatusColor = (statut) => {
     switch (statut) {
-      case "EN_ATTENTE": return "orange";
-      case "ACCEPTE": return "green";
-      case "REJETE": return "red";
-      default: return "gray";
+      case "EN_ATTENTE":
+        return "orange";
+      case "ACCEPTE":
+        return "green";
+      case "REJETE":
+        return "red";
+      default:
+        return "gray";
     }
   };
 
   const getStatusText = (statut) => {
     switch (statut) {
-      case "EN_ATTENTE": return "En attente";
-      case "ACCEPTE": return "Accepté";
-      case "REJETE": return "Rejeté";
-      default: return statut;
+      case "EN_ATTENTE":
+        return "En attente";
+      case "ACCEPTE":
+        return "Accepté";
+      case "REJETE":
+        return "Rejeté";
+      default:
+        return statut;
     }
   };
 
   const getFilterStats = (status) =>
-    contacts.filter(c => c.statut === status).length;
+    contacts.filter((c) => c.statut === status).length;
 
   const handlePaiement = (contactId) => {
-    message.info(`Redirection vers paiement pour contact ${contactId}`);
-    // Redirection vers /paiement/${contactId} si tu veux
+    setSelectedContactId(contactId);
+    setShowPaiementModal(true);
+  };
+
+  const handlePaiementConfirm = async (contactId, operateur) => {
+    try {
+      const res = await initierPaiement(contactId, operateur);
+      console.log('url : ', res.data)
+      if (res.data?.paiementUrl) {
+        window.location.href = res.data.paiementUrl;
+      } else {
+        message.error("Lien de paiement introuvable.");
+      }
+    } catch (err) {
+      message.error("Erreur lors de l'initiation du paiement.");
+      console.error(err);
+    }
   };
 
   const handleContacter = (email) => {
@@ -94,9 +131,13 @@ const ContactsPage = () => {
       key: "dateContact",
       render: (text) => (
         <div className="text-sm text-gray-700">
-          {new Date(text).toLocaleDateString("fr-FR")}<br />
+          {new Date(text).toLocaleDateString("fr-FR")}
+          <br />
           <span className="text-xs text-gray-400">
-            {new Date(text).toLocaleTimeString("fr-FR", { hour: '2-digit', minute: '2-digit' })}
+            {new Date(text).toLocaleTimeString("fr-FR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
           </span>
         </div>
       ),
@@ -108,7 +149,13 @@ const ContactsPage = () => {
       render: (statut) => (
         <Tag
           color={getStatusColor(statut)}
-          icon={statut === "ACCEPTE" ? <CheckCircleOutlined /> : <ClockCircleOutlined />}
+          icon={
+            statut === "ACCEPTE" ? (
+              <CheckCircleOutlined />
+            ) : (
+              <ClockCircleOutlined />
+            )
+          }
           className="rounded-full font-medium"
         >
           {getStatusText(statut)}
@@ -203,43 +250,49 @@ const ContactsPage = () => {
         </Card>
 
         {/* Stats Card */}
-         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-           <Card className="bg-gradient-to-r from-orange-50 to-orange-100 border-orange-200 shadow-sm">
-             <div className="flex items-center space-x-3">
-               <div className="w-12 h-12 bg-orange-200 rounded-full flex items-center justify-center">
-                 <ClockCircleOutlined className="text-orange-600 text-xl" />
-               </div>
-               <div>
-                 <div className="text-2xl font-bold text-orange-800">{getFilterStats("EN_ATTENTE")}</div>
-                 <div className="text-orange-600 font-medium">En attente</div>
-               </div>
-             </div>
-           </Card>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <Card className="bg-gradient-to-r from-orange-50 to-orange-100 border-orange-200 shadow-sm">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-orange-200 rounded-full flex items-center justify-center">
+                <ClockCircleOutlined className="text-orange-600 text-xl" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-orange-800">
+                  {getFilterStats("EN_ATTENTE")}
+                </div>
+                <div className="text-orange-600 font-medium">En attente</div>
+              </div>
+            </div>
+          </Card>
 
-           <Card className="bg-gradient-to-r from-green-50 to-green-100 border-green-200 shadow-sm">
-             <div className="flex items-center space-x-3">
-               <div className="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center">
-                 <CheckCircleOutlined className="text-green-600 text-xl" />
-               </div>
-               <div>
-                 <div className="text-2xl font-bold text-green-800">{getFilterStats("ACCEPTE")}</div>
-                 <div className="text-green-600 font-medium">Acceptés</div>
-               </div>
-             </div>
-           </Card>
+          <Card className="bg-gradient-to-r from-green-50 to-green-100 border-green-200 shadow-sm">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center">
+                <CheckCircleOutlined className="text-green-600 text-xl" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-green-800">
+                  {getFilterStats("ACCEPTE")}
+                </div>
+                <div className="text-green-600 font-medium">Acceptés</div>
+              </div>
+            </div>
+          </Card>
 
-           <Card className="bg-gradient-to-r from-red-50 to-red-100 border-red-200 shadow-sm">
-             <div className="flex items-center space-x-3">
-               <div className="w-12 h-12 bg-red-200 rounded-full flex items-center justify-center">
-                 <ClockCircleOutlined className="text-red-600 text-xl" />
-               </div>
-               <div>
-                 <div className="text-2xl font-bold text-red-800">{getFilterStats("REJETE")}</div>
-                 <div className="text-red-600 font-medium">Rejetés</div>
-               </div>
-             </div>
-           </Card>
-         </div>
+          <Card className="bg-gradient-to-r from-red-50 to-red-100 border-red-200 shadow-sm">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-red-200 rounded-full flex items-center justify-center">
+                <ClockCircleOutlined className="text-red-600 text-xl" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-red-800">
+                  {getFilterStats("REJETE")}
+                </div>
+                <div className="text-red-600 font-medium">Rejetés</div>
+              </div>
+            </div>
+          </Card>
+        </div>
 
         <Card>
           {loading ? (
@@ -263,6 +316,13 @@ const ContactsPage = () => {
             />
           )}
         </Card>
+
+        <PaymentModal
+          visible={showPaiementModal}
+          onClose={() => setShowPaiementModal(false)}
+          onPaiementConfirm={handlePaiementConfirm}
+          contactId={selectedContactId}
+        />
       </div>
     </div>
   );
