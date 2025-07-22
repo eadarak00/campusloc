@@ -25,6 +25,8 @@ import FavorisPage from "../pages/prospect/FavorisPage";
 import AnnonceDetailsProspect from "../pages/prospect/DetailsAnnonce";
 import ContactsPage from "../pages/prospect/ContactPages";
 import ContactsBailleurPage from "../components/bailleur/ContactsBailleurPages";
+import PaiementSucces from "../pages/prospect/PaiementSucess";
+import PaiementAnnule from "../pages/prospect/PaiementAnnule";
 
 const AppRouter = () => (
   <Router>
@@ -66,6 +68,15 @@ const AppRouter = () => (
         <Route
          path={ROUTES.CONTACTS_PROSPECT}
          element = {<ContactsPage />}
+        />
+
+         <Route
+         path={ROUTES.PAIEMENT_SUCCES }
+         element = {<PaiementSucces />}
+        />
+          <Route
+         path={ROUTES.PAIEMENT_ANNULE}
+         element = {<PaiementAnnule />}
         />
       </Route>
 
