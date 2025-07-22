@@ -49,12 +49,14 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/webjars/**",
                                 "/swagger-resources/**",
-                                "/debug/**" ,
+                                "/debug/**",
                                 "/v1/annonces/recentes",
                                 "/v1/annonces/recentes/**",
-                                "/v1/annonces/*"
-
-                                )
+                                "/v1/annonces/*",
+                                "/v1/paiements/callback",
+                                "/v1/paiements/valider",
+                                "/api/v1/paiements/valider"
+                        )
                         .permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/v1/annonces/*/valider").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/v1/annonces/valider").hasRole("ADMIN")
