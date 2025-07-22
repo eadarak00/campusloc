@@ -36,6 +36,10 @@ const ROUTES = {
   ANNONCES_DETAILS_PROSPECT: "/prospect/annonces/:id",
   CONTACTS_PROSPECT: "/prospect/contacts",
 
+  //endpoint pour les paiement
+  PAIEMENT_SUCCES : "/prospect/paiement/succes",
+  PAIEMENT_ANNULE : "/prospect/paieement/annule",
+
   NOT_FOUND: "*",
 };
 
